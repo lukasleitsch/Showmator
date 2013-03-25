@@ -1,0 +1,22 @@
+{
+"background": {
+    "scripts": ["background.js"]
+  },
+  "manifest_version": 2,
+
+  "name": "Showmator",
+  "description": "Link für die Shownotes speichern.",
+  "version": "1.2",
+
+  "update_url": "http://sn.phasentheater.de/link_to_shownotes/update.xml",
+
+  "permissions": [
+    "tabs", "http://*/*", "https://*/*", "background", "notifications"
+  ],
+  "browser_action": {
+    "default_icon": "icon_19.png",
+    "default_title": "Add Link to Shownotes"
+  }
+
+
+}
