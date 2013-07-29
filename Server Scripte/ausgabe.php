@@ -1,7 +1,13 @@
 <?php 
 	include("function.php");
 
-	$content = json_decode(file_get_contents("data/".$episode.".json"), true);
+	if (isset($_GET['slug'])) {
+		$slug = $_GET['slug'];
+	}
+
+	$content = json_decode(file_get_contents("data/".$slug.".json"), true);
+
+	unset($content[meta]);
 
 	$content = array_reverse($content);
 
