@@ -1,5 +1,7 @@
 <?php 
-	$content = json_decode(file_get_contents("data/pt005.json"), true);
+	include("function.php");
+
+	$content = json_decode(file_get_contents("data/".$episode.".json"), true);
 
 	$content = array_reverse($content);
 

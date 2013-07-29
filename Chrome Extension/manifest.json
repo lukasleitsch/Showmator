@@ -5,18 +5,28 @@
   "manifest_version": 2,
 
   "name": "Showmator",
-  "description": "Link für die Shownotes speichern.",
-  "version": "1.2",
+  "description": "A awsome Shownotes-Tool for Podcaster",
+  "version": "1.0.1",
 
-  "update_url": "http://sn.phasentheater.de/link_to_shownotes/update.xml",
+  "icons": { "16": "icon16.png",
+            "32": "icon32.png",
+           "48": "icon48.png",
+          "128": "icon128.png" },
 
   "permissions": [
     "tabs", "http://*/*", "https://*/*", "background", "notifications"
   ],
   "browser_action": {
-    "default_icon": "icon_19.png",
+    "default_icon": "icon19.png",
     "default_title": "Add Link to Shownotes"
-  }
+  },
+
+  "content_scripts": [ {
+    "js": [ "jquery.min.js", "background.js" ],
+    "matches": [ "http://*/*", "https://*/*"]
+  }],
+
+  "options_page": "options.html"
 
 
 }

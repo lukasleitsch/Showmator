@@ -6,10 +6,11 @@
 <script>
 $(document).ready(function()    
         {
-           $(window).focus(function() {
-           $("#refresh").load("ausgabe.php");
-            });
+          $(window).focus(function() {
+            $("#refresh").load("ausgabe.php");
+          });
            $(window).focus();
+
         }
       );
 </script>

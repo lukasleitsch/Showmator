@@ -2,9 +2,19 @@
 
 //Globale Variablen 
 
-$episode = "pt005";
+$slug = "pt010";
+
+if(isset($_POST['slug']) && isset($_POST['startTime']){
+	$slug = $_POST['slug'];
+	$startTime = $_POST['startTime'];
+
+	echo $slug." ".$startTime;
+}
+
+
+
 //Stunde, Minute, Sekunde, Monat, Tag, Jahr
-$start_uhrzeit = mktime(19, 20, 0, 03, 24, 2013);
+$start_uhrzeit = mktime(19, 35, 0, 07, 05, 2013);
 
 
 function header_ausgeben($title){
@@ -32,3 +42,5 @@ function footer_ausgeben(){
 }
 
  ?>
+
+ <h1>Test</h1>
