@@ -12,7 +12,7 @@ chrome.browserAction.onClicked.addListener(function(tab) { chrome.tabs.getSelect
 				//alert("Folgender Link wurde in die Shownotes eingetragen:\n\n"+xhr.responseText);
 				//alert("Der Link wurde in die Shownotes eingetragen!");
 				var notification = webkitNotifications.createNotification(
-		  			'',  // icon url - can be relative
+		  			'icon48.png',  // icon url - can be relative
 		  			'Link wurde gespeichert!',  // notification title 			
 		  			xhr.responseText  // notification body text
 				);
