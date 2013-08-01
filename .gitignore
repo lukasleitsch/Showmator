@@ -3,4 +3,4 @@
 *.pem
 *.zip
 *.psd
-data/*
+data/
