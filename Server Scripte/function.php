@@ -1,5 +1,7 @@
 <?php 
 
+date_default_timezone_set('Europe/Berlin');
+
 function header_ausgeben($title){
 
 	echo'	<!DOCTYPE html>

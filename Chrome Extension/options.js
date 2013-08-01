@@ -1,7 +1,14 @@
-function sendData(){
+function sendData(start){
+
+  if (start == true) {
+      var currentTime = true;
+  }else{
+      var currentTime = false;
+  }
 
 
-  var startTime = $('#startTime').val();
+
+ var startTime = $('#startTime').val();
   var slug = $('#slug').val();
 
   localStorage["slug"] = slug;
@@ -10,7 +17,7 @@ function sendData(){
 
 
   var xhr = new XMLHttpRequest();
-xhr.open('POST', 'http://showmator.phasenkasper.de/settings.php/', true);
+xhr.open('POST', localStorage['address']+'settings.php/', true);
 xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
 
@@ -27,7 +34,7 @@ xhr.onreadystatechange = function() {
   }
 }
 
-xhr.send('slug='+slug+'&startTime='+startTime);
+xhr.send('slug='+slug+'&currentTime='+currentTime+'&startTime='+startTime);
 
 
 }
@@ -44,16 +51,21 @@ function restoreData(){
 
 
     $('#live').click(function() {
-      window.location = "http://showmator.phasenkasper.de/live.php?slug="+localStorage['slug'];
+      window.location = localStorage['address']+"live.php?slug="+localStorage['slug'];
     });
     $('#html').click(function() {
-      window.location = "http://showmator.phasenkasper.de/html.php?slug="+localStorage['slug'];
-    });
-    $('#newSlug').click(function(){
-      $('#slug').val(randomSlug());
+      window.location = localStorage['address']+"html.php?slug="+localStorage['slug'];
     });
 
 
+
+    /*DEV*/
+
+    if (true) {
+      localStorage['address'] = 'http://localhost/Showmator/Server%20Scripte/';
+    } else {
+      localStorage['address'] = "http://showmator.phasenkasper.de/";
+    }
 }
 
 function randomSlug(){
@@ -61,4 +73,13 @@ function randomSlug(){
 }
 
 document.addEventListener('DOMContentLoaded', restoreData);
-document.querySelector('#save').addEventListener('click', sendData);
+
+$('#save').click(function(){
+  sendData(false);
+});
+$('#newSlug').click(function(){
+  $('#slug').val(randomSlug());
+});
+$('#start').click(function(){
+  sendData(true);
+});

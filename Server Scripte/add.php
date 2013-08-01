@@ -1,6 +1,7 @@
 <?php  
 	include("function.php");
 	header('Content-Type: text/html; charset=utf-8');
+	
 
 	$title = htmlentities($_POST['t']);
 	$url = ($_POST['u']);

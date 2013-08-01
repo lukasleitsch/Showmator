@@ -1,26 +1,40 @@
 <?php 
-
-	if(!empty($_POST['slug']) && !empty($_POST['startTime'])){
-	$slug = $_POST['slug'];
-	$startTime = $_POST['startTime'];
-	$startTimeE = explode(':', $startTime);
-
-
-	$startTimeUnix = mktime($startTimeE[0], $startTimeE[1], 0, 0, 0, 0);
-
-
-	$content = json_decode(file_get_contents("data/".$slug.".json"), true);
-
-	$content = array(meta => array(slug => $slug, startTime => $startTimeUnix));
-
-	file_put_contents("data/".$slug.".json", json_encode($content));
-
-
-	echo 'Die Shownotes "'.$slug.'" wurden angelegt und die Startzeit des Podcasts auf '.$startTime.' gesetzt.';
-
+	if(isset($_POST['slug'])){
+		$slug = $_POST['slug'];
+	}
+	if (isset($_POST['startTime'])) {
+		$startTime = $_POST['startTime'];
+	}
+	if (isset($_POST['currentTime'])) {
+		$currentTime = $_POST['currentTime'];
 	}
 
-	if (!empty($_POST['slug']) && empty($_POST['startTime'])) {
-		echo "Einstellungen wurden gespeichert!";
+	date_default_timezone_set('Europe/Berlin');
+
+
+	if(!empty($slug) && !empty($startTime) && $currentTime == 'false'){
+		$startTimeE = explode(':', $startTime);
+		$startTimeUnix = mktime($startTimeE[0], $startTimeE[1], 0, 0, 0, 0);
+
+		save($slug, $startTimeUnix);
+
+		echo 'Die Shownotes "'.$slug.'" wurden angelegt und die Startzeit auf '.date('H:i', $startTimeUnix).' gesetzt.';
+	}
+
+	if (!empty($slug) && empty($startTime) && $currentTime == 'true') {
+		$startTimeUnix = mktime(date('H'), date('i'), 0, 0, 0, 0);
+		save($slug, $startTimeUnix);
+
+		echo 'Die Shownotes "'.$slug.'" wurden angelegt und die Startzeit automatisch auf '.date('H:i', $startTimeUnix).' gesetzt.';
+	}
+
+	if (!empty($slug) && empty($startTime) && $currentTime == 'false') {
+		echo "Einstellungen gespeicher!";
+	}
+
+	function save($slug, $time){
+		$content = json_decode(file_get_contents("data/".$slug.".json"), true);
+		$content = array(meta => array(slug => $slug, startTime => $time));
+		file_put_contents("data/".$slug.".json", json_encode($content));
 	}
  ?>
