@@ -1,11 +1,17 @@
 <?php  
 	include("function.php");
 	header('Content-Type: text/html; charset=utf-8');
-	
 
-	$title = htmlentities($_POST['t']);
-	$url = ($_POST['u']);
-	$slug = $_POST['s'];
+	if (isset($_POST['t'])) {
+		$title = htmlentities($_POST['t']);
+	}
+	if (isset($_POST['u'])) {
+		$url = htmlentities($_POST['u']);
+	}
+	if (isset($_POST['s'])) {
+		$slug = htmlentities($_POST['s']);
+	}
+	
 
 
 	$content = json_decode(file_get_contents("data/".$slug.".json"), true);
