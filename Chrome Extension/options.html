@@ -7,10 +7,10 @@
 
 <body>
 <h1>Einstellungen für den Showmator</h1>
-<p>Zum Erstellen von neuen Shownotes müssen Slug und Startzeit ausgefüllt sein. Zum Mitarbeiten bei anderen Shownotes muss nur den entsprechenden Slug ausfüllt sein.</p>
-<label for="slug">Slug:</label>
+<p>Zum Erstellen von neuen Shownotes muss Kürzel und Startzeit ausgefüllt sein. Zum Mitarbeiten bei anderen Shownotes muss nur das entsprechenden Kürzel ausgefüllt sein.</p>
+<label for="slug">Kürzel:</label>
 <input type="text" name="slug" id="slug">
-<button id="newSlug">Neuer Slug</button>
+<button id="newSlug">Generiere neues Kürzel</button>
 <br>
 <label for="startTime">Startzeit:</label>
 <input type="time" name="startTime" id="startTime" value="" placeholder="">
@@ -18,12 +18,16 @@
 
 <br>
 <br>
-<button id="save">Mit eingetragener Zeit loslegen</button> ODER <button id ="start">Aktuelle Zeit verwenden und loslegen</button>
+<button id="save">Mit eingetragener Zeit loslegen / Mitmachen</button> ODER <button id ="start">Aktuelle Zeit verwenden und loslegen</button>
 <br>
 <br>
 <div id="status"></div>
 <br>
 <button id="live">Live-Shownotes</button> <button id="html">Shownotes in HTML</button>
+<br>
+<br>
+<input type="checkbox" name="popup" value="true" id="popup">Popup verwenden
+<p>Wenn diese Option angewählt ist, dann hat man die Möglichkeit den Linktitel vor dem Eintrag zu änderen. Des Weiteren können in dem Popup Shownotes ohne Link eingetragen werden.</p>
 </body>
 <script src="jquery.min.js"></script>
 <script src="options.js"></script>

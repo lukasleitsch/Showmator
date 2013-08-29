@@ -57,7 +57,9 @@ function restoreData(){
       window.location = localStorage['address']+"html.php?slug="+localStorage['slug'];
     });
 
-
+    if(localStorage['popup'] == 'true'){
+      $('#popup').prop('checked', true);
+    }
 
     /*DEV*/
 
@@ -66,6 +68,8 @@ function restoreData(){
     } else {
       localStorage['address'] = "http://showmator.phasenkasper.de/";
     }
+
+    /*-------*/
 }
 
 function randomSlug(){
@@ -83,3 +87,13 @@ $('#newSlug').click(function(){
 $('#start').click(function(){
   sendData(true);
 });
+
+$('#popup').change(function() {
+        if($(this).is(":checked")) {
+            localStorage['popup'] = 'true';
+            chrome.extension.getBackgroundPage().update();
+        }else{
+            localStorage['popup'] = 'false';
+            chrome.extension.getBackgroundPage().update();
+        }
+    });

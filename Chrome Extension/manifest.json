@@ -6,7 +6,7 @@
 
   "name": "Showmator",
   "description": "A awsome Shownotes-Tool for Podcaster",
-  "version": "1.0.2",
+  "version": "1.1.0",
 
   "icons": { "16": "icon16.png",
             "32": "icon32.png",
@@ -27,11 +27,12 @@
   },
 
   "content_scripts": [ {
-    "js": [ "jquery.min.js", "background.js" ],
-    "matches": [ "http://*/*", "https://*/*"]
+    "matches": [ "http://*/*", "https://*/*"],
+    "js": [ "jquery.min.js", "background.js" ]
+
   }],
 
-  "options_page": "options.html"
+  "options_page": "options.html",
 
-
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

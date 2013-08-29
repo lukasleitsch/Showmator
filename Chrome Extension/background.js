@@ -1,8 +1,32 @@
-chrome.browserAction.onClicked.addListener(function(tab) { chrome.tabs.getSelected(null,function(tab) {
+if(localStorage['popup']=='true'){
+	chrome.browserAction.setPopup({popup:'popup.html'});
+}else{
+	chrome.browserAction.setPopup({popup:''});
+}
+
+function update(){
+	if(localStorage['popup']=='true'){
+		chrome.browserAction.setPopup({popup:'popup.html'});
+	}else{
+		chrome.browserAction.setPopup({popup:''});
+	}
+}
+
+
+	chrome.browserAction.onClicked.addListener(function(tab) { chrome.tabs.getSelected(null,function(tab) {
+		add(tab.title, tab.url);
+	});
+	});
+
+
+function add(title, url){
+
+
 
 	if (typeof(localStorage['slug']) == "undefined") {
 		alert('Bitte die Einstellungen setzen. Rechts Klick auf Icon und dann Optionen.')
 	} else{
+
 		var xhr = new XMLHttpRequest();
 		xhr.open('POST', localStorage['address']+'add.php/', true);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -25,14 +49,6 @@ chrome.browserAction.onClicked.addListener(function(tab) { chrome.tabs.getSelect
 			}
 		}
 
-		xhr.send('s='+localStorage['slug']+'&t='+tab.title+'&u='+tab.url);
-			
-
-			};
-
-
-
-
-});
-});
-
+		xhr.send('s='+localStorage['slug']+'&t='+title+'&u='+url);
+	};
+}

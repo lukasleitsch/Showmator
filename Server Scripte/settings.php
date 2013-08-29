@@ -1,12 +1,15 @@
 <?php 
 	if(isset($_POST['slug'])){
-		$slug = htmlentities($_POST['slug']);
+		$slug = $_POST['slug'];
+		htmlentities($slug);
 	}
 	if (isset($_POST['startTime'])) {
-		$startTime = htmlentities($_POST['startTime']);
+		$startTime = $_POST['startTime'];
+		htmlentities($startTime);
 	}
 	if (isset($_POST['currentTime'])) {
-		$currentTime = htmlentities($_POST['currentTime']);
+		$currentTime = $_POST['currentTime'];
+		htmlentities($currentTime);
 	}
 
 	date_default_timezone_set('Europe/Berlin');

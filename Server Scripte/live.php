@@ -4,7 +4,9 @@
 
   if (isset($_GET['slug'])) {
     $slug = $_GET['slug'];
+    htmlentities($slug);
   }
+
  ?>
 
 <script>
