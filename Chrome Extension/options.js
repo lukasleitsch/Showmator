@@ -63,7 +63,7 @@ function restoreData(){
 
     /*DEV*/
 
-    if (false) {
+    if (true) {
       localStorage['address'] = 'http://localhost/Showmator/Server%20Scripte/';
     } else {
       localStorage['address'] = "http://showmator.phasenkasper.de/";

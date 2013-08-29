@@ -18,7 +18,7 @@ echo '<span class="list">&lt;ul&gt;<br></span>';
    	// echo '<span class="time">'.date("H:i:s", $value["time"]).'</span>'.htmlentities(' <a href="'.$value["url"]).'" <span>target="_blank"</span>'.$value["title"].'</a>')."<br />";
    	
 
-    echo '<span class="list">&lt;li&gt;</span><span class="time">'.date("H:i:s", $value["time"]).'</span> '.($value["url"] == 'null' ? $value["title"].'<span class="list">&lt;/li&gt;</span><br>' : '&lta href="'.$value["url"].'"<span class="target"> target="_blank"</span>>'.$value["title"].'&lt/a&gt<span class="list">&lt;/li&gt;</span><br />'); 
+    echo '<span class="list">&lt;li&gt;</span><span class="time">'.date("H:i:s", $value["time"]).' </span>'.($value["url"] == 'null' ? $value["title"].'<span class="list">&lt;/li&gt;</span><br>' : '&lta href="'.$value["url"].'"<span class="target"> target="_blank"</span>>'.$value["title"].'&lt/a&gt<span class="list">&lt;/li&gt;</span><br />'); 
     
  
 	}
