@@ -16,7 +16,7 @@ function sendData(start){
 
 
 
-  var xhr = new XMLHttpRequest();
+var xhr = new XMLHttpRequest();
 xhr.open('POST', localStorage['address']+'settings.php/', true);
 xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
@@ -63,7 +63,7 @@ function restoreData(){
 
     /*DEV*/
 
-    if (true) {
+    if (false) {
       localStorage['address'] = 'http://localhost/Showmator/Server%20Scripte/';
     } else {
       localStorage['address'] = "http://showmator.phasenkasper.de/";
