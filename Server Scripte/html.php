@@ -22,7 +22,7 @@ echo '<span class="list">&lt;ul&gt;<br></span>';
     
  
 	}
-  echo '<span class="list">&lt;ul&gt;</span>';
+  echo '<span class="list">&lt;/ul&gt;</span>';
 
   footer_ausgeben();
 

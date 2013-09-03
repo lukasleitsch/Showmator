@@ -10,9 +10,8 @@ $(document).ready(function(){
 		}else{
 			length = length*1.1;
 		}
-	  $('#title').attr("size", length);
-
-	  url = tab.url;
+	  	$('#title').attr("size", length);
+	  	url = tab.url;
 	});
 
 	$('#eintragen').click(function(){
@@ -20,10 +19,8 @@ $(document).ready(function(){
 	});
 
 	$('body').keyup(function(e) {
-		//alert(e.keyCode);
 		if(e.keyCode == 13) {
 			eintragen();
-
 		}
 	});
 
@@ -31,11 +28,11 @@ $(document).ready(function(){
 		if($('#text').is(":checked")){
 			url = 'null';
 		}
-
 		var title = $('#title').val();
-
 		chrome.extension.getBackgroundPage().add(title, url);
 		window.close();
 	}
+
+	$('#title').focus();
 
 });

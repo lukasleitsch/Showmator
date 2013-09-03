@@ -12,15 +12,13 @@ function update(){
 	}
 }
 
-
 chrome.browserAction.onClicked.addListener(function(tab) { chrome.tabs.getSelected(null,function(tab) {
-		add(tab.title, tab.url);
+	add(tab.title, tab.url);
 });
 });
 
 function add(title, url){
-
-	if (duplicate(url)) {
+	if (duplicate(url) && url != 'null') {
 		if (confirm("Dieser Link ist schon in den Shownotes vorhanden. Soll er trotzdem hinzugefügt werden?")) {
 			send(title, url);
 		}
@@ -29,13 +27,10 @@ function add(title, url){
 	}
 }
 
-
 function send(title, url){
-
 	if (typeof(localStorage['slug']) == "undefined") {
 		alert('Bitte die Einstellungen setzen. Rechts Klick auf Icon und dann Optionen.')
 	} else{
-
 		var xhr = new XMLHttpRequest();
 		xhr.open('POST', localStorage['address']+'add.php/', true);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -52,20 +47,15 @@ function send(title, url){
 				setTimeout(function(){
   					notification.cancel();
 				}, 3000);
-
 			}
 		}
-
 		xhr.send('s='+localStorage['slug']+'&t='+title+'&u='+url);
-
-		return false;
 	};
 }
 
 var t;
 
 function duplicate(url){
-
 	var xhr = new XMLHttpRequest();
 	xhr.open('POST', localStorage['address']+'duplicate.php/', false);
 	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -82,5 +72,4 @@ function duplicate(url){
 	xhr.send('s='+localStorage['slug']+'&u='+url);
 
 	return t;
-	
 } 
