@@ -57,7 +57,7 @@ var t;
 
 function duplicate(url){
 	var xhr = new XMLHttpRequest();
-	xhr.open('POST', localStorage['address']+'duplicate.php/', false);
+	xhr.open('POST', localStorage['address']+'duplicate.php/', true);
 	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
 	xhr.onreadystatechange = function() {
