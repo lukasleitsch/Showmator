@@ -1,3 +1,5 @@
+localStorage['version'] = '1.3.0';
+
 if(localStorage['popup']=='true'){
 	chrome.browserAction.setPopup({popup:'popup.html'});
 }else{
@@ -16,16 +18,6 @@ chrome.browserAction.onClicked.addListener(function(tab) { chrome.tabs.getSelect
 	add(tab.title, tab.url);
 });
 });
-
-function add(title, url){
-	if (duplicate(url) && url != 'null') {
-		if (confirm("Dieser Link ist schon in den Shownotes vorhanden. Soll er trotzdem hinzugefügt werden?")) {
-			send(title, url);
-		}
-	}else{
-		send(title, url);
-	}
-}
 
 function send(title, url){
 	if (typeof(localStorage['slug']) == "undefined") {
@@ -49,27 +41,30 @@ function send(title, url){
 				}, 3000);
 			}
 		}
-		xhr.send('s='+localStorage['slug']+'&t='+title+'&u='+url);
+		xhr.send('s='+localStorage['slug']+'&t='+title+'&u='+url+'&version='+localStorage['version']);
 	};
 }
 
-var t;
-
-function duplicate(url){
+function add(title, url){
 	var xhr = new XMLHttpRequest();
-	xhr.open('POST', localStorage['address']+'duplicate.php/', true);
+	xhr.open('POST', localStorage['address']+'duplicate.php/', false);
 	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
-	xhr.onreadystatechange = function() {
-		if (xhr.readyState == 4) {
-			if (xhr.responseText == "true") {
-				t = true;
-			} else if (xhr.responseText == "false") {
-				t = false;
+	if(url != 'null'){	
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState == 4) {
+				if (xhr.responseText == "true") {
+					if (confirm("Dieser Link ist schon in den Shownotes vorhanden. Soll er trotzdem hinzugefügt werden?")) {
+						send(title, url);
+					}
+				} else if (xhr.responseText == "false") {
+					send(title, url);
+				}
 			}
 		}
+	}else{
+		send(title, url);
 	}
-	xhr.send('s='+localStorage['slug']+'&u='+url);
 
-	return t;
+	xhr.send('s='+localStorage['slug']+'&u='+url);
 } 

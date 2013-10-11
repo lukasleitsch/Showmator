@@ -1,7 +1,13 @@
 <?php 
+	include("function.php");
+
 	if(isset($_POST['slug'])){
 		$slug = $_POST['slug'];
 		htmlentities($slug);
+	}
+	if(isset($_POST['publicSlug'])){
+		$publicSlug = $_POST['publicSlug'];
+		htmlentities($publicSlug);
 	}
 	if (isset($_POST['startTime'])) {
 		$startTime = $_POST['startTime'];
@@ -11,8 +17,14 @@
 		$currentTime = $_POST['currentTime'];
 		htmlentities($currentTime);
 	}
+	if (isset($_POST['version'])) {
+		$version = $_POST['version'];
+		htmlentities($version);
+	}
 
 	date_default_timezone_set('Europe/Berlin');
+
+	check_version($version);
 
 
 	if(!empty($slug) && !empty($startTime) && $currentTime == 'false'){
@@ -20,7 +32,7 @@
 		$startTimeUnix = mktime($startTimeE[0], $startTimeE[1], 0, 0, 0, 0);
 
 		if (!file_exists("data/".$slug.".json")) {
-			save($slug, $startTimeUnix);
+			save($slug ,$startTimeUnix);
 			echo 'Die Shownotes "'.$slug.'" wurden angelegt und die Startzeit auf '.date('H:i', $startTimeUnix).' gesetzt.';
 		}else{
 			echo "Die Shownotes mit diesem Slug existieren schon. Bitte einen anderen Slug verwenden.";
@@ -44,8 +56,14 @@
 	}
 
 	function save($slug, $time){
+			global $publicSlug;
 			$content = json_decode(file_get_contents("data/".$slug.".json"), true);
 			$content = array(meta => array(slug => $slug, startTime => $time));
 			file_put_contents("data/".$slug.".json", json_encode($content));
+
+
+			$filePublicSlug = fopen('data/publicSlugs/'.$publicSlug.'.inc',"w+");
+			fwrite($filePublicSlug, $slug);
+			fclose($filePublicSlug);
 	}
  ?>

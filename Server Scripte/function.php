@@ -2,6 +2,8 @@
 
 date_default_timezone_set('Europe/Berlin');
 
+$sVersion = '1.3.0';
+
 function header_ausgeben($title){
 
 	echo'	<!DOCTYPE html>
@@ -26,6 +28,14 @@ function footer_ausgeben(){
 			</html>
 	';
 
+}
+
+function check_version($version){
+	global $sVersion;
+	if($sVersion != $version){
+		echo "Auf dem Server läuft nicht die aktuelle Version des Showmators. Bitte updaten!";
+		exit;
+	}
 }
 
  ?>

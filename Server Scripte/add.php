@@ -13,6 +13,16 @@
 		$slug = $_POST['s'];
 		htmlentities($slug);
 	}
+
+	if (isset($_POST['version'])) {
+		$version = $_POST['version'];
+		htmlentities($version);
+	}
+
+
+
+	check_version($version);
+
 	
 	$content = json_decode(file_get_contents("data/".$slug.".json"), true);
 
