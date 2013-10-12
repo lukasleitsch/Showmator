@@ -19,16 +19,11 @@
 		htmlentities($version);
 	}
 
-
-
 	check_version($version);
 
-	
 	$content = json_decode(file_get_contents("data/".$slug.".json"), true);
 
 	$startTime = $content[meta][startTime];
-
-	// $time = $startTime-time()-3600;
 
 	$time = time()-$startTime;
 

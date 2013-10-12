@@ -48,7 +48,6 @@
 		}else{
 			echo "Die Shownotes mit diesem Slug existieren schon. Bitte einen anderen Slug verwenden.";
 		}
-
 	}
 
 	if (!empty($slug) && empty($startTime) && $currentTime == 'false') {
@@ -56,14 +55,21 @@
 	}
 
 	function save($slug, $time){
-			global $publicSlug;
-			$content = json_decode(file_get_contents("data/".$slug.".json"), true);
-			$content = array(meta => array(slug => $slug, startTime => $time));
-			file_put_contents("data/".$slug.".json", json_encode($content));
+		global $publicSlug;
+
+		if (!is_dir('data')) {
+		  mkdir('data');
+		}
+
+		if (!is_dir('data/publicSlugs')) {
+		  mkdir('data/publicSlugs');
+		}
+
+		$content = json_decode(file_get_contents("data/".$slug.".json"), true);
+		$content = array(meta => array(slug => $slug, startTime => $time));
+		file_put_contents("data/".$slug.".json", json_encode($content));
 
 
-			$filePublicSlug = fopen('data/publicSlugs/'.$publicSlug.'.inc',"w+");
-			fwrite($filePublicSlug, $slug);
-			fclose($filePublicSlug);
+		file_put_contents('data/publicSlugs/'.$publicSlug.'.inc', $slug);
 	}
  ?>

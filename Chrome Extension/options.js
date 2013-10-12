@@ -1,3 +1,5 @@
+var defaultUrl = "http://showmator.phasenkasper.de/beta/";
+
 function sendData(start){
 
     if (start == true) {
@@ -42,7 +44,7 @@ function restoreData(){
     }
 
     if (typeof(localStorage['address']) == "undefined"){
-        localStorage['address'] = "http://showmator.phasenkasper.de/"
+        localStorage['address'] = defaultUrl;
     }else{
          $('#serverUrl').val(localStorage['address']);
     }
@@ -60,16 +62,7 @@ function restoreData(){
 
     $('#serverUrl').val(localStorage['address']);
 
-    /*DEV*/
-
-    // if (true) {
-    //     localStorage['address'] = 'http://localhost/Showmator/Server%20Scripte/';
-    // } else {
-    //     localStorage['address'] = "http://showmator.phasenkasper.de/";
-    // }
-
-    /*-------*/
-    }
+}
 
 function randomSlug(){
   return Math.random().toString(36).substring(7);
@@ -87,22 +80,23 @@ $('#save').click(function(){
     }
   
 });
+
 $('#newSlug').click(function(){
-  $('#slug').val(randomSlug());
-  localStorage['publicSlug'] = randomSlug();
+    $('#slug').val(randomSlug());
+    localStorage['publicSlug'] = randomSlug();
 });
 $('#start').click(function(){
-  sendData(true);
+    sendData(true);
 });
 $('#join').click(function(){
-  sendData(false);
+    sendData(false);
 });
 $('#saveUrl').click(function(){
-  localStorage['address'] = $('#serverUrl').val();
+    localStorage['address'] = $('#serverUrl').val();
 });
 $('#defaultUrl').click(function(){
-  $('#serverUrl').val("http://showmator.phasenkasper.de/");
-  localStorage['address'] = $('#serverUrl').val();
+    $('#serverUrl').val(defaultUrl);
+    localStorage['address'] = $('#serverUrl').val();
 });
 
 $('#popup').change(function() {

@@ -16,18 +16,13 @@
 	unset($content[meta]);
 
 	$content = array_reverse($content);
-
-
    		foreach ($content as $value) {
 
  			$html .= date("H:i:s", $value["time"]).' '.($value["url"] == 'null' ? $value["title"].'<br>' : '<a href="'.$value["url"].'" target="_blank">'.$value["title"].'</a><br />');
 
 		}
 
-
-$time = date('r');
-echo "data: $html\n\n";
-flush();
-
-	
+	$time = date('r');
+	echo "data: $html\n\n";
+	flush();
 ?>

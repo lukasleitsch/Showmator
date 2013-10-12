@@ -2,7 +2,6 @@ $(document).ready(function(){
 
 	var url;
 	var title;
-	//$('#title').focus();
 
 	chrome.tabs.getSelected(null,function(tab) { 
 		title = tab.title;

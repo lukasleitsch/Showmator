@@ -2,56 +2,50 @@
 <head><title>Einstellungen für den Showmator</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<link href="style.css" rel="stylesheet" >
-
 </head>
-
 <body>
-<h1>Einstellungen für den Showmator</h1>
-<p>Zum Erstellen von neuen Shownotes muss Kürzel und Startzeit ausgefüllt sein. Zum Mitarbeiten bei anderen Shownotes muss nur das entsprechenden Kürzel ausgefüllt sein.</p>
-<hr />
-<h2>Neue Shownotes erstellen oder bei bestehenden mitmachen</h2>
-<h3>1. Neues oder bestehendes Kürzel eintragen oder generieren:</h3>
-<label for="slug">Kürzel:</label>
-<input type="text" name="slug" id="slug">
-<button id="newSlug">Generiere neues Kürzel</button>
-<br>
-<h3>2. <i>optional:</i> Startzeit festlegen:</h3>
-<label for="startTime">Startzeit:</label>
-<input type="time" name="startTime" id="startTime" value="" placeholder="">
-<br>
-<br>
-<h3>3. Starten</h3>
-<button id="save">Mit eingetragener Zeit loslegen</button> 
-
-<button id ="start">Aktuelle Zeit verwenden und loslegen</button>
-
-<button id="join">Mitmachen</button> 
-<br>
-<br>
-<div id="status"></div>
-<br>
-<hr>
-<h2>Shownotes live verfolgen oder als HTML exportieren</h2>
-<p>Das Kürzel, dass bei den Live-Shownotes in der URL verwendet wird, ist nicht das gleiche, das hier festgelegt worden ist. Der Link kann an die Hörer weitergeben werden.</p>
-<button id="live">Live-Shownotes</button> <button id="html">Shownotes in HTML</button>
-<br>
-<br>
-<hr />
-<h2>Erweiterte Einstellungen</h2>
-<input type="checkbox" name="popup" value="true" id="popup"> <label for="popup">Popup verwenden</label>
-<p>Wenn diese Option angewählt ist, dann hat man die Möglichkeit den Linktitel vor dem Eintrag zu änderen. Des Weiteren können in dem Popup Shownotes ohne Link eingetragen werden.</p>	
-<h3>URL zum Server</h3>
-Wird der Showmator auf dem eigenen Server betrieben, muss hier die URL eingetragen werden.
-<input type="text" name="serverUrl" id="serverUrl" size="100%">
-<br>
-<button id="saveUrl">Speichern</button> <button id="defaultUrl">Standard-Url wiederherstellen</button>
-<footer>
+	<h1>Einstellungen für den Showmator</h1>
+	<p>Zum Erstellen von neuen Shownotes muss Kürzel und Startzeit ausgefüllt sein. Zum Mitarbeiten bei anderen Shownotes muss nur das entsprechenden Kürzel ausgefüllt sein.</p>
+	<hr />
+	<h2>Neue Shownotes erstellen oder bei bestehenden mitmachen</h2>
+	<h3>1. Neues oder bestehendes Kürzel eintragen oder generieren:</h3>
+	<label for="slug">Kürzel:</label>
+	<input type="text" name="slug" id="slug">
+	<button id="newSlug">Generiere neues Kürzel</button>
+	<br>
+	<h3>2. <i>optional:</i> Startzeit festlegen:</h3>
+	<label for="startTime">Startzeit:</label>
+	<input type="time" name="startTime" id="startTime" value="" placeholder="">
+	<br>
+	<br>
+	<h3>3. Starten</h3>
+	<button id="save">Mit eingetragener Zeit loslegen</button> 
+	<button id ="start">Aktuelle Zeit verwenden und loslegen</button>
+	<button id="join">Mitmachen</button> 
+	<br>
+	<br>
+	<div id="status"></div>
+	<br>
 	<hr>
-	<a href="https://leitsch.org/projects/showmator" title="">Changelog des Showmators</a>
-</footer>
+	<h2>Shownotes live verfolgen oder als HTML exportieren</h2>
+	<p>Das Kürzel, dass bei den Live-Shownotes in der URL verwendet wird, ist nicht das gleiche, das hier festgelegt worden ist. Der Link kann an die Hörer weitergeben werden.</p>
+	<button id="live">Live-Shownotes</button> <button id="html">Shownotes in HTML</button>
+	<br>
+	<br>
+	<hr />
+	<h2>Erweiterte Einstellungen</h2>
+	<input type="checkbox" name="popup" value="true" id="popup"> <label for="popup">Popup verwenden</label>
+	<p>Wenn diese Option angewählt ist, dann hat man die Möglichkeit den Linktitel vor dem Eintrag zu änderen. Des Weiteren können in dem Popup Shownotes ohne Link eingetragen werden.</p>	
+	<h3>URL zum Server</h3>
+	Wird der Showmator auf dem eigenen Server betrieben, muss hier die URL eingetragen werden.
+	<input type="text" name="serverUrl" id="serverUrl" size="100%">
+	<br>
+	<button id="saveUrl">Speichern</button> <button id="defaultUrl">Standard-Url wiederherstellen</button>
+	<footer>
+		<hr>
+		<a href="https://leitsch.org/projects/showmator" title="">Changelog des Showmators</a>
+	</footer>
 </body>
-<script src="jquery.min.js"></script>
-<script src="options.js"></script>
-
-
+	<script src="jquery.min.js"></script>
+	<script src="options.js"></script>
 </html>
