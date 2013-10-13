@@ -66,7 +66,7 @@
 		}
 
 		$content = json_decode(file_get_contents("data/".$slug.".json"), true);
-		$content = array(meta => array(slug => $slug, startTime => $time));
+		$content = array(meta => array(slug => $slug, startTime => $time, entryId => '0'));
 		file_put_contents("data/".$slug.".json", json_encode($content));
 
 

@@ -50,7 +50,8 @@ function restoreData(){
     }
 
     $('#live').click(function() {
-      window.location = localStorage['address']+"live.php?slug="+localStorage['publicSlug'];
+      var url = localStorage['address']+"live.php?slug="+localStorage['publicSlug'];
+      window.open(url);
     });
     $('#html').click(function() {
       window.location = localStorage['address']+"html.php?slug="+localStorage['slug'];

@@ -19,16 +19,43 @@ $(document).ready(function(){
     // });
     //  $(window).focus();
 
-    var source=new EventSource('ausgabe.php?slug='+slug);
-    source.onmessage=function(event){
-        document.getElementById("result").innerHTML=event.data + "<br>";
-    };
-
-    if(typeof(EventSource)!=="undefined"){
+     if(typeof(EventSource)!=="undefined"){
             //$('#result').html("Läuft");
     }else{
         $('#result').html("Dein Browser ist zu alt. Diese Seite benötigt einen aktuellen Browser!")
     }
+
+    var source=new EventSource('ausgabe.php?slug='+slug);
+
+    source.addEventListener("ping", function(e) {
+           
+        var obj = JSON.parse(e.data);
+        var link;
+
+        if(obj.url != 'null'){
+            link = '<a href="'+obj.url+'" target="_blank">'+obj.title+'</a>';
+        }else{
+            link = obj.title;
+        }
+
+        $('#result').prepend(obj.time+' '+link+'<br>');
+
+        if ($('#tab').is(":checked")) {
+            window.open(obj.url,'_newtab');
+            window.focus();
+        };
+       
+    }, false);
+
+    source.addEventListener("first", function(e){
+        $('#result').html(e.data);
+    }, false);
+
+    source.onmessage=function(event){
+        document.getElementById("result").innerHTML=event.data + "<br>";
+    };
+
+   
 
 });
 
@@ -37,7 +64,10 @@ $(document).ready(function(){
     <div class="row">
         <div class="span12">
             <h2>Live-Shownotes</h2>
-        <div id="result"></div>
+            <div id="settings">
+               <input type="checkbox" name="tab" id="tab" style="float: left;"> <label for="tab" style="margin-left: 15px;">Neue Links automatisch öffnen</label>
+            </div>
+            <div id="result"></div>
         </div>
     </div>
 </div>

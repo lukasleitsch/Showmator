@@ -24,12 +24,18 @@
 	$content = json_decode(file_get_contents("data/".$slug.".json"), true);
 
 	$startTime = $content[meta][startTime];
+	$metaSlug = $content[meta][slug];
+	$entryId = $content[meta][entryId];
+	$entryId++;
 
 	$time = time()-$startTime;
 
 	if(!empty($title) && !empty($url) && !empty($slug)){
 
-		$content[] = array(time => $time, title => $title, url => $url);
+		$content[] = array(id => $entryId, time => $time, title => $title, url => $url);
+		$replace = array(meta => array(slug => $metaSlug, startTime => $startTime, entryId => $entryId));
+
+		$content = array_replace($content, $replace);
 
 		file_put_contents("data/".$slug.".json", json_encode($content));
 
