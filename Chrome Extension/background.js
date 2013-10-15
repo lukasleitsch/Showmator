@@ -1,4 +1,4 @@
-localStorage['version'] = '1.3.0';
+localStorage['version'] = '1.3.1';
 
 if(localStorage['popup']=='true'){
 	chrome.browserAction.setPopup({popup:'popup.html'});
@@ -41,7 +41,7 @@ function send(title, url){
 				}, 3000);
 			}
 		}
-		xhr.send('s='+localStorage['slug']+'&t='+title+'&u='+url+'&version='+localStorage['version']);
+		xhr.send('s='+localStorage['slug']+'&t='+encodeURIComponent(title)+'&u='+url+'&version='+localStorage['version']);
 	};
 }
 
@@ -68,3 +68,7 @@ function add(title, url){
 
 	xhr.send('s='+localStorage['slug']+'&u='+url);
 } 
+
+function htmlEntities(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}

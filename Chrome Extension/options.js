@@ -1,5 +1,7 @@
 // var defaultUrl = "http://showmator-beta.phasenkasper.de/";
 localStorage['address'] = "http://showmator.phasenkasper.de/";
+// localStorage['address'] = "http://localhost/Showmator/Server%20Scripte/";
+
 
 function sendData(start){
 

@@ -2,7 +2,7 @@
 
 date_default_timezone_set('Europe/Berlin');
 
-$sVersion = '1.3.0';
+$sVersion = '1.3.1';
 
 function header_ausgeben($title){
 
