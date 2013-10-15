@@ -25,7 +25,9 @@ $(document).ready(function(){
         $('#result').html("Dein Browser ist zu alt. Diese Seite benötigt einen aktuellen Browser!")
     }
 
-    var source=new EventSource('ausgabe.php?slug='+slug);
+    var id = 0;
+
+    var source=new EventSource('ausgabe.php?slug='+slug+'&id='+id);
 
     source.addEventListener("ping", function(e) {
            
@@ -44,18 +46,19 @@ $(document).ready(function(){
             window.open(obj.url,'_newtab');
             window.focus();
         };
-       
+
+        id = obj.id;
+        //alert(id);
+        //var source=new EventSource('ausgabe.php?slug='+slug+'&id='+id);
     }, false);
 
     source.addEventListener("first", function(e){
+        //var obj1 = JSON.parse(e.data);
         $('#result').html(e.data);
+        //id = obj1.id;
+                //alert(id);
+        //var source=new EventSource('ausgabe.php?slug='+slug+'&id='+id);
     }, false);
-
-    source.onmessage=function(event){
-        document.getElementById("result").innerHTML=event.data + "<br>";
-    };
-
-   
 
 });
 
@@ -65,7 +68,9 @@ $(document).ready(function(){
         <div class="span12">
             <h2>Live-Shownotes</h2>
             <div id="settings">
-               <input type="checkbox" name="tab" id="tab" style="float: left;"> <label for="tab" style="margin-left: 15px;">Neue Links automatisch öffnen</label>
+               <!-- <input type="checkbox" name="tab" id="tab" style="float: left;"> <label for="tab" style="margin-left: 15px;">Neue Links automatisch öffnen</label> -->
+               <p>Die Seite aktualisiert sich automatisch.</p>
+
             </div>
             <div id="result"></div>
         </div>

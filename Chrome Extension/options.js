@@ -1,4 +1,5 @@
-var defaultUrl = "http://showmator.phasenkasper.de/beta/";
+// var defaultUrl = "http://showmator-beta.phasenkasper.de/";
+localStorage['address'] = "http://showmator.phasenkasper.de/";
 
 function sendData(start){
 
@@ -43,11 +44,11 @@ function restoreData(){
         localStorage['publicSlug'] = randomSlug();
     }
 
-    if (typeof(localStorage['address']) == "undefined"){
-        localStorage['address'] = defaultUrl;
-    }else{
-         $('#serverUrl').val(localStorage['address']);
-    }
+    // if (typeof(localStorage['address']) == "undefined"){
+    //     localStorage['address'] = defaultUrl;
+    // }else{
+    //      $('#serverUrl').val(localStorage['address']);
+    // }
 
     $('#live').click(function() {
       var url = localStorage['address']+"live.php?slug="+localStorage['publicSlug'];
@@ -61,7 +62,7 @@ function restoreData(){
       $('#popup').prop('checked', true);
     }
 
-    $('#serverUrl').val(localStorage['address']);
+    // $('#serverUrl').val(localStorage['address']);
 
 }
 
