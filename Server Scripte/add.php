@@ -28,7 +28,7 @@
 	$entryId = $content[meta][entryId];
 	$entryId++;
 
-	$time = time()-$startTime;
+	$time = time()-$startTime-3600;
 
 	if(!empty($title) && !empty($url) && !empty($slug)){
 

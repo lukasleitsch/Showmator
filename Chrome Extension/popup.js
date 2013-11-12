@@ -22,6 +22,10 @@ $(document).ready(function(){
 		eintragen();
 	});
 
+	$('#loeschen').click(function(){
+		chrome.extension.getBackgroundPage().loeschen();
+	});
+
 	$('body').keyup(function(e) {
 		if(e.keyCode == 13) {
 			eintragen();
@@ -36,6 +40,7 @@ $(document).ready(function(){
 		chrome.extension.getBackgroundPage().add(title, url);
 		window.close();
 	};
+
 
 	$('#title').focus();
 
