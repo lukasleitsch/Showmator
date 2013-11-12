@@ -84,7 +84,7 @@ function add(title, url){
 function loeschen(){
 
 	var r = confirm("Soll der letzte Eintrag wirklich gelöscht werden?");
-	if (r = true){
+	if (r == true){
 
 		var xhr = new XMLHttpRequest();
 		xhr.open('POST', localStorage['address']+'delete.php/', false);
