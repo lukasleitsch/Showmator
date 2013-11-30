@@ -22,11 +22,6 @@
 		htmlentities($version);
 	}
 
-	date_default_timezone_set('Europe/Berlin');
-
-	check_version($version);
-
-
 	if(!empty($slug) && !empty($startTime) && $currentTime == 'false'){
 		$startTimeE = explode(':', $startTime);
 		$startTimeUnix = mktime($startTimeE[0], $startTimeE[1], 0, 0, 0, 0);

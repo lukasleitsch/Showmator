@@ -19,8 +19,6 @@
 		htmlentities($version);
 	}
 
-	check_version($version);
-
 	$content = json_decode(file_get_contents("data/".$slug.".json"), true);
 
 	$startTime = $content[meta][startTime];
@@ -45,5 +43,17 @@
 		echo "Link wurde leider NICHT eingetragen!";
 	}
 
+
+	// Push an NodeJS
+	$ch = curl_init();
+	
+	curl_setopt($ch, CURLOPT_URL, "http://phasenkasper.de:63123/push");
+	curl_setopt($ch,CURLOPT_POST,true); 
+	curl_setopt($ch,CURLOPT_MUTE,true); 
+
+
+	curl_exec($ch);
+
+	curl_close($ch);
 
 ?>	

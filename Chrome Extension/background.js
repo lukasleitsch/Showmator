@@ -1,4 +1,6 @@
-localStorage['version'] = '1.3.2';
+//localStorage['address'] = "http://showmator-beta.phasenkasper.de/";
+//localStorage['address'] = "http://showmator.phasenkasper.de/";
+localStorage['address'] = "http://localhost/Showmator/Server%20Scripte/";
 
 // Umschaltung zwischen Popup und einfachem Klick
 
@@ -49,7 +51,7 @@ function send(title, url){
 				}, 3000);
 			}
 		}
-		xhr.send('s='+localStorage['slug']+'&t='+encodeURIComponent(title)+'&u='+url+'&version='+localStorage['version']);
+		xhr.send('s='+localStorage['slug']+'&t='+encodeURIComponent(title)+'&u='+url);
 	};
 }
 

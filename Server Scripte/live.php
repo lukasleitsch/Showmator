@@ -8,68 +8,79 @@
     }
 ?>
 
+<script src="http://phasenkasper.de:63123/socket.io/socket.io.js"></script>
 <script>
-var slug = '<?php echo $slug ?>';
+	var slug = '<?php echo $slug ?>';
 
-$(document).ready(function(){
-    // $("#refresh").load('ausgabe.php?slug='+slug);
-          
-    // $(window).focus(function() {
-    //   $("#refresh").load('ausgabe.php?slug='+slug);
-    // });
-    //  $(window).focus();
+  var socket = io.connect('http://phasenkasper.de:63123');
 
-     if(typeof(EventSource)!=="undefined"){
-            //$('#result').html("Läuft");
-    }else{
-        $('#result').html("Dein Browser ist zu alt. Diese Seite benötigt einen aktuellen Browser!")
+
+  // Wird beim Verbindungsaufgbau vom Server aufgerufen. Öffentlicher Slug wird zurückgegeben.
+  socket.on('start', function (data) {
+    socket.emit('slug', slug);
+  });
+
+  // Dient zu Testzwecken
+
+  socket.on('test', function (data) {
+    console.log(data);
+    // $('#result').html(data);
+    //$("#result").empty();  	
+  });
+
+  // Daten vom Server weiterverarbeiten
+
+  socket.on('ping', function(data){
+    console.log(data);
+    content = JSON.parse(data);
+
+    // Seite leeren
+
+    $("#result").empty();
+
+       if(data == "{}"){
+       $('#result').prepend('<div class="alert">Bitte noch etwas Geduld. Im Moment sind noch keine Shownotes eingetragen.</div>');
     }
 
-    var id = 0;
+    // Übermittelte Daten werden weiterverabeitet. Text in Text und Links in Links gewandelt.
 
-    var source=new EventSource('ausgabe.php?slug='+slug+'&id='+id);
+    for (var key in content) {
+      if(content[key]["url"] != "null"){
+        var link = '<a href="'+content[key]["url"]+'">'+content[key]["title"]+'</a>';
+      }else{
+        var link = content[key]['title'];
+      }
+         
+      // Einträge werden von oben angehängt, damit der letzte Eintrag oben steht.   
 
-    source.addEventListener("ping", function(e) {
-           
-        var obj = JSON.parse(e.data);
-        var link;
+      $('#result').prepend('<div>'+link+'</div>');
+            
+      }
 
-        if(obj.url != 'null'){
-            link = '<a href="'+obj.url+'" target="_blank">'+obj.title+'</a>';
-        }else{
-            link = obj.title;
-        }
+  });
 
-        $('#result').prepend(obj.time+' '+link+'<br>');
+  // Counter für die aktuellen Verbindungen
 
-        if ($('#tab').is(":checked")) {
-            window.open(obj.url,'_newtab');
-            window.focus();
-        };
+  socket.on('counter', function(data){
+    //console.log(data);
+    $('#counter').html(data);
+  });
 
-        id = obj.id;
-        //alert(id);
-        //var source=new EventSource('ausgabe.php?slug='+slug+'&id='+id);
-    }, false);
+  // Fehlermeldungen ausgeben
 
-    source.addEventListener("first", function(e){
-        //var obj1 = JSON.parse(e.data);
-        $('#result').html(e.data);
-        //id = obj1.id;
-                //alert(id);
-        //var source=new EventSource('ausgabe.php?slug='+slug+'&id='+id);
-    }, false);
-
-});
+  socket.on('error', function(data){
+    $('#result').html('<div class="alert alert-error">'+data+'</div>');
+  });
 
 </script>
+
 <div class="container">
     <div class="row">
         <div class="span12">
             <h2>Live-Shownotes</h2>
             <div id="settings">
                <!-- <input type="checkbox" name="tab" id="tab" style="float: left;"> <label for="tab" style="margin-left: 15px;">Neue Links automatisch öffnen</label> -->
-               <p>Die Seite aktualisiert sich automatisch.</p>
+               <p>Aktuelle Betrachter: <span id="counter"></span> | Die Seite aktualisiert sich automatisch.</p>
 
             </div>
             <div id="result"></div>

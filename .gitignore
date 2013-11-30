@@ -4,3 +4,4 @@
 *.zip
 *.psd
 data/
+.DS_Store

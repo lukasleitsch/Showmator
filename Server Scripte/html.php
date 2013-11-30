@@ -8,19 +8,31 @@
 
 	$content = json_decode(file_get_contents("data/".$slug.".json"), true);
 
+  $time = $content[meta][startTime];
+
 	unset($content[meta]);
 
-	echo '<div><span id="hideTime" class="label">Zeit ausblenden</span><span id="showTime" style="display: none;" class="label label-inverse">Zeit anzeigen</span> <span id="hideTarget" class="label">target="_blank" ausblenden</span><span id="showTarget" style="display: none;" class="label label-inverse">target="_blank" einblenden</span> <span id="list" class="label">Als HTML-Liste</span><span id="plain" style="display: none;" class="label label-inverse">Als Plain-Text</span></div><br />';
+  // Einstellungsmöglichkeiten für die Shownotes
 
+	echo '<div>
+        <span id="hideTime" class="label">Zeit ausblenden</span>
+        <span id="showTime" style="display: none;" class="label label-inverse">Zeit anzeigen</span> 
+        <span id="hideTarget" class="label">target="_blank" ausblenden</span>
+        <span id="showTarget" style="display: none;" class="label label-inverse">target="_blank" einblenden</span>
+        <span id="list" class="label">Als HTML-Liste</span><span id="plain" style="display: none;" class="label label-inverse">Als Plain-Text</span> 
+        <form action="" method="get" accept-charset="utf-8">
+        
+  
+        </form>
+        <br>
+  ';
 
-echo '<span class="list">&lt;ul&gt;<br></span>';
+  echo '<span class="list">&lt;ul&gt;<br></span>';
 	foreach ($content as $value) {
    	// echo '<span class="time">'.date("H:i:s", $value["time"]).'</span>'.htmlentities(' <a href="'.$value["url"]).'" <span>target="_blank"</span>'.$value["title"].'</a>')."<br />";
-   	
 
     echo '<span class="list">&lt;li&gt;</span><span class="time">'.date("H:i:s", $value["time"]).' </span>'.($value["url"] == 'null' ? $value["title"].'<span class="list">&lt;/li&gt;</span><br>' : '&lta href="'.$value["url"].'"<span class="target"> target="_blank"</span>>'.$value["title"].'&lt/a&gt<span class="list">&lt;/li&gt;</span><br />'); 
     
- 
 	}
   echo '<span class="list">&lt;/ul&gt;</span>';
 

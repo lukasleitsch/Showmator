@@ -1,9 +1,3 @@
-// var defaultUrl = "http://showmator-beta.phasenkasper.de/";
-localStorage['address'] = "http://showmator-beta.phasenkasper.de/";
-// localStorage['address'] = "http://showmator.phasenkasper.de/";
-//localStorage['address'] = "http://localhost/Showmator/Server%20Scripte/";
-
-
 function sendData(start){
 
     if (start == true) {
@@ -32,7 +26,7 @@ function sendData(start){
         }
     }
 
-    xhr.send('slug='+slug+'&publicSlug='+publicSlug+'&currentTime='+currentTime+'&startTime='+startTime+'&version='+localStorage['version']);
+    xhr.send('slug='+slug+'&publicSlug='+publicSlug+'&currentTime='+currentTime+'&startTime='+startTime);
 }
 
 function restoreData(){
