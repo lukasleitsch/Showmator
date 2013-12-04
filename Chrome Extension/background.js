@@ -1,6 +1,6 @@
 //localStorage['address'] = "http://showmator-beta.phasenkasper.de/";
-//localStorage['address'] = "http://showmator.phasenkasper.de/";
-localStorage['address'] = "http://localhost/Showmator/Server%20Scripte/";
+localStorage['address'] = "http://showmator.phasenkasper.de/";
+//localStorage['address'] = "http://localhost/Showmator/Server%20Scripte/";
 
 // Umschaltung zwischen Popup und einfachem Klick
 
@@ -58,6 +58,28 @@ function send(title, url){
 // Vor dem Senden wir überprüft, ob der Link schon vorhanden ist. Wenn ja wird gefragt, ob er trotzdem eingetragen werden soll
 
 function add(title, url){
+
+	// Überprüft, ob es eine URL ist, die in den Einstellungen ausgeschlossen wurde
+
+	var badurl = localStorage['badUrls'].split('\n');
+	for (var i = 0; i < badurl.length; i++) {
+		console.log(url+" // "+ badurl);
+		if(url == badurl[i]){
+			var notification = webkitNotifications.createNotification(
+		  			'icon48.png',  // icon url - can be relative
+		  			'BÖSE URL',  // notification title 			
+		  			'Die ist eine böse URL und kann nicht eingetragen werden!'  // notification body text
+				);
+				notification.show();
+
+				setTimeout(function(){
+  					notification.cancel();
+				}, 3000);
+
+				return;
+		}
+	};
+
 	var xhr = new XMLHttpRequest();
 	xhr.open('POST', localStorage['address']+'duplicate.php/', false);
 	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -113,7 +135,6 @@ function loeschen(){
 };
 
 // Wandelt URLs in das richtige Format um, dass alle Zeichen übertragen werden
-
 
 function htmlEntities(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

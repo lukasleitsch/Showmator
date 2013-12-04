@@ -6,9 +6,33 @@
 		$slug = htmlentities($_GET['slug']);
 	}
 
-	$content = json_decode(file_get_contents("data/".$slug.".json"), true);
+  $content = json_decode(file_get_contents("data/".$slug.".json"), true);
 
-  $time = $content[meta][startTime];
+    $startTime = $content[meta][startTime];
+    $offsetmeta = $content[meta][offset];
+    $metaSlug = $content[meta][slug];
+    $entryId = $content[meta][entryId];
+
+  if(isset($_GET['offset'])){
+
+    $offset = $_GET['offset'];
+    $offsetE = explode(":", $offset);
+    $offsetUnix = mktime($offsetE[0], $offsetE[1], $offsetE[2], 0, 0, 0);
+
+    $replace = array(meta => array(slug => $metaSlug, startTime => $startTime, offset => $offsetUnix, entryId => $entryId));
+
+    $content = array_replace($content, $replace);
+
+    file_put_contents("data/".$slug.".json", json_encode($content));
+
+    $content = json_decode(file_get_contents("data/".$slug.".json"), true);
+
+    $startTime = $content[meta][startTime];
+    $offsetmeta = $content[meta][offset];
+    $metaSlug = $content[meta][slug];
+    $entryId = $content[meta][entryId];
+  
+  }
 
 	unset($content[meta]);
 
@@ -20,23 +44,41 @@
         <span id="hideTarget" class="label">target="_blank" ausblenden</span>
         <span id="showTarget" style="display: none;" class="label label-inverse">target="_blank" einblenden</span>
         <span id="list" class="label">Als HTML-Liste</span><span id="plain" style="display: none;" class="label label-inverse">Als Plain-Text</span> 
-        <form action="" method="get" accept-charset="utf-8">
-        
-  
+        <form action="'.$_SERVER['PHP_SELF'].'" method="get" accept-charset="utf-8" class="form-inline" style="display: inline;">
+          <input type="hidden" name="slug" value="'.$slug.'">
+          Zeit des ersten Eintrags: 
+          <input type="text" name="offset" value="'.date("H:i:s", $offsetmeta).'">
+          <input type="submit" value="Ändern" class="btn">  
+    
         </form>
         <br>
   ';
 
+  echo '<div id="normal">';
   echo '<span class="list">&lt;ul&gt;<br></span>';
-	foreach ($content as $value) {
-   	// echo '<span class="time">'.date("H:i:s", $value["time"]).'</span>'.htmlentities(' <a href="'.$value["url"]).'" <span>target="_blank"</span>'.$value["title"].'</a>')."<br />";
 
-    echo '<span class="list">&lt;li&gt;</span><span class="time">'.date("H:i:s", $value["time"]).' </span>'.($value["url"] == 'null' ? $value["title"].'<span class="list">&lt;/li&gt;</span><br>' : '&lta href="'.$value["url"].'"<span class="target"> target="_blank"</span>>'.$value["title"].'&lt/a&gt<span class="list">&lt;/li&gt;</span><br />'); 
+	foreach ($content as $value) {
+
+    
+    echo '<span class="list">&lt;li&gt;</span><span class="time">'.date("H:i:s", $value["time"]-$startTime+$offsetmeta).' </span>'
+        .($value["url"] == 'null' ? $value["title"].'<span class="list">&lt;/li&gt;</span><br>' : '&lta href="'.$value["url"].'"
+          <span class="target"> target="_blank"</span>>'.$value["title"].'&lt/a&gt<span class="list">&lt;/li&gt;</span><br />'); 
+    
     
 	}
+  
   echo '<span class="list">&lt;/ul&gt;</span>';
+  echo '</div>';
 
-  footer_ausgeben();
+  echo '<div id="chapter">';
+  echo '<br><h1>Shownotes als Podlove Simple Chapter</h1>';
+  foreach ($content as $value) {
+    echo date("H:i:s", $value["time"]-$startTime+$offsetmeta).' '.($value["url"] == 'null' ? $value["title"].'<br>' : $value["title"].' &lt;'.$value["url"].'&gt;<br />'); 
+  }
+
+  echo '</div>';
+
+  echo '&lt;p&gt;&lt;a href="https://leitsch.org/projects/showmator&quot; target=&quot;_blank&quot;&gt;Shownotes were created with Showmator&lt;/a&gt;&lt;/p&gt;';
 
 ?>
 
@@ -82,6 +124,9 @@
 
           });
 
+
+
 	});
 
 </script>
+<script type="text/javascript" src="tinyosf.js"></script>

@@ -6,6 +6,7 @@
 <body>
 	<h1>Einstellungen für den Showmator</h1>
 	<p>Zum Erstellen von neuen Shownotes muss das Kürzel ausgefühlt sein. Man kann einfach das generierte Kürzel verwenden. Damit andere bei den Shownotes mitarbeiten können, muss das Kürzel weitergeben werden und bei dem Partner eigetragen werden.</p>
+	<p>Die Zeit wird mit dem ersten Eintrag gestartet. Wenn man die Shownotes exportiert, kann der Zeitpunkt des ersten Eintrags definiert werden.</p>
 	<hr />
 	<h2>Neue Shownotes erstellen oder bei bestehenden mitmachen</h2>
 	<h3>1. Neues oder bestehendes Kürzel eintragen oder generieren:</h3>
@@ -13,14 +14,9 @@
 	<input type="text" name="slug" id="slug">
 	<button id="newSlug">Generiere neues Kürzel</button>
 	<br>
-	<h3>2. <i>optional:</i> Startzeit festlegen:</h3>
-	<label for="startTime">Startzeit:</label>
-	<input type="time" name="startTime" id="startTime" value="" placeholder="">
 	<br>
-	<br>
-	<h3>3. Starten</h3>
-	<button id="save">Mit eingetragener Zeit loslegen</button> 
-	<button id ="start">Aktuelle Zeit verwenden und loslegen</button>
+	<h3>2. Starten</h3>
+	<button id ="start">Anlegen und loslegen</button>
 	<button id="join">Mitmachen</button> 
 	<br>
 	<br>
@@ -34,16 +30,15 @@
 	<br>
 	<hr />
 	<h2>Erweiterte Einstellungen</h2>
+	<h3>Popup aktivieren/deaktivieren</h3>
 	<input type="checkbox" name="popup" value="true" id="popup"> <label for="popup">Popup verwenden</label>
 	<p>Wenn diese Option angewählt ist, dann hat man die Möglichkeit den Linktitel vor dem Eintrag zu ändern. Des Weiteren können in dem Popup Shownotes ohne Link eingetragen werden.</p>	
-	<!-- <h3>URL zum Server</h3>
-	Wird der Showmator auf dem eigenen Server betrieben, muss hier die URL eingetragen werden.
-	<input type="text" name="serverUrl" id="serverUrl" size="100%">
-	<br>
-	<button id="saveUrl">Speichern</button> <button id="defaultUrl">Standard-Url wiederherstellen</button> -->
+	<h3>Böse URLs</h3>
+	<textarea id="badUrls"></textarea>
+	<p>Pro Zeile eine URL, die nicht in die Shownotes eingetragen wird. Kann z.B. dafür genutzt werden, dass keine internen Links ausversehen in die Shownotes gelangen.</p>
 	<footer>
 		<hr>
-		<a href="https://leitsch.org/projects/showmator" title="">Changelog des Showmators</a>
+		<a href="https://leitsch.org/projects/showmator" title="Changelog des Showmators">Changelog des Showmators</a>
 	</footer>
 </body>
 	<script src="jquery.min.js"></script>

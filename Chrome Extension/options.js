@@ -1,11 +1,4 @@
-function sendData(start){
-
-    if (start == true) {
-        var currentTime = true;
-    }else{
-        var currentTime = false;
-    }
-    var startTime = $('#startTime').val();
+function sendData(join){
 
     var slug = $('#slug').val();
     localStorage["slug"] = slug;
@@ -26,7 +19,7 @@ function sendData(start){
         }
     }
 
-    xhr.send('slug='+slug+'&publicSlug='+publicSlug+'&currentTime='+currentTime+'&startTime='+startTime);
+    xhr.send('slug='+slug+'&publicSlug='+publicSlug+'&join='+join);
 }
 
 function restoreData(){
@@ -41,12 +34,6 @@ function restoreData(){
         localStorage['publicSlug'] = randomSlug();
     }
 
-    // if (typeof(localStorage['address']) == "undefined"){
-    //     localStorage['address'] = defaultUrl;
-    // }else{
-    //      $('#serverUrl').val(localStorage['address']);
-    // }
-
     $('#live').click(function() {
       var url = localStorage['address']+"live.php?slug="+localStorage['publicSlug'];
       window.open(url);
@@ -59,8 +46,11 @@ function restoreData(){
       $('#popup').prop('checked', true);
     }
 
-    // $('#serverUrl').val(localStorage['address']);
-
+    if (typeof(localStorage['badUrls']) == "undefined"){
+        localStorage['badUrls'] = '';
+    }else{
+        $('#badUrls').val(localStorage['badUrls']);
+    }
 }
 
 function randomSlug(){
@@ -69,41 +59,32 @@ function randomSlug(){
 
 document.addEventListener('DOMContentLoaded', restoreData);
 
-$('#save').click(function(){
-    var time = $('#startTime').val();
-    
-    if(time == ''){
-        alert("Es ist keine Zeit eingetragen!")
-    }else{
-       sendData(false); 
-    }
-  
-});
+$(document).ready(function(){
 
-$('#newSlug').click(function(){
-    $('#slug').val(randomSlug());
-    localStorage['publicSlug'] = randomSlug();
-});
-$('#start').click(function(){
-    sendData(true);
-});
-$('#join').click(function(){
-    sendData(false);
-});
-$('#saveUrl').click(function(){
-    localStorage['address'] = $('#serverUrl').val();
-});
-$('#defaultUrl').click(function(){
-    $('#serverUrl').val(defaultUrl);
-    localStorage['address'] = $('#serverUrl').val();
-});
 
-$('#popup').change(function() {
-    if($(this).is(":checked")) {
-        localStorage['popup'] = true;
-        chrome.extension.getBackgroundPage().update();
-    }else{
-        localStorage['popup'] = false;
-        chrome.extension.getBackgroundPage().update();
-        }
-});
+    $('#newSlug').click(function(){
+        $('#slug').val(randomSlug());
+        localStorage['publicSlug'] = randomSlug();
+    });
+    $('#start').click(function(){
+        sendData(false);
+    });
+    $('#join').click(function(){
+        sendData(true);
+    });
+
+    $('#popup').change(function() {
+        if($(this).is(":checked")) {
+            localStorage['popup'] = true;
+            chrome.extension.getBackgroundPage().update();
+        }else{
+            localStorage['popup'] = false;
+            chrome.extension.getBackgroundPage().update();
+            }
+    });
+
+    $('#badUrls').keyup(function(){
+        localStorage['badUrls'] = $(this).val();
+    });
+
+    });

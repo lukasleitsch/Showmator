@@ -6,7 +6,7 @@
 
   "name": "Showmator",
   "description": "An awesome Shownotes-Tool for Podcaster",
-  "version": "1.4.0",
+  "version": "1.5.1",
 
   "icons": { "16": "icon16.png",
             "32": "icon32.png",

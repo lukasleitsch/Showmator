@@ -1,8 +1,6 @@
 <?php 
 
-date_default_timezone_set('Europe/Berlin');
-
-$sVersion = '1.3.2';
+date_default_timezone_set('UTC');
 
 function header_ausgeben($title){
 

@@ -9,10 +9,12 @@
 ?>
 
 <script src="http://phasenkasper.de:63123/socket.io/socket.io.js"></script>
+<!-- <script src="http://localhost:63123/socket.io/socket.io.js"></script>  -->  <!-- DEV -->
 <script>
 	var slug = '<?php echo $slug ?>';
 
   var socket = io.connect('http://phasenkasper.de:63123');
+  // var socket = io.connect('http://localhost:63123');    //DEV
 
 
   // Wird beim Verbindungsaufgbau vom Server aufgerufen. Öffentlicher Slug wird zurückgegeben.

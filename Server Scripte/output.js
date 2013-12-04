@@ -26,9 +26,9 @@ io.sockets.on('connection', function (socket) {
     
     slug = data;
     socket.join(slug);
-    console.log("Nach Raum erstellen: "+ slug);
+    // console.log("Nach Raum erstellen: "+ slug);
 
-    console.log(data);
+    // console.log(data);
     fa = require('fs');
   try{
     privatslug = fa.readFileSync(__dirname + '/data/publicSlugs/'+data+'.inc', "utf8");
@@ -39,7 +39,7 @@ io.sockets.on('connection', function (socket) {
     io.sockets.in(slug).emit('error', "Diese Shownotes existieren nicht!");
   }
   
-  console.log(privatslug);
+  // console.log(privatslug);
   read(privatslug);
 
   // Meldet sich ein neuer Client an, wird die Anzahl der verbunden Clients neu ermittelt
@@ -81,7 +81,7 @@ function read(privatslug){
 function counter(slug){
   var length = 0;
   var clients = io.sockets.clients(slug);
-  console.log(slug+"\nClients: \n"+clients);
+  // console.log(slug+"\nClients: \n"+clients);
   for (val in clients){
     length++;
   }
