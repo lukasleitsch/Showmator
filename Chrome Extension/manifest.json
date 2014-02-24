@@ -1,0 +1,34 @@
+{
+  "manifest_version": 2,
+
+  "name": "Showmator",
+  "description": "An awesome Shownotes-Tool for Podcaster",
+  "version": "2.0.0",
+
+  "permissions": [
+    "tabs", "http://*/*", "https://*/*", "background", "notifications"
+  ],
+
+   "web_accessible_resources": [
+    "icon48.png"
+  ],
+
+  "browser_action": {
+    "default_title": "Add Link to Shownotes"
+  },
+
+  "content_scripts": [ {
+    "matches": [ "http://*/*", "https://*/*"],
+    "js": ["jquery.min.js", "socket.io.js", "content.js"],
+    "css": ["styles.css"]
+
+  }],
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "options_page": "options.html",
+
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}
