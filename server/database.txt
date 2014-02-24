@@ -1,0 +1,2 @@
+CREATE TABLE meta (slug TEXT PRIMARY KEY, startTime INTEGER, offset INTEGER);
+CREATE TABLE data (slug TEXT NOT NULL, title TEXT, url TEXT, time INTEGER, FOREIGN KEY (slug) REFERENCES meta(slug));

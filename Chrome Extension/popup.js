@@ -2,6 +2,8 @@ $(document).ready(function(){
 
   var socket = io.connect('http://localhost:3000');
 
+  // socket.emit('slug', localStorage['slug']);
+
 
   var title;
   var url;
@@ -19,7 +21,7 @@ $(document).ready(function(){
       length = length*1.1;
     }
     $('#title').attr("size", length);
-    
+
   });
 
   socket.on('messages', function(data){
@@ -29,9 +31,9 @@ $(document).ready(function(){
   $('.output').html("Gude");
 
   $( "#insert" ).click(function() {
-
+    title = $('#title').val();
     console.log(title+" "+url);
-    socket.emit('add', {title: title, url: url});
+    socket.emit('add', {slug: localStorage['slug'], title: title, url: url});
   });
 
   
