@@ -1,4 +1,4 @@
-var socket = io.connect('http://192.168.2.104:3000');
+var socket = io.connect('http://showmator-beta.phasenkasper.de:63685');
 
 $(document).ready(function(){
   var title;

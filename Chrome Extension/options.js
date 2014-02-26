@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-  var socket = io.connect('http://192.168.2.104:3000');
+  var socket = io.connect('http://showmator-beta.phasenkasper.de:63685');
 
   $('#submit').click(function(){
     
@@ -23,7 +23,11 @@ $(document).ready(function(){
 
   $('#live').click(function(){
       // console.log("Live");
-      window.open("http://192.168.2.104:3000/live/"+localStorage['publicSlug']);
+      window.open("http://showmator-beta.phasenkasper.de:63685/live/"+localStorage['publicSlug']);
+    });
+
+    $('#html').click(function(){
+      window.open("http://showmator-beta.phasenkasper.de:63685/html/"+localStorage.slug);
     });
 });
 

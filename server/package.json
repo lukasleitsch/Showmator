@@ -1,0 +1,18 @@
+{
+  "name": "Showmator",
+  "version": "2.0.0",
+  "description": "Klick dir deine Shownotes",
+  "main": "app.js",
+  "dependencies": {
+    "express": "~3.4.8",
+    "ejs": "~0.8.5",
+    "sqlite3": "~2.2.0",
+    "socket.io": "~0.9.16"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lukas Leitsch",
+  "license": "ISC"
+}

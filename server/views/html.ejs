@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shownotes in HTML</title>
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+
+  <script>
+  $(document).ready(function(){
+    $('.list').hide();
+
+    $('#time').click(function(){
+      $('.time').toggle();
+    });
+
+    $('#target').click(function(){
+      $('.target').toggle();
+    });
+
+    $('#list').click(function(){
+      $('.list').toggle();
+    });
+  });
+  </script>
+</head>
+<body>
+<div class="container">
+  <button id="time">Zeit ausblenden</button>
+  <button id="target">target ausblenden</button>
+  <button id="list">List ausblenden</button>
+</div>
+  <span class="list">&lt;ul&gt;<br></span>
+  <% items.forEach(function(item){ %>
+    <% var hours = Math.floor(((item.time-start) / (1000*60*60)) % 24) %>
+    <% if(hours < 9) { hours = "0"+hours }  %>
+    <% var minutes = Math.floor(((item.time-start) / (1000*60)) % 60) %>
+    <% if(minutes < 9) { minutes = "0"+minutes }  %>
+    <% var seconds = Math.floor(((item.time-start) / (1000)) % 60) %>
+    <% if(seconds < 9) { seconds = "0"+seconds }  %>
+  <% if(item.url != 'null'){ %>
+    <span class="list">&lt;li&gt;</span><span class="time"><%= hours %>:<%= minutes %>:<%= seconds %> </span>&lt;a href=&quot;<%= item.url %>"<span class="target"> target="_blank"</span>><%= item.title %>&lt;/a&gt;<span class="list">&lt;/li&gt;</span><br>
+  <% } else { %>
+    <span class="list">&lt;li&gt;</span><span class="time"><%=hours %>:<%=minutes %>:<%=seconds %> </span><%= item.title %><span class="list"> &lt;li&gt;</span>
+  <% } %>
+  
+<% }); %>
+<span class="list"><br>&lt;/ul&gt;</span>
+</body>
+</html>

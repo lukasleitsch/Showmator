@@ -2,7 +2,7 @@ var app = require('express')()
   , server = require('http').createServer(app)
   , io = require('socket.io').listen(server);
 
-server.listen(3000);
+server.listen(63685);
 
 var fs = require("fs");
 var file = "data.db";
@@ -14,8 +14,6 @@ if(!exists) {
   console.log("Creating DB file.");
   fs.openSync(file, "w");
 }
-
-
 
 io.sockets.on('connection', function(client){
   console.log('Client connected ...');
@@ -40,22 +38,18 @@ io.sockets.on('connection', function(client){
     console.log(data);
     db.serialize(function() {
 
-    db.run('INSERT INTO meta (slug, publicSlug) VALUES ("'+data.slug+'","'+data.publicSlug+'")', function(err1, result){
-      var publicSlug;
-      db.get('SELECT publicSlug FROM meta WHERE slug == "'+data.slug+'"', function(err2, row){
-        console.log(result);
-              if(err1 && err1.errno == 19){
-                console.log(err1);
-                client.emit('status', {publicSlug: row.publicSlug, text: 'Du machst bei den Shownotes mit'});
-              }else{
-                client.emit('status', {publicSlug: row.publicSlug, text: 'Neue Shownotes angelegt'});
-              }
+      db.run('INSERT INTO meta (slug, publicSlug) VALUES ("'+data.slug+'","'+data.publicSlug+'")', function(err1, result){
+        var publicSlug;
+        db.get('SELECT publicSlug FROM meta WHERE slug == "'+data.slug+'"', function(err2, row){
+          console.log(result);
+                if(err1 && err1.errno == 19){
+                  console.log(err1);
+                  client.emit('status', {publicSlug: row.publicSlug, text: 'Du machst bei den Shownotes mit'});
+                }else{
+                  client.emit('status', {publicSlug: row.publicSlug, text: 'Neue Shownotes angelegt'});
+                }
+        });
       });
-
-      
-      
-    });
-
     });
   });
 
@@ -131,15 +125,15 @@ io.sockets.on('connection', function(client){
 
 // Zählt die aktuellen Verbindungen mit dem aktuellen Raum
 
-function counter(slug){
-  var length = 0;
-  var clients = io.sockets.clients(slug);
-  // console.log(slug+"\nClients: \n"+clients);
-  for (val in clients){
-    length++;
-  }
-  return length;
-};
+  function counter(slug){
+    var length = 0;
+    var clients = io.sockets.clients(slug);
+    // console.log(slug+"\nClients: \n"+clients);
+    for (val in clients){
+      length++;
+    }
+    return length;
+  };
 
 });
 
@@ -154,10 +148,6 @@ app.get('/live/:publicslug', function (req, res) {
   var sqlite3 = require("sqlite3").verbose();
   var db = new sqlite3.Database(file);
   var publicslug = req.params.publicslug;
-
-  if (publicslug) {
-
-  }
 
   var items = [];
   db.serialize(function(){
@@ -174,10 +164,31 @@ app.get('/live/:publicslug', function (req, res) {
         res.write ("Diese Shownotes existieren nicht.");
         res.end();
       }
-
     });
-
-
   });
+});
 
+app.get('/html/:slug', function (req, res) {
+
+  var sqlite3 = require("sqlite3").verbose();
+  var db = new sqlite3.Database(file);
+  var slug = req.params.slug;
+  var items = [];
+  var startTime;
+
+  db.serialize(function(){
+    db.get('SELECT startTime FROM meta WHERE slug == "'+slug+'"',function (err1, row1){
+      if (row1) {
+        db.each('SELECT * FROM data WHERE slug =="'+slug+'" ORDER BY time', function (err2,row2){
+          items.push(row2);
+        },function(){
+          res.render('html.ejs', {items: items, start: row1.startTime});
+        });
+      } else {
+        res.writeHead(200);
+        res.write ("Diese Shownotes existieren nicht.");
+        res.end();
+      }
+    });
+  });
 });

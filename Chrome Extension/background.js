@@ -1,6 +1,3 @@
-localStorage['address'] = "http://192.168.2.104:3000/";
-
-
 chrome.browserAction.setPopup({popup:'popup.html'});
 
 
