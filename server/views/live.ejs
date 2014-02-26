@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live-Shownotes</title>
+  <script src="http://192.168.2.104:3000/socket.io/socket.io.js"></script>
+  <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <script>
+    var socket = io.connect('http://192.168.2.104:3000');
+
+    socket.on('connect', function () {
+      socket.emit('live', '<%= slug %>');
+    });
+
+    socket.on('push', function(data){
+      console.log(data.url);
+      if ($('#auto').is(":checked") && data.url != null){
+        window.open(data.url, '_blank');
+      }
+      
+      if(data.url != null){
+        $('#result').prepend('<p><a href="'+data.url+'" target="_blank">'+data.title+'</a></p>');
+      } else {
+        $('#result').prepend('<p>'+data.title+'</p>');
+      }
+      
+      $('.leer').fadeOut(3000);
+
+    });
+
+    socket.on('counter', function(data){
+      $('#counter').html(data);
+    });
+
+    $(document).ready(function(){
+      if($('#result').children().children().length == 0){
+        $('#info').html('<div class="leer alert alert-warning">Bitte noch etwas Geduld. Im Moment sind noch keine Shownotes eingetragen.</div>');
+      }
+    });
+  </script>
+</head>
+<body class="container">
+<h1>Live-Shownotes</h1>
+<input type="checkbox" name="auto" id="auto"> <label for="auto">Neuer Link automatisch öffnen</label> | Aktuelle Betrachter: <span id="counter"></span> | Seite aktualisiert automatisch
+<div id="info"></div>
+<div id="result" style="padding-top: 30px;">
+  <% items.forEach(function(item){ %>
+  <% if(item.url != 'null'){ %>
+    <p><a href="<%= item.url %>"><%= item.title %></a></p>
+  <% } else { %>
+    <p><%= item.title %></p>
+  <% } %>
+  
+<% }); %>
+</div>
+<hr>
+<a href="https://leitsch.org/projects/showmator" target="_blank">Shownotes were created with Showmator</a>
+
+</body>
+</html>

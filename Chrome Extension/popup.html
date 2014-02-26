@@ -6,14 +6,15 @@
   <script src="jquery.min.js"></script>
   <script src="socket.io.js"></script>
   <script src="popup.js"></script>
+  <link rel="stylesheet" type="text/css" href="popup.css">
 </head>
-<body style="height: 100px;">
-<p>Showmator</p>
-<input name="title" id="title">
+<body>
+<div id="status"></div>
+<input name="title" id="title" tabindex="2">
   <br>
   <br>  
-  <input type="checkbox" name="text" value="true" id="text"><label for="text">Nur Text speichern</label>
-<button id="insert">Einfügen</button>
+  <input type="checkbox" name="text" value="true" id="text" tabindex="3"><label for="text">Nur Text speichern</label>
+<button id="insert" tabindex="1">Einfügen</button>
 <div class="output"></div>
 </body>
 </html>

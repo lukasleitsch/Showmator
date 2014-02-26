@@ -1,42 +1,52 @@
+var socket = io.connect('http://192.168.2.104:3000');
+
 $(document).ready(function(){
-
-  var socket = io.connect('http://localhost:3000');
-
-  // socket.emit('slug', localStorage['slug']);
-
-
   var title;
   var url;
 
   chrome.tabs.getSelected(null,function(tab) { 
     title = tab.title;
-    url = tab.url;
+    url = htmlEntities(tab.url);
 
     $('#title').val(title);
 
     var length = $('#title').val().length;
-    if(length < 50){
-      length = 50;
-    }else{
-      length = length*1.1;
-    }
-    $('#title').attr("size", length);
 
+    $('#title').attr("size", length*1.3);
+
+    socket.emit('check_dublicate', {slug: localStorage['slug'], url: url});
   });
 
-  socket.on('messages', function(data){
-    $('.output').html(data.hello);
-  });
-
-  $('.output').html("Gude");
+  
 
   $( "#insert" ).click(function() {
-    title = $('#title').val();
+    title = htmlEntities($('#title').val());
+    if($('#text').is(":checked")){
+      url = null;
+    }
     console.log(title+" "+url);
     socket.emit('add', {slug: localStorage['slug'], title: title, url: url});
   });
 
-  
+  setTimeout(function() {
+    $('#insert').focus();
+  }, 100);
+
+
+  socket.on('dublicate', function(){
+    $('#status').html('<div class="alert alert-error">Dieser Link ist schon eingetragen!</div>');
+    $('#insert').html("Trotzdem einfügen");
+  });
+
+  socket.on('close', function(){
+   chrome.extension.getBackgroundPage().badget("OK", "#33cc00");
+    window.close();
+  });
+
+  function htmlEntities(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    // return str;
+  }
 
 });
 

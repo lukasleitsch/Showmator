@@ -1,22 +1,47 @@
 $(document).ready(function(){
 
-var socket = io.connect('http://localhost:3000');
+  var socket = io.connect('http://192.168.2.104:3000');
 
-$('#submit').click(function(){
-  var slug = $('#slug').val();
-  localStorage['slug'] = slug;
-  socket.emit('new', {slug: slug});
-});
+  $('#submit').click(function(){
+    
+    if(!$('#slug').val()){
+      $('#status').show().html("Bitte ein Kürzel eingeben!").delay(3000).fadeOut(3000);
+    } else {
+      var slug = $.trim($('#slug').val());
+      slug = slug.replace(/ /g,'');
+      localStorage['slug'] = slug;
+      localStorage['publicSlug'] = randomSlug();
+      socket.emit('new', {slug: slug, publicSlug: localStorage['publicSlug']});
+      $('#slug').val(localStorage['slug']);
+    }
+  });
 
-socket.on('status', function(data){
-  $('#status').html(data);
-  // $('#status').delay(5000).html('');
-})
+  socket.on('status', function(data){
+    $('#status').show().html(data.text).delay(3000).fadeOut(3000);
+    localStorage['publicSlug'] = data.publicSlug;
+  });
 
+  $('#live').click(function(){
+      // console.log("Live");
+      window.open("http://192.168.2.104:3000/live/"+localStorage['publicSlug']);
+    });
 });
 
 document.addEventListener('DOMContentLoaded', restoreData);
 
 function restoreData () {
-  $('#slug').val(localStorage['slug']);
+  if (typeof(localStorage['slug']) == "undefined"){
+      localStorage['slug'] = randomSlug();
+      $('#slug').val(localStorage['slug']);
+  }else{
+      $('#slug').val(localStorage['slug']);
+  }
+
+  if (typeof(localStorage['publicSlug']) == "undefined"){
+      localStorage['publicSlug'] = randomSlug();
+  }
+}
+
+function randomSlug(){
+  return Math.random().toString(36).substring(7);
 }

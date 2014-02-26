@@ -1,18 +1,27 @@
-localStorage['address'] = "http://localhost:3000/";
+localStorage['address'] = "http://192.168.2.104:3000/";
 
 
 chrome.browserAction.setPopup({popup:'popup.html'});
 
-function getTitle(){
-  
-  return "Ich bin der Title";
 
+function notification(title, text){
+  var notification = webkitNotifications.createNotification(
+        '',  // icon url - can be relative
+        title,  // notification title       
+        text  // notification body text
+    );
+    notification.show();
+
+    setTimeout(function(){
+        notification.cancel();
+    }, 3000);
+};
+
+function badget(text, color){
+  chrome.browserAction.setBadgeText({text: text});
+  chrome.browserAction.setBadgeBackgroundColor({color: color});
+
+  setTimeout(function(){
+    chrome.browserAction.setBadgeText({text: ""});
+  }, 5000)
 }
-
-function getUrl(){
-  chrome.browserAction.onClicked.addListener(function(tab) { chrome.tabs.getSelected(null,function(tab) {
-  return tab.url;
-});
-});
-}
-
