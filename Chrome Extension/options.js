@@ -29,6 +29,11 @@ $(document).ready(function(){
     $('#html').click(function(){
       window.open("http://phasenkasper.de:63685/html/"+localStorage.slug);
     });
+
+    $('#badUrls').keyup(function(){
+        localStorage['badUrls'] = $(this).val();
+        $('#status_url').show().html("Gespeichert").delay(3000).fadeOut(3000);
+    });
 });
 
 document.addEventListener('DOMContentLoaded', restoreData);
@@ -43,6 +48,12 @@ function restoreData () {
 
   if (typeof(localStorage['publicSlug']) == "undefined"){
       localStorage['publicSlug'] = randomSlug();
+  }
+
+  if (typeof(localStorage['badUrls']) == "undefined"){
+      localStorage['badUrls'] = '';
+  }else{
+      $('#badUrls').val(localStorage['badUrls']);
   }
 }
 

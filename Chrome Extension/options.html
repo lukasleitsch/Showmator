@@ -14,14 +14,32 @@
 
 <p>Die Zeit wird mit dem ersten Eintrag gestartet. Wenn man die Shownotes exportiert, kann der Zeitpunkt des ersten Eintrags definiert werden.</p>
 <h2>Neue Shownotes erstellen oder mitmachen.</h2>
+<br>
 <input type="text" name="slug" id="slug">
-<button id="submit">Senden</button>
-<div id="status"></div>
+<button id="submit">Senden</button> <span id="status" class="alert alert-success"></span>
+<br>
 <h2>Shownotes live verfolgen oder als HTML exportieren</h2>
 <p>Das Kürzel, dass bei den Live-Shownotes in der URL verwendet wird, ist nicht das gleiche, wie das, das hier festgelegt worden ist. Der Link kann an die Hörer weitergegeben werden.</p>
 <div>
   <button id="live">Live-Shownotes</button>
   <button id="html">Shownotes in HTML</button>
 </div>
+<h2>Böse URLs</h2>
+<p>Pro Zeile eine URL, die nicht in die Shownotes eingetragen wird. Kann z.B. dafür genutzt werden, dass keine internen Links ausversehen in die Shownotes gelangen.</p>
+<div class="row">
+  <div class="col-md-4">
+  <textarea id="badUrls" style="width:100%;"></textarea>
+</div>
+<div class="col-md-4">
+  <div id="status_url" class="alert alert-success" style="display: none;"></div>
+</div>
+</div>
+
+
+ 
+<footer>
+  <hr>
+  <a href="https://leitsch.org/projects/showmator">Changelog des Showmator</a>
+</footer>
 </body>
 </html>
