@@ -154,7 +154,7 @@ app.get('/live/:publicslug', function (req, res) {
     db.get('SELECT slug FROM meta WHERE publicSlug == "'+publicslug+'"',function(err, row){
       if (row){
         db.each('SELECT * FROM data WHERE slug == "'+row.slug+'" ORDER BY time DESC', function(err,row){
-          console.log(row);
+          // console.log(row);
           items.push(row);
         },function(){
           res.render('live.ejs', {items: items, slug: publicslug});
