@@ -44,9 +44,9 @@ io.sockets.on('connection', function(client){
           console.log(result);
                 if(err1 && err1.errno == 19){
                   console.log(err1);
-                  client.emit('status', {publicSlug: row.publicSlug, text: 'Du machst bei den Shownotes mit'});
+                  client.emit('status', {publicSlug: row.publicSlug, text: 'Du machst bei den Shownotes '+data.slug+' mit.'});
                 }else{
-                  client.emit('status', {publicSlug: row.publicSlug, text: 'Neue Shownotes angelegt'});
+                  client.emit('status', {publicSlug: row.publicSlug, text: 'Neue Shownotes '+data.slug+' sind angelegt. Zeit startet mit erstem Eintrag.'});
                 }
         });
       });
@@ -173,6 +173,7 @@ app.get('/html/:slug', function (req, res) {
   var sqlite3 = require("sqlite3").verbose();
   var db = new sqlite3.Database(file);
   var slug = req.params.slug;
+
   var items = [];
   var startTime;
 

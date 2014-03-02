@@ -20,14 +20,20 @@
     $('#list').click(function(){
       $('.list').toggle();
     });
+
+
+  
+    var offset;
   });
   </script>
 </head>
 <body>
 <div class="container">
-  <button id="time">Zeit ausblenden</button>
-  <button id="target">target ausblenden</button>
-  <button id="list">List ausblenden</button>
+  <button class="btn btn-default" id="time">Zeit ausblenden</button>
+  <button class="btn btn-default" id="target">target ausblenden</button>
+  <button class="btn btn-default" id="list">List ausblenden</button>
+  <form action=""></form>
+  <input type="time" name="" value="00:02:59" placeholder=".">
 </div>
   <span class="list">&lt;ul&gt;<br></span>
   <% items.forEach(function(item){ %>

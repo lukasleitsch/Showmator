@@ -15,20 +15,31 @@
 <p>Die Zeit wird mit dem ersten Eintrag gestartet. Wenn man die Shownotes exportiert, kann der Zeitpunkt des ersten Eintrags definiert werden.</p>
 <h2>Neue Shownotes erstellen oder mitmachen.</h2>
 <br>
-<input type="text" name="slug" id="slug">
-<button id="submit">Senden</button> <span id="status" class="alert alert-success"></span>
-<br>
+<div class="row">
+  <div class="col-md-3">
+    <div class="input-group">
+      <input type="text" class="form-control" id="slug">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" id="submit">Los!</button>
+      </span>
+    </div>
+  </div>
+  <div class="col-md-8">
+     <span id="status" class="alert alert-success" style="display:none;"></span>
+  </div>
+
+</div>
 <h2>Shownotes live verfolgen oder als HTML exportieren</h2>
 <p>Das Kürzel, dass bei den Live-Shownotes in der URL verwendet wird, ist nicht das gleiche, wie das, das hier festgelegt worden ist. Der Link kann an die Hörer weitergegeben werden.</p>
 <div>
-  <button id="live">Live-Shownotes</button>
-  <button id="html">Shownotes in HTML</button>
+  <button id="live" class="btn btn-default">Live-Shownotes</button>
+  <button id="html" class="btn btn-default">Shownotes in HTML</button>
 </div>
 <h2>Böse URLs</h2>
 <p>Pro Zeile eine URL, die nicht in die Shownotes eingetragen wird. Kann z.B. dafür genutzt werden, dass keine internen Links ausversehen in die Shownotes gelangen.</p>
 <div class="row">
   <div class="col-md-4">
-  <textarea id="badUrls" style="width:100%;"></textarea>
+  <textarea id="badUrls" style="width:100%;" class="form-control"></textarea>
 </div>
 <div class="col-md-4">
   <div id="status_url" class="alert alert-success" style="display: none;"></div>
@@ -39,7 +50,7 @@
  
 <footer>
   <hr>
-  <a href="https://leitsch.org/projects/showmator">Changelog des Showmator</a>
+  <a href="http://leitsch.org">Showmator by Lukas Leitsch</a> &bull; <a href="https://leitsch.org/projects/showmator">Changelog</a>
 </footer>
 </body>
 </html>

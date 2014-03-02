@@ -5,7 +5,7 @@ $(document).ready(function(){
   $('#submit').click(function(){
     
     if(!$('#slug').val()){
-      $('#status').show().html("Bitte ein Kürzel eingeben!").delay(3000).fadeOut(3000);
+      $('#status').show().html("Bitte ein Kürzel eingeben!").delay(5000).fadeOut(3000);
     } else {
       var slug = $.trim($('#slug').val());
       slug = slug.replace(/ /g,'');
@@ -17,7 +17,7 @@ $(document).ready(function(){
   });
 
   socket.on('status', function(data){
-    $('#status').show().html(data.text).delay(3000).fadeOut(3000);
+    $('#status').show().html(data.text).delay(5000).fadeOut(3000);
     localStorage['publicSlug'] = data.publicSlug;
   });
 
@@ -32,7 +32,7 @@ $(document).ready(function(){
 
     $('#badUrls').keyup(function(){
         localStorage['badUrls'] = $(this).val();
-        $('#status_url').show().html("Gespeichert").delay(3000).fadeOut(3000);
+        $('#status_url').show().html("Gespeichert").delay(5000).fadeOut(3000);
     });
 });
 

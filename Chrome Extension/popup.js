@@ -6,7 +6,6 @@ $(document).ready(function(){
 
   chrome.tabs.getSelected(null,function(tab) { 
     title = tab.title;
-    // url = htmlEntities(tab.url);
     url = tab.url;
 
     $('#title').val(title);
@@ -17,14 +16,14 @@ $(document).ready(function(){
 
     $('#title').attr("size", length*1.3);
 
-    /* Böse URLs */
+     /* Böse URLs */
 
     var badurl = localStorage['badUrls'].split('\n');
     for (var i = 0; i < badurl.length; i++) {
       console.log(url+" // "+ badurl);
       if(url == badurl[i]){
-        $('#status').html('<div class="alert alert-error">Böse URL: Kann nicht eingetragen werden!</div>');
-        $('#insert, #text, .text, #title').remove();  
+        $('#badUrl').html('<div class="alert alert-error">Böse URL: Kann nicht eingetragen werden!</div>');
+        $('#insert, #text, .text, #title, #dublicate').remove();  
       }
     };
 
@@ -49,7 +48,7 @@ $(document).ready(function(){
 
 
   socket.on('dublicate', function(){
-    $('#status').html('<div class="alert alert-error">Dieser Link ist schon eingetragen!</div>');
+    $('#dublicate').html('<div class="alert alert-error">Dieser Link ist schon eingetragen!</div>');
     $('#insert').html("Trotzdem einfügen");
   });
 
