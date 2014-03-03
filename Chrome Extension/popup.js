@@ -14,7 +14,11 @@ $(document).ready(function(){
 
     var length = $('#title').val().length;
 
-    $('#title').attr("size", length*1.3);
+    $('#title').attr("size", length*1.2);
+
+    if ($(window).width() < 220) {
+      $('body').width(220);
+    }
 
      /* Böse URLs */
 
@@ -23,7 +27,7 @@ $(document).ready(function(){
       console.log(url+" // "+ badurl);
       if(url == badurl[i]){
         $('#badUrl').html('<div class="alert alert-error">Böse URL: Kann nicht eingetragen werden!</div>');
-        $('#insert, #text, .text, #title, #dublicate').remove();  
+        $('#insert, #text, .text, #title, #dublicate, #delete').remove();  
       }
     };
 
@@ -45,6 +49,10 @@ $(document).ready(function(){
   setTimeout(function() {
     $('#insert').focus();
   }, 100);
+
+  $('#delete').click(function(){
+    socket.emit('delete', {slug: localStorage['slug']});
+  });
 
 
   socket.on('dublicate', function(){

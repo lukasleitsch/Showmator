@@ -24,7 +24,7 @@ io.sockets.on('connection', function(client){
 
   db.serialize(function(){
     db.run('CREATE TABLE IF NOT EXISTS meta (slug TEXT PRIMARY KEY NOT NULL, startTime INTEGER, offset INTEGER, publicSlug TEXT)');
-    db.run('CREATE TABLE IF NOT EXISTS data (slug TEXT NOT NULL, title TEXT, url TEXT, time INTEGER, FOREIGN KEY (slug) REFERENCES meta(slug))');
+    db.run('CREATE TABLE IF NOT EXISTS data (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, title TEXT, url TEXT, time INTEGER, FOREIGN KEY (slug) REFERENCES meta(slug))');
     db.run('PRAGMA foreign_keys = ON');
   });
 
@@ -45,9 +45,9 @@ io.sockets.on('connection', function(client){
           console.log(result);
                 if(err1 && err1.errno == 19){
                   console.log(err1);
-                  client.emit('status', {publicSlug: row.publicSlug, text: 'Du machst bei den Shownotes '+data.slug+' mit.'});
+                  client.emit('status', {publicSlug: row.publicSlug, text: 'Du machst bei den Shownotes "'+data.slug+'" mit.'});
                 }else{
-                  client.emit('status', {publicSlug: row.publicSlug, text: 'Neue Shownotes '+data.slug+' sind angelegt. Zeit startet mit erstem Eintrag.'});
+                  client.emit('status', {publicSlug: row.publicSlug, text: 'Neue Shownotes "'+data.slug+'" sind angelegt. Zeit startet mit erstem Eintrag.'});
                 }
         });
       });
@@ -59,19 +59,13 @@ io.sockets.on('connection', function(client){
   client.on('check_dublicate', function(data){
     console.log("Check dublicate");
     console.log(data.url);
-    var dublicate;
 
     db.serialize(function(){
-
-    dublicate = false;
-      
       db.each('SELECT url from data WHERE url == "'+data.url+'" AND slug == "'+data.slug+'"', function(err, row) {
 
       }, function(err, row){
-        console.log('Complete: '+err);
-        console.log('Complete: '+row);
+        console.log('Doppelte Einträge: '+row);
         if(row > 0){
-          // insert(data.slug, data.title, data.url, time);
           client.emit('dublicate', "Dieser Link wurde schon hinzugefügt!");
         }
       });
@@ -92,6 +86,13 @@ io.sockets.on('connection', function(client){
     console.log("Client disconnected ...");
     io.sockets.in(slug).emit("counter", counter(slug)-1);
     db.close();
+  });
+
+  client.on('delete', function(data){
+    db.run('DELETE FROM data WHERE id IN (SELECT id FROM (SELECT id FROM data WHERE slug = "'+data.slug+'" group by slug)x)',function (err,row){
+      client.broadcast.to(slug).emit('reload');
+    });
+    console.log("Reload");
   });
 
 

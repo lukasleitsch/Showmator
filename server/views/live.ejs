@@ -32,6 +32,10 @@
       $('#counter').html(data);
     });
 
+    socket.on('reload', function(){
+       location.reload();
+    });
+
     $(document).ready(function(){
       if($('#result').children().children().length == 0){
         $('#info').html('<div class="leer alert alert-warning">Bitte noch etwas Geduld. Im Moment sind noch keine Shownotes eingetragen.</div>');
