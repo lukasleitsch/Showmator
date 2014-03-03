@@ -7,3 +7,4 @@ data/
 .DS_Store
 server/node_modules
 Chrome Extension.crx
+server/data.db
