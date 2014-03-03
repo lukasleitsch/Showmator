@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-  var socket = io.connect('http://phasenkasper.de:63685');
+  var socket = io.connect('http://localhost:63685');
 
   $('#submit').click(function(){
     
@@ -23,11 +23,11 @@ $(document).ready(function(){
 
   $('#live').click(function(){
       // console.log("Live");
-      window.open("http://phasenkasper.de:63685/live/"+localStorage['publicSlug']);
+      window.open("http://localhost:63685/live/"+localStorage['publicSlug']);
     });
 
     $('#html').click(function(){
-      window.open("http://phasenkasper.de:63685/html/"+localStorage.slug);
+      window.open("http://localhost:63685/html/"+localStorage.slug);
     });
 
     $('#badUrls').keyup(function(){

@@ -7,49 +7,112 @@
 
   <script>
   $(document).ready(function(){
+
     $('.list').hide();
+
+    if (localStorage.getItem('time') == "false"){
+      $('.time').toggle();
+      $('#time').text("Zeit einblenden");
+    }
+
+    if (localStorage.getItem('target') == "false"){
+      $('.target').toggle();
+      $('#target').text("Target einblenden");
+    }
+
+    if (localStorage.getItem('list') == "false"){
+      $('.list').toggle();
+      $('#list').text("Liste ausblenden");
+    }
+
+    console.log($('#time').val());
+
+    
 
     $('#time').click(function(){
       $('.time').toggle();
+
+      if (localStorage.getItem('time') == 'true' || localStorage.getItem('time') == null){
+        localStorage.setItem('time', false);
+        $('#time').text("Zeit einblenden");
+      } else {
+        localStorage.setItem('time', true);
+        $('#time').text("Zeit ausblenden");
+      }
     });
 
     $('#target').click(function(){
       $('.target').toggle();
+
+      if (localStorage.getItem('target') == 'true' || localStorage.getItem('target') == null){
+        localStorage.setItem('target', false);
+        $('#target').text("Target einblenden");
+      } else {
+        localStorage.setItem('target', true);
+        $('#target').text("Target ausblenden");
+      }
     });
 
     $('#list').click(function(){
       $('.list').toggle();
+
+      if (localStorage.getItem('list') == 'true' || localStorage.getItem('list') == null){
+        localStorage.setItem('list', false);
+        $('#list').text("Liste ausblenden");
+      } else {
+        localStorage.setItem('list', true);
+        $('#list').text("Liste einblenden");
+      }
     });
 
-
+    $('#submit_offset').click(function(){
+      var offset_hours = $('#offset_hours').val()*3600000;
+      var offset_minutes = $('#offset_minutes').val()*60000;
+      var offset_seconds = $('#offset_seconds').val()*1000;
+      var offset = offset_hours+offset_minutes+offset_seconds;
+      window.location.assign("/html/<%=slug%>/"+offset);
+    });
   
-    var offset;
   });
   </script>
 </head>
 <body>
 <div class="container">
   <button class="btn btn-default" id="time">Zeit ausblenden</button>
-  <button class="btn btn-default" id="target">target ausblenden</button>
-  <button class="btn btn-default" id="list">List ausblenden</button>
-  <form action=""></form>
-  <input type="time" name="" value="00:02:59" placeholder=".">
+  <button class="btn btn-default" id="target">Target ausblenden</button>
+  <button class="btn btn-default" id="list">List einblenden</button>
+  <% var hours_offset = Math.floor(((offset) / (1000*60*60)) % 24) %>
+  <% if(hours_offset < 9) { hours_offset = "0"+hours_offset }  %>
+  <% var minutes_offset = Math.floor(((offset) / (1000*60)) % 60) %>
+  <% if(minutes_offset < 9) { minutes_offset = "0"+minutes_offset }  %>
+  <% var seconds_offset = Math.floor(((offset) / (1000)) % 60) %>
+  <% if(seconds_offset < 9) { seconds_offset = "0"+seconds_offset }  %>
+  Zeit des ersten Eintrags
+  <input type="number" id="offset_hours" value="<%=hours_offset %>" min="0" max="23"> :
+  <input type="number" id="offset_minutes" value="<%=minutes_offset %>" min="0" max="59"> :
+  <input type="number" id="offset_seconds" value="<%=seconds_offset %>" min="0" max="59">
+  <button class="btn btn-default" id="submit_offset" type="button">Ändern</button>
+</div>
+  
+
+  
+ 
 </div>
   <span class="list">&lt;ul&gt;<br></span>
   <% items.forEach(function(item){ %>
-    <% var hours = Math.floor(((item.time-start) / (1000*60*60)) % 24) %>
+    <% var hours = Math.floor(((item.time-start+offset) / (1000*60*60)) % 24) %>
     <% if(hours < 9) { hours = "0"+hours }  %>
-    <% var minutes = Math.floor(((item.time-start) / (1000*60)) % 60) %>
+    <% var minutes = Math.floor(((item.time-start+offset) / (1000*60)) % 60) %>
     <% if(minutes < 9) { minutes = "0"+minutes }  %>
-    <% var seconds = Math.floor(((item.time-start) / (1000)) % 60) %>
+    <% var seconds = Math.floor(((item.time-start+offset) / (1000)) % 60) %>
     <% if(seconds < 9) { seconds = "0"+seconds }  %>
   <% if(item.url != 'null'){ %>
     <span class="list">&lt;li&gt;</span><span class="time"><%= hours %>:<%= minutes %>:<%= seconds %> </span>&lt;a href=&quot;<%= item.url %>"<span class="target"> target="_blank"</span>><%= item.title %>&lt;/a&gt;<span class="list">&lt;/li&gt;</span><br>
   <% } else { %>
-    <span class="list">&lt;li&gt;</span><span class="time"><%=hours %>:<%=minutes %>:<%=seconds %> </span><%= item.title %><span class="list"> &lt;li&gt;</span>
+    <span class="list">&lt;li&gt;</span><span class="time"><%=hours %>:<%=minutes %>:<%=seconds %> </span><%= item.title %><span class="list"> &lt;li&gt;</span><br>
   <% } %>
   
 <% }); %>
-<span class="list"><br>&lt;/ul&gt;</span>
+<span class="list">&lt;/ul&gt;</span>
 </body>
 </html>

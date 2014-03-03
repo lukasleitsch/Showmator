@@ -1,4 +1,5 @@
-var app = require('express')()
+var express = require('express'),
+    app = express()
   , server = require('http').createServer(app)
   , io = require('socket.io').listen(server);
 
@@ -178,12 +179,44 @@ app.get('/html/:slug', function (req, res) {
   var startTime;
 
   db.serialize(function(){
-    db.get('SELECT startTime FROM meta WHERE slug == "'+slug+'"',function (err1, row1){
+    db.get('SELECT startTime,offset FROM meta WHERE slug == "'+slug+'"',function (err1, row1){
       if (row1) {
         db.each('SELECT * FROM data WHERE slug =="'+slug+'" ORDER BY time', function (err2,row2){
           items.push(row2);
         },function(){
-          res.render('html.ejs', {items: items, start: row1.startTime});
+          res.render('html.ejs', {items: items, start: row1.startTime, slug: slug, offset: row1.offset});
+        });
+      } else {
+        res.writeHead(200);
+        res.write ("Diese Shownotes existieren nicht.");
+        res.end();
+      }
+    });
+  });
+});
+
+/* Offset */
+
+
+app.get('/html/:slug/:offset', function (req, res) {
+
+  var sqlite3 = require("sqlite3").verbose();
+  var db = new sqlite3.Database(file);
+  var slug = req.params.slug;
+  var offset = req.params.offset;
+
+  var items = [];
+  var startTime;
+
+  db.serialize(function(){
+    db.run('UPDATE meta set offset = "'+offset+'" where slug =="'+slug+'"');
+
+    db.get('SELECT startTime,offset FROM meta WHERE slug == "'+slug+'"',function (err1, row1){
+      if (row1) {
+        db.each('SELECT * FROM data WHERE slug =="'+slug+'" ORDER BY time', function (err2,row2){
+          items.push(row2);
+        },function(){
+          res.render('html.ejs', {items: items, start: row1.startTime, slug: slug, offset: row1.offset});
         });
       } else {
         res.writeHead(200);
