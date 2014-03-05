@@ -107,12 +107,13 @@
     <% var seconds = Math.floor(((item.time-start+offset) / (1000)) % 60) %>
     <% if(seconds < 9) { seconds = "0"+seconds }  %>
   <% if(item.url != 'null'){ %>
-    <span class="list">&lt;li&gt;</span><span class="time"><%= hours %>:<%= minutes %>:<%= seconds %> </span>&lt;a href=&quot;<%= item.url %>"<span class="target"> target="_blank"</span>><%= item.title %>&lt;/a&gt;<span class="list">&lt;/li&gt;</span><br>
+    <span class="list">&lt;li&gt;</span><span class="time"><%= hours %>:<%= minutes %>:<%= seconds %> </span><span class="ruck">&lt;a href=&quot;<%= item.url %>"<span class="target"> target="_blank"</span>><%= item.title %>&lt;/a&gt;</span><span class="list">&lt;/li&gt;</span><br>
   <% } else { %>
     <span class="list">&lt;li&gt;</span><span class="time"><%=hours %>:<%=minutes %>:<%=seconds %> </span><%= item.title %><span class="list"> &lt;li&gt;</span><br>
   <% } %>
   
 <% }); %>
 <span class="list">&lt;/ul&gt;</span>
+&lt;p&gt;&lt;a href=&quot;https://leitsch.org/projects/showmator&quot; target=&quot;_blank&quot;&gt;Shownotes were created with Showmator&lt;/a&gt;&lt;/p&gt;
 </body>
 </html>

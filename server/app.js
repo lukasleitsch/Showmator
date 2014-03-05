@@ -1,7 +1,7 @@
 var express = require('express'),
     app = express()
   , server = require('http').createServer(app)
-  , io = require('socket.io').listen(server);
+  , io = require('socket.io').listen(server, { log: false });
 
 server.listen(63685);
 
@@ -31,20 +31,19 @@ io.sockets.on('connection', function(client){
   client.on('live', function(data){
     client.join(data);
     slug = data;
-    console.log("Slug Live: "+slug);
     io.sockets.in(slug).emit("counter", counter(slug));
   });
 
   client.on('new', function(data){
+    console.log("---- Create new Shownotes ----");
     console.log(data);
+    console.log("------------------------------");
     db.serialize(function() {
 
       db.run('INSERT INTO meta (slug, publicSlug) VALUES ("'+data.slug+'","'+data.publicSlug+'")', function(err1, result){
         var publicSlug;
         db.get('SELECT publicSlug FROM meta WHERE slug == "'+data.slug+'"', function(err2, row){
-          console.log(result);
                 if(err1 && err1.errno == 19){
-                  console.log(err1);
                   client.emit('status', {publicSlug: row.publicSlug, text: 'Du machst bei den Shownotes "'+data.slug+'" mit.'});
                 }else{
                   client.emit('status', {publicSlug: row.publicSlug, text: 'Neue Shownotes "'+data.slug+'" sind angelegt. Zeit startet mit erstem Eintrag.'});
@@ -57,7 +56,7 @@ io.sockets.on('connection', function(client){
   /* Auf Duplikate prüfen */
 
   client.on('check_dublicate', function(data){
-    console.log("Check dublicate");
+    console.log("--- Check dublicate ----");
     console.log(data.url);
 
     db.serialize(function(){
@@ -77,7 +76,9 @@ io.sockets.on('connection', function(client){
   client.on('add', function(data){
     var time = new Date().getTime();
     insert(data.slug, data.title, data.url, time);
-    console.log("Add Slug: "+slug);
+    console.log("---- Add -----")
+    console.log("Slug: "+slug);
+    console.log(data);
     client.broadcast.to(slug).emit('push', {title: data.title, url: data.url});
   });
 
@@ -92,19 +93,18 @@ io.sockets.on('connection', function(client){
     db.run('DELETE FROM data WHERE id IN (SELECT id FROM (SELECT id FROM data WHERE slug = "'+data.slug+'" group by slug)x)',function (err,row){
       client.broadcast.to(slug).emit('reload');
     });
-    console.log("Reload");
+    console.log("---- Delete -----");
   });
 
 
   /* Functions */
 
   function insert(slug, title, url, time) {
-    console.log("----------------");
-    console.log(slug);
-    console.log(title);
-    console.log(url);
-    console.log(time);
-    console.log("----------------");
+    console.log("---- Insert function ----");
+    console.log("Slug: "+slug);
+    console.log("Title: "+title);
+    console.log("Url: "+url);
+    console.log("Time: "+time);
 
     db.serialize(function() {
       db.each('SELECT startTime from meta WHERE slug == "'+slug+'"', function(err, row) {
@@ -116,9 +116,6 @@ io.sockets.on('connection', function(client){
 
       db.run('INSERT INTO data (slug,title,url,time) VALUES ("'+slug+'","'+title+'","'+url+'",'+ time +')');
 
-      // db.each("SELECT * from data", function(err, row) {
-      //     console.log(row.slug+" "+row.title+" "+row.url);
-      // });
       client.emit('close');
 
     });
@@ -130,7 +127,6 @@ io.sockets.on('connection', function(client){
   function counter(slug){
     var length = 0;
     var clients = io.sockets.clients(slug);
-    // console.log(slug+"\nClients: \n"+clients);
     for (val in clients){
       length++;
     }
@@ -139,11 +135,7 @@ io.sockets.on('connection', function(client){
 
 });
 
-app.get('/', function (req, res){
-  res.writeHead(200);
-  res.write("Hallo");
-  res.end();
-});
+/* Live-Shownotes */
 
 app.get('/live/:publicslug', function (req, res) {
 
@@ -169,6 +161,8 @@ app.get('/live/:publicslug', function (req, res) {
     });
   });
 });
+
+/* Shownotes in HMTL*/
 
 app.get('/html/:slug', function (req, res) {
 
@@ -197,7 +191,6 @@ app.get('/html/:slug', function (req, res) {
 });
 
 /* Offset */
-
 
 app.get('/html/:slug/:offset', function (req, res) {
 
