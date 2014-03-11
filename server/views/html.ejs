@@ -82,11 +82,11 @@
   <button class="btn btn-default" id="target">Target ausblenden</button>
   <button class="btn btn-default" id="list">List einblenden</button>
   <% var hours_offset = Math.floor(((offset) / (1000*60*60)) % 24) %>
-  <% if(hours_offset < 9) { hours_offset = "0"+hours_offset }  %>
+  <% if(hours_offset <= 9) { hours_offset = "0"+hours_offset }  %>
   <% var minutes_offset = Math.floor(((offset) / (1000*60)) % 60) %>
-  <% if(minutes_offset < 9) { minutes_offset = "0"+minutes_offset }  %>
+  <% if(minutes_offset <= 9) { minutes_offset = "0"+minutes_offset }  %>
   <% var seconds_offset = Math.floor(((offset) / (1000)) % 60) %>
-  <% if(seconds_offset < 9) { seconds_offset = "0"+seconds_offset }  %>
+  <% if(seconds_offset <= 9) { seconds_offset = "0"+seconds_offset }  %>
   Zeit des ersten Eintrags
   <input type="number" id="offset_hours" value="<%=hours_offset %>" min="0" max="23"> :
   <input type="number" id="offset_minutes" value="<%=minutes_offset %>" min="0" max="59"> :
@@ -101,11 +101,11 @@
   <span class="list">&lt;ul&gt;<br></span>
   <% items.forEach(function(item){ %>
     <% var hours = Math.floor(((item.time-start+offset) / (1000*60*60)) % 24) %>
-    <% if(hours < 9) { hours = "0"+hours }  %>
+    <% if(hours <= 9) { hours = "0"+hours }  %>
     <% var minutes = Math.floor(((item.time-start+offset) / (1000*60)) % 60) %>
-    <% if(minutes < 9) { minutes = "0"+minutes }  %>
+    <% if(minutes <= 9) { minutes = "0"+minutes }  %>
     <% var seconds = Math.floor(((item.time-start+offset) / (1000)) % 60) %>
-    <% if(seconds < 9) { seconds = "0"+seconds }  %>
+    <% if(seconds <= 9) { seconds = "0"+seconds }  %>
   <% if(item.url != 'null'){ %>
     <span class="list">&lt;li&gt;</span><span class="time"><%= hours %>:<%= minutes %>:<%= seconds %> </span><span class="ruck">&lt;a href=&quot;<%= item.url %>"<span class="target"> target="_blank"</span>><%= item.title %>&lt;/a&gt;</span><span class="list">&lt;/li&gt;</span><br>
   <% } else { %>
@@ -113,7 +113,7 @@
   <% } %>
   
 <% }); %>
-<span class="list">&lt;/ul&gt;</span>
+<span class="list">&lt;/ul&gt;<br></span>
 &lt;p&gt;&lt;a href=&quot;https://leitsch.org/projects/showmator&quot; target=&quot;_blank&quot;&gt;Shownotes were created with Showmator&lt;/a&gt;&lt;/p&gt;
 </body>
 </html>
