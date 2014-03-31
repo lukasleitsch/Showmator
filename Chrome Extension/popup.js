@@ -4,6 +4,7 @@ $(document).ready(function(){
   var title;
   var url;
 
+  // Titel und URL des aktuellen Tabs auslesen
   chrome.tabs.getSelected(null,function(tab) { 
     title = tab.title;
     url = tab.url;
@@ -31,10 +32,12 @@ $(document).ready(function(){
       }
     };
 
+    // Dublicate überprüfen. Wird direkt ausgeführt beim öffnen des Popups
+
     socket.emit('check_dublicate', {slug: localStorage['slug'], url: htmlEntities(url)});
   });
 
-  
+  // Button zum Einfügen
 
   $( "#insert" ).click(function() {
 
@@ -46,25 +49,33 @@ $(document).ready(function(){
     socket.emit('add', {slug: localStorage['slug'], title: title, url: url});
   });
 
+  // Behebt den Bug von Chrome, dass der Focus nicht direkt auf eine Element gesetzt werden kann. 
+
   setTimeout(function() {
     $('#insert').focus();
   }, 100);
+
+  // Löschen Button
 
   $('#delete').click(function(){
     socket.emit('delete', {slug: localStorage['slug']});
   });
 
+  // Blendet die Meldung ein, wenn der Server meldet, dass der Link schon eingetragen wurde
 
   socket.on('dublicate', function(){
     $('#dublicate').html('<div class="alert alert-error">Dieser Link ist schon eingetragen!</div>');
     $('#insert').html("Trotzdem einfügen");
   });
 
+  // Ist der Link eingetragen, meldet der Server dies und das Popup wird geschlossen und das Badget wird gesetzt
+
   socket.on('close', function(){
    chrome.extension.getBackgroundPage().badget("OK", "#33cc00");
     window.close();
   });
 
+  // Sonderzeichen escapen
 
   function htmlEntities(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

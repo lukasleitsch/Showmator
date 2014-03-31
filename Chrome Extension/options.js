@@ -2,6 +2,7 @@ $(document).ready(function(){
 
   var socket = io.connect('http://localhost:63685');
 
+  // Wenn der Senden-Button gedrückt wird
   $('#submit').click(function(){
     
     if(!$('#slug').val()){
@@ -16,25 +17,31 @@ $(document).ready(function(){
     }
   });
 
+  //Zeigt die Rückmeldung des Servers an
   socket.on('status', function(data){
     $('#status').show().html(data.text).delay(5000).fadeOut(3000);
     localStorage['publicSlug'] = data.publicSlug;
   });
 
+  //Button zu den Live-Shownotes
   $('#live').click(function(){
       // console.log("Live");
       window.open("http://localhost:63685/live/"+localStorage['publicSlug']);
     });
 
-    $('#html').click(function(){
-      window.open("http://localhost:63685/html/"+localStorage.slug);
-    });
+  //Button zu den Shownotes in HTML
+  $('#html').click(function(){
+    window.open("http://localhost:63685/html/"+localStorage.slug);
+  });
 
-    $('#badUrls').keyup(function(){
-        localStorage['badUrls'] = $(this).val();
-        $('#status_url').show().html("Gespeichert").delay(5000).fadeOut(3000);
-    });
+  // Bei der Eingabe die bösen URLs speichern
+  $('#badUrls').keyup(function(){
+    localStorage['badUrls'] = $(this).val();
+    $('#status_url').show().html("Gespeichert").delay(5000).fadeOut(3000);
+  });
 });
+
+//Einstellunge beim Laden wiederherstellen
 
 document.addEventListener('DOMContentLoaded', restoreData);
 
@@ -56,6 +63,8 @@ function restoreData () {
       $('#badUrls').val(localStorage['badUrls']);
   }
 }
+
+// Zufälligen Slug erzeugen
 
 function randomSlug(){
   return Math.random().toString(36).substring(7);

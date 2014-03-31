@@ -22,9 +22,12 @@ io.sockets.on('connection', function(client){
   var sqlite3 = require("sqlite3").verbose();
   var db = new sqlite3.Database(file);
 
+  // Falls Tabellen noch nicht angelegt sind, werden diese erzeugt
+
   db.serialize(function(){
     db.run('CREATE TABLE IF NOT EXISTS meta (slug TEXT PRIMARY KEY NOT NULL, startTime INTEGER, offset INTEGER, publicSlug TEXT)');
     db.run('CREATE TABLE IF NOT EXISTS data (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, title TEXT, url TEXT, time INTEGER, FOREIGN KEY (slug) REFERENCES meta(slug))');
+    // Aktiviert Foreign in SQLITE
     db.run('PRAGMA foreign_keys = ON');
   });
 
@@ -33,6 +36,8 @@ io.sockets.on('connection', function(client){
     slug = data;
     io.sockets.in(slug).emit("counter", counter(slug));
   });
+
+  // Neue Shownotes anlegen
 
   client.on('new', function(data){
     console.log("---- Create new Shownotes ----");
@@ -72,6 +77,8 @@ io.sockets.on('connection', function(client){
     });
   });
 
+  // Neuen Eintrag hinzufügen
+
 
   client.on('add', function(data){
     var time = new Date().getTime();
@@ -82,12 +89,15 @@ io.sockets.on('connection', function(client){
     client.broadcast.to(slug).emit('push', {title: data.title, url: data.url});
   });
 
+  // Beim Abmelden eines Clients
 
   client.on('disconnect', function(){
     console.log("Client disconnected ...");
     io.sockets.in(slug).emit("counter", counter(slug)-1);
     db.close();
   });
+
+  // letzten Eintrag aus der Datenbank löschen
 
   client.on('delete', function(data){
     db.run('DELETE FROM data WHERE id IN (SELECT id FROM (SELECT id FROM data WHERE slug = "'+data.slug+'" group by slug)x)',function (err,row){
@@ -97,7 +107,7 @@ io.sockets.on('connection', function(client){
   });
 
 
-  /* Functions */
+  // Funktion zum Eintragen in die Datenbank
 
   function insert(slug, title, url, time) {
     console.log("---- Insert function ----");
