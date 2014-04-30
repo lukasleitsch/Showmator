@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
 
   "name": "Showmator",
   "description": "An awesome Shownotes-Tool for Podcaster",
@@ -9,32 +9,32 @@
     "tabs", "http://*/*", "https://*/*", "background", "notifications"
   ],
 
-   "web_accessible_resources": [
+  "web_accessible_resources": [
     "icon48.png"
   ],
 
-  "icons": { "16": "icons/icon16.png",
-           "48": "icons/icon48.png",
-          "128": "icons/icon128.png" 
-          },
+  "icons": {
+    "16":  "icons/icon16.png",
+    "48":  "icons/icon48.png",
+    "128": "icons/icon128.png" 
+  },
 
   "browser_action": {
     "default_title": "Add to Shownotes",
     "default_icon": {
-            "19": "icons/icon19.png",
-            "38": "icons/icon38.png"
-          }
+      "19": "icons/icon19.png",
+      "38": "icons/icon38.png"
+    }
   },
 
-  "content_scripts": [ {
+  "content_scripts": [{
     "matches": [ "http://*/*", "https://*/*"],
-    "js": ["jquery.min.js", "socket.io.js"],
-    "css": ["styles.css"]
-
+    "js":      ["js/jquery.min.js", "js/socket.io.js"],
+    "css":     ["css/styles.css"]
   }],
 
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["js/background.js"]
   },
 
   "options_page": "options.html",

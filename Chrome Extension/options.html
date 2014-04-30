@@ -2,15 +2,38 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/options.css">
   <title>Einstellungen für Showmator</title>
-  <script src="jquery.min.js"></script>
-  <script src="socket.io.js"></script>
-  <script src="options.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/socket.io.js"></script>
+  <script src="js/options.js"></script>
 </head>
-<body class="container">
-<h1><img src="./icons/icon48.png" alt=""> Einstellungen für den Showmator</h1>
-<p>Zum Erstellen von neuen Shownotes muss das Kürzel ausgefühlt sein. Man kann einfach das generierte Kürzel verwenden. Damit andere bei den Shownotes mitarbeiten können, muss das Kürzel weitergeben werden und bei dem Partner eigetragen werden.</p>
+<body>
+  <header class="jumbo-header">
+    <h1>
+      <img src="./icons/icon48_white.png" alt=""> Showmator Optionen
+    </h1>
+  </header>
+
+  <div class="alert alert-info">
+    <strong>Für Admins:</strong> neues Kürzel hier eintragen und den anderen Teilnehmern schicken.<br />
+    <strong>Für Teilnehmer:</strong> vom Admin geschicktes Kürzel hier eintragen.
+  </div>
+
+  <div class="slug-wrap">
+    <label for="">Kürzel eintragen:</label>
+    <div class="input-group-wrap">
+      <div class="input-group">
+        <input class="form-control input-lg" type="text" value="r4nd0m S†r1ng" />
+        <div class="input-group-btn">
+          <button class="btn btn-primary btn-lg">loslegen</button>
+        </div>
+      </div>
+    </div>    
+  </div>
+
+<!-- <p>Zum Erstellen von neuen Shownotes muss das Kürzel ausgefühlt sein. Man kann einfach das generierte Kürzel verwenden. Damit andere bei den Shownotes mitarbeiten können, muss das Kürzel weitergeben werden und bei dem Partner eigetragen werden.</p>
 
 <p>Die Zeit wird mit dem ersten Eintrag gestartet. Wenn man die Shownotes exportiert, kann der Zeitpunkt des ersten Eintrags definiert werden.</p>
 <h2>Neue Shownotes erstellen oder mitmachen.</h2>
@@ -45,13 +68,11 @@
 <div class="col-md-4">
   <div id="status_url" class="alert alert-success" style="display: none;"></div>
 </div>
-</div>
+</div> -->
 
-
- 
 <footer>
-  <hr>
   <a href="http://leitsch.org">Showmator by Lukas Leitsch</a> &bull; <a href="https://leitsch.org/projects/showmator">Changelog</a>
 </footer>
+
 </body>
 </html>
