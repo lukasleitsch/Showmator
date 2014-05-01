@@ -20,11 +20,10 @@ $(function() {
         if (typeof(localStorage.publicSlug) == "undefined")
           localStorage.publicSlug = randomSlug();
 
-        if (typeof(localStorage.blacklist) == "undefined") {
+        if (typeof(localStorage.blacklist) == "undefined")
           localStorage.blacklist = '';
-        } else {
+        else
           $blacklist.val(localStorage.blacklist);
-        }
 
         // set hrefs for links
         $('#live').prop('href', baseUrl + '/live/' + localStorage.publicSlug);
