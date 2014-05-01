@@ -1,15 +1,63 @@
 @import "vars";
 
-.jumbo-header {margin-bottom:40px; padding:30px 0; background-color:$colorPrimary; color:white; text-align:center;
-  h1 {margin:0;}
-  img {margin-top:-4px; margin-right:10px;}
+// active shownotes toggle
+// -----------------------------------------------------------------------------
+
+.show-on-active-shownotes {display:none;}
+.has-active-shownotes {
+  .hide-on-active-shownotes {display:none;}
+  .show-on-active-shownotes {display:block;}
 }
 
-.alert-info {max-width:600px; margin:0 auto 30px; background-color:$colorPrimary; border-color:$borderPrimary; color:#fff;}
+
+// shared styles
+// -----------------------------------------------------------------------------
+
+.jumbo-header {margin-bottom:40px; padding:30px 0; background-color:$colorPrimary; color:white; text-align:center;
+  h1 {margin:0;}
+  img {margin:-4px 10px 0 0;}
+}
+
+.alert-info {max-width:600px; margin:0 auto 30px; background-color:$colorPrimary; border-color:$borderPrimary; color:#fff;
+  h3 {margin-top:0;}
+  a {color:white; font-weight:bold;}
+}
+
+
+// without active shownotes
+// -----------------------------------------------------------------------------
 
 .slug-wrap {text-align:center;
   label {margin-right:20px; line-height:46px; vertical-align:top;}
   .input-group-wrap {display:inline-block; width:300px;}
 }
 
-footer {max-width:600px; margin:80px auto 0; padding-top:12px; border-top:1px solid #eee; text-align:center;}
+footer {max-width:600px; margin:80px auto 0; padding:12px 0; border-top:1px solid #eee; text-align:center;}
+
+
+// with active shownotes
+// -----------------------------------------------------------------------------
+
+$formMaxWidth:500px;
+$labelWidth:100px;
+
+.form-horizontal {max-width:$formMaxWidth; margin:0 auto;
+  .form-group {margin:0 0 40px;}
+  .form-group-no-label {margin-left:$labelWidth;}
+  .control-label {float:left; width:$labelWidth; padding-top:12px; text-align:left;}
+  .form-control {font-size:16px;
+    & + .help-block {margin-top:10px;}
+  }
+  hr {margin-bottom:50px;}
+}
+.form-control-wrap {float:left; width:$formMaxWidth - $labelWidth; font-size:16px;}
+.help-block {margin-bottom:0; font-size:12px;}
+
+#label-slug-static {padding-top:2px;}
+#slug-static {margin-bottom:0;}
+#title {width:200px;}
+#live {margin-right:10px; background-color:#fff; ;color:$colorPrimary; font-weight:bold;
+  &:hover, &:hover {background-color:#f4f4f4; color:$borderPrimary;}
+}
+#html {font-weight:bold;}
+#blacklist {width:100%; min-height:150px;}

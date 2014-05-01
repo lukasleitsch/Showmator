@@ -1,71 +1,83 @@
-$(document).ready(function(){
+// TODO title stuff
 
-  var socket = io.connect('http://localhost:63685');
+$(function() {
 
-  // Wenn der Senden-Button gedrückt wird
-  $('#submit').click(function(){
+  var baseUrl = 'http://localhost:63685',
+      socket  = io.connect(baseUrl),
+
+      activeClass = 'has-active-shownotes',
+      $slug       = $('#slug'),
+      $blacklist  = $('#blacklist'),
+
+      init = function() {
+        // TODO find out status (active?)
+        // TODO toggle class based on current status
+        
+        if (typeof(localStorage.slug) == "undefined")
+          localStorage.slug = randomSlug();
+        $slug.val(localStorage.slug);
+
+        if (typeof(localStorage.publicSlug) == "undefined")
+          localStorage.publicSlug = randomSlug();
+
+        if (typeof(localStorage.blacklist) == "undefined") {
+          localStorage.blacklist = '';
+        } else {
+          $blacklist.val(localStorage.blacklist);
+        }
+
+        // set hrefs for links
+        $('#live').prop('href', baseUrl + '/live/' + localStorage.publicSlug);
+        $('#html').prop('href', baseUrl + '/html/' + localStorage.slug);
+      },
+
+
+      randomSlug = function() {
+        return Math.random().toString(36).substring(7);
+      };
+
+
+  // submit new slug and show more options
+  $('#submit-slug').click(function() {
+    var slug = $.trim($slug.val()).replace(/ /g,'');
     
-    if(!$('#slug').val()){
+    if (!slug) {
+      // TODO make tooltip
       $('#status').show().html("Bitte ein Kürzel eingeben!").delay(5000).fadeOut(3000);
+    
     } else {
-      var slug = $.trim($('#slug').val());
-      slug = slug.replace(/ /g,'');
-      localStorage['slug'] = slug;
-      localStorage['publicSlug'] = randomSlug();
-      socket.emit('new', {slug: slug, publicSlug: localStorage['publicSlug']});
-      $('#slug').val(localStorage['slug']);
+      localStorage.slug = slug;
+      localStorage.publicSlug = randomSlug(); // TODO why?
+      socket.emit('new', {slug: slug, publicSlug: localStorage.publicSlug});
+      $slug.val(slug);
+      $('body').addClass(activeClass);
+      $('#slug-static').text(slug);
     }
   });
 
-  //Zeigt die Rückmeldung des Servers an
+
   socket.on('status', function(data){
     $('#status').show().html(data.text).delay(5000).fadeOut(3000);
-    localStorage['publicSlug'] = data.publicSlug;
+    localStorage.publicSlug = data.publicSlug;
   });
 
-  //Button zu den Live-Shownotes
-  $('#live').click(function(){
-      // console.log("Live");
-      window.open("http://localhost:63685/live/"+localStorage['publicSlug']);
-    });
 
-  //Button zu den Shownotes in HTML
-  $('#html').click(function(){
-    window.open("http://localhost:63685/html/"+localStorage.slug);
-  });
-
-  // Bei der Eingabe die bösen URLs speichern
-  $('#badUrls').keyup(function(){
-    localStorage['badUrls'] = $(this).val();
+  // save blacklist changes
+  $blacklist.keyup(function(){
+    localStorage.blacklist = $(this).val();
+    // TODO necessary?
     $('#status_url').show().html("Gespeichert").delay(5000).fadeOut(3000);
   });
+
+
+  // 'create new' button triggers new shownotes' init
+  $('#create-new, #alert-link-create-new').click(function(e) {
+    e.preventDefault();
+    localStorage.clear();
+    init();
+  });
+
+
+  // do it
+  init();
 });
-
-//Einstellunge beim Laden wiederherstellen
-
-document.addEventListener('DOMContentLoaded', restoreData);
-
-function restoreData () {
-  if (typeof(localStorage['slug']) == "undefined"){
-      localStorage['slug'] = randomSlug();
-      $('#slug').val(localStorage['slug']);
-  }else{
-      $('#slug').val(localStorage['slug']);
-  }
-
-  if (typeof(localStorage['publicSlug']) == "undefined"){
-      localStorage['publicSlug'] = randomSlug();
-  }
-
-  if (typeof(localStorage['badUrls']) == "undefined"){
-      localStorage['badUrls'] = '';
-  }else{
-      $('#badUrls').val(localStorage['badUrls']);
-  }
-}
-
-// Zufälligen Slug erzeugen
-
-function randomSlug(){
-  return Math.random().toString(36).substring(7);
-}

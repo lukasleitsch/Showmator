@@ -8,6 +8,5 @@ data/
 server/node_modules
 Chrome Extension.crx
 server/data.db
-config.codekit
 .sass-cache
 

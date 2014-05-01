@@ -16,22 +16,90 @@
     </h1>
   </header>
 
-  <div class="alert alert-info">
-    <strong>Für Admins:</strong> neues Kürzel hier eintragen und den anderen Teilnehmern schicken.<br />
-    <strong>Für Teilnehmer:</strong> vom Admin geschicktes Kürzel hier eintragen.
-  </div>
+  <div class="hide-on-active-shownotes">
 
-  <div class="slug-wrap">
-    <label for="">Kürzel eintragen:</label>
-    <div class="input-group-wrap">
-      <div class="input-group">
-        <input class="form-control input-lg" type="text" value="r4nd0m S†r1ng" />
-        <div class="input-group-btn">
-          <button class="btn btn-primary btn-lg">loslegen</button>
+    <div class="alert alert-info">
+      <p>
+        <strong>Für Admins:</strong> neues Kürzel hier eintragen und den anderen Teilnehmern schicken.<br />
+        <strong>Für Teilnehmer:</strong> vom Admin geschicktes Kürzel hier eintragen.
+      </p>
+    </div>
+
+    <div class="slug-wrap">
+      <label for="">Kürzel eintragen:</label>
+      <div class="input-group-wrap">
+        <div class="input-group">
+          <input id="slug" class="form-control input-lg" type="text" value="r4nd0mS†r1ng" />
+          <div class="input-group-btn">
+            <button id="submit-slug" class="btn btn-primary btn-lg">loslegen</button>
+          </div>
+        </div>
+      </div>    
+    </div> <!-- /.slug-wrap -->
+
+  </div> <!-- /.hide-on-active-shownotes -->
+
+
+  <div class="show-on-active-shownotes">
+
+    <div class="alert alert-info">
+      <h3>Es sind Shownotes aktiv.</h3>
+      <p>
+        Um die aktiven Shownotes (<em id="title">Phasentheater 005</em>) und das zugehörige Kürzel zu verwerfen, klicke auf <a href="#" id="alert-link-create-new">neue Shownotes erstellen</a>.
+      </p>
+    </div>
+
+    <div class="form-horizontal">
+
+      <!-- Static Slug -->
+      <div class="form-group">
+        <label id="label-slug-static" class="control-label">Kürzel:</label>
+        <div class="form-control-wrap">
+          <p id="slug-static"></p>
+          <p class="help-block">Wird vom Admin erstellt und von den Shownotes-Erstellern eingetragen, um mitmachen zu können.</p>
         </div>
       </div>
-    </div>    
-  </div>
+
+      <!-- Links -->
+      <div class="form-group">
+        <label class="control-label">Links:</label>
+        <div class="form-control-wrap">
+          <a id="live" class="btn btn-lg btn-primary">Live-Shownotes</a>
+          <a id="html" class="btn btn-lg btn-default">HTML exportieren</a>
+        </div>
+      </div>
+
+      <!-- Titel -->
+      <div class="form-group">
+        <label class="control-label">Titel:</label>
+        <div class="form-control-wrap">
+          <input id="title" type="text" class="input-lg form-control" placeholder="z.B. Mein Podcast 017" />
+          <p class="help-block">Wird für die Überschrift der Live-Shownotes verwendet.</p>
+        </div>
+      </div>
+
+      <!-- Blacklist -->
+      <div class="form-group">
+        <label class="control-label">Blacklist:</label>
+        <div class="form-control-wrap">
+          <textarea id="blacklist" type="text" class="input-lg form-control" placeholder="z.B. http://www.google.de"></textarea>
+          <p class="help-block">Hier gelistete Links tauchen nicht in den Shownotes auf. 1 Link pro Zeile.</p>
+        </div>
+      </div>
+
+      <hr />
+
+      <!-- Create New -->
+      <div class="form-group form-group-no-label">
+        <div class="form-control-wrap">
+          <button id="create-new" class="btn btn-lg btn-primary">neue Shownotes erstellen</button>
+          <p class="help-block">Die aktiven Shownotes und das zugehörige Kürzel werden verworfen, um mit neuen Shownotes starten zu können</p>
+        </div>
+      </div>
+
+    </div> <!-- /.form-horizontal -->
+  </div> <!-- /.show-on-active-shownotes -->
+
 
 <!-- <p>Zum Erstellen von neuen Shownotes muss das Kürzel ausgefühlt sein. Man kann einfach das generierte Kürzel verwenden. Damit andere bei den Shownotes mitarbeiten können, muss das Kürzel weitergeben werden und bei dem Partner eigetragen werden.</p>
 

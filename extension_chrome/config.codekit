@@ -257,14 +257,14 @@
 		},
 	"\/showmator\/js\/options.js": {
 		"fileType": 64,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
+		"ignore": 1,
+		"ignoreWasSetByUser": 1,
 		"inputAbbreviatedPath": "\/showmator\/js\/options.js",
 		"outputAbbreviatedPath": "\/showmator\/js\/min\/options-ck.js",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
-		"outputStyle": 1,
-		"syntaxCheckerStyle": 1
+		"outputStyle": 0,
+		"syntaxCheckerStyle": 0
 		},
 	"\/showmator\/js\/popup.js": {
 		"fileType": 64,
@@ -502,7 +502,7 @@
 			"flagValue": -1
 			},
 		"eqeqeq": {
-			"active": 1,
+			"active": 0,
 			"flagValue": -1
 			},
 		"eqnull": {
