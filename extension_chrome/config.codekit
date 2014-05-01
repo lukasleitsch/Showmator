@@ -255,6 +255,17 @@
 		"outputStyle": 1,
 		"syntaxCheckerStyle": 1
 		},
+	"\/showmator\/js\/min\/options-ck.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/showmator\/js\/min\/options-ck.js",
+		"outputAbbreviatedPath": "\/showmator\/js\/min\/min\/options-ck-ck.js",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
+		},
 	"\/showmator\/js\/options.js": {
 		"fileType": 64,
 		"ignore": 1,
@@ -486,7 +497,7 @@
 			"flagValue": -1
 			},
 		"curly": {
-			"active": 1,
+			"active": 0,
 			"flagValue": -1
 			},
 		"debug": {

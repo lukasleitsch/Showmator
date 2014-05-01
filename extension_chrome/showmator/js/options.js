@@ -2,7 +2,7 @@
 
 $(function() {
 
-  var baseUrl = 'http://localhost:63685',
+  var baseUrl = 'http://localhost:63685', // TODO should come from server
       socket  = io.connect(baseUrl),
 
       activeClass = 'has-active-shownotes',
