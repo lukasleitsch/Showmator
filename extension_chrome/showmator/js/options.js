@@ -10,8 +10,21 @@ $(function() {
       $blacklist  = $('#blacklist'),
 
       init = function() {
-        // TODO find out status (active?)
-        // TODO toggle class based on current status
+        
+        // toggle class based on current status
+
+        $('body').removeClass(activeClass);
+
+        socket.emit('status', {slug: localStorage.slug});
+
+        socket.on('shownotes-active', function(){
+          console.log("Shownotes active");
+          $('body').addClass(activeClass);
+        });
+
+        // set slug in option
+        $('#slug-static').text(localStorage.slug);
+        
         
         if (typeof(localStorage.slug) == "undefined")
           localStorage.slug = randomSlug();

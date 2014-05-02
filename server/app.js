@@ -25,7 +25,7 @@ io.sockets.on('connection', function(client){
   // Falls Tabellen noch nicht angelegt sind, werden diese erzeugt
 
   db.serialize(function(){
-    db.run('CREATE TABLE IF NOT EXISTS meta (slug TEXT PRIMARY KEY NOT NULL, startTime INTEGER, offset INTEGER, publicSlug TEXT)');
+    db.run('CREATE TABLE IF NOT EXISTS meta (slug TEXT PRIMARY KEY NOT NULL, startTime INTEGER, offset INTEGER, publicSlug TEXT, title TEXT)');
     db.run('CREATE TABLE IF NOT EXISTS data (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, title TEXT, url TEXT, time INTEGER, FOREIGN KEY (slug) REFERENCES meta(slug))');
     // Aktiviert Foreign in SQLITE
     db.run('PRAGMA foreign_keys = ON');
@@ -37,7 +37,20 @@ io.sockets.on('connection', function(client){
     io.sockets.in(slug).emit("counter", counter(slug));
   });
 
-  // Neue Shownotes anlegen
+
+  // Check status of shownotes
+
+  client.on('status', function(data){
+    db.serialize(function() {
+      db.get('SELECT * FROM meta WHERE slug == "' + data.slug + '"', function(err, row){
+        if (row) {
+          client.emit('shownotes-active');
+        };
+      });
+    });
+  });
+
+  // Create new shownotes
 
   client.on('new', function(data){
     console.log("---- Create new Shownotes ----");
@@ -58,7 +71,7 @@ io.sockets.on('connection', function(client){
     });
   });
 
-  /* Auf Duplikate prüfen */
+  // Check for dublicate
 
   client.on('check_dublicate', function(data){
     console.log("--- Check dublicate ----");
@@ -77,8 +90,7 @@ io.sockets.on('connection', function(client){
     });
   });
 
-  // Neuen Eintrag hinzufügen
-
+  // Add new item
 
   client.on('add', function(data){
     var time = new Date().getTime();
@@ -89,7 +101,7 @@ io.sockets.on('connection', function(client){
     client.broadcast.to(slug).emit('push', {title: data.title, url: data.url});
   });
 
-  // Beim Abmelden eines Clients
+  // Client disconnected
 
   client.on('disconnect', function(){
     console.log("Client disconnected ...");
@@ -97,7 +109,7 @@ io.sockets.on('connection', function(client){
     db.close();
   });
 
-  // letzten Eintrag aus der Datenbank löschen
+  // delete last item
 
   client.on('delete', function(data){
     db.run('DELETE FROM data WHERE id IN (SELECT id FROM (SELECT id FROM data WHERE slug = "'+data.slug+'" group by slug)x)',function (err,row){
@@ -132,7 +144,7 @@ io.sockets.on('connection', function(client){
   };
 
 
-// Zählt die aktuellen Verbindungen mit dem aktuellen Raum
+// Current connections of clients
 
   function counter(slug){
     var length = 0;
