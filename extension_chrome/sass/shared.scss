@@ -1,0 +1,14 @@
+// Vars
+// -----------------------------------------------------------------------------
+
+$colorPrimary:#ef6560;
+$borderPrimary:#db4d48;
+
+
+// Components
+// -----------------------------------------------------------------------------
+
+.alert-info {max-width:600px; margin:0 auto 30px; background-color:$colorPrimary; border-color:$borderPrimary; color:#fff;
+  h3 {margin-top:0;}
+  .alert-link {color:white; font-weight:bold;}
+}
