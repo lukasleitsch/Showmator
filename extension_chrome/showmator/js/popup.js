@@ -33,9 +33,12 @@ $(function() {
 
     title = htmlEntities($title.val());
     if ($('#kind-text-only').is(":checked"))
-      url = null;
+      var isText = 1;
+    if ($('#kind-link').is(":checked"))
+      var isText = 0;
     // TODO make change event
-    socket.emit('add', {slug: localStorage.slug, title: title, url: url});
+    socket.emit('update', {slug: localStorage.slug, title: title, url: url, isText: isText});
+    window.close();
   });
 
 
@@ -47,15 +50,22 @@ $(function() {
 
 
   // prevent duplication
-  socket.on('duplicate', function(){
+  socket.on('duplicate', function(data){
     $alertDublicate.addClass('alert-show');
+    if(data.title)
+      $title.val(data.title);
+    if(data.isText == 1)
+      $('#kind-text-only').prop('checked', true);
+    console.log(data.isText);
   });
 
 
   // show alert-successful abd badget if server respond
-  socket.on('add-successful', function(){
+  socket.on('add-successful', function(data){
     chrome.extension.getBackgroundPage().badget("OK", "#33cc00");
     $alertSuccessful.addClass('alert-show');
+    if(data.title)
+      $title.val(data.title);
   });
 
 
@@ -78,6 +88,13 @@ $(function() {
       $alertInfo.slideUp();
       $saveChanges.removeClass('disabled');
     }
+  });
+
+
+  // if radio-button text change
+  $('#kind-text-only, #kind-link').change(function(){
+    $alertInfo.slideUp();
+    $saveChanges.removeClass('disabled');
   });
 
   
@@ -108,6 +125,6 @@ $(function() {
 
     // add link
     // TODO badge on success
-    socket.emit('add', {slug: localStorage.slug, title: title, url: url});
+    socket.emit('add', {slug: localStorage.slug, title: title, url: url, isText: 0});
   });
 });

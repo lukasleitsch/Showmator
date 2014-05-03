@@ -1,3 +1,5 @@
+// TOD0 FOREIGN KEY constraint failed: Insert entry without create shownotes
+
 var express = require('express'),
     app     = express(),
     server  = require('http').createServer(app),
@@ -26,7 +28,7 @@ io.sockets.on('connection', function(client){
 
   db.serialize(function(){
     db.run('CREATE TABLE IF NOT EXISTS meta (slug TEXT PRIMARY KEY NOT NULL, startTime INTEGER, offset INTEGER, publicSlug TEXT, title TEXT)');
-    db.run('CREATE TABLE IF NOT EXISTS data (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, title TEXT, url TEXT, time INTEGER, FOREIGN KEY (slug) REFERENCES meta(slug))');
+    db.run('CREATE TABLE IF NOT EXISTS data (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, title TEXT, url TEXT, time INTEGER, isText INTEGER, FOREIGN KEY (slug) REFERENCES meta(slug))');
     // Aktiviert Foreign in SQLITE
     db.run('PRAGMA foreign_keys = ON');
   });
@@ -83,7 +85,7 @@ io.sockets.on('connection', function(client){
   });
 
 
-  // Add new item
+  // Add new entry
 
   client.on('add', function(data){
     var time = new Date().getTime();
@@ -91,10 +93,17 @@ io.sockets.on('connection', function(client){
     console.log("--- Check duplicate ----");
     console.log(data.url);
 
+    var title,
+        isText;
+
     db.serialize(function(){
-      db.each('SELECT url from data WHERE url == "'+data.url+'" AND slug == "'+data.slug+'"', function(err, row) {
+      db.each('SELECT * from data WHERE url == "'+data.url+'" AND slug == "'+data.slug+'"', function(err, row) {
         // do nothing
+        title = row.title;
+        isText = row.isText;
+        console.log(row.isText);
       }, function(err, row){
+
         console.log('Doppelte Einträge: '+row);
         if (row == 0){
           // client.emit('duplicate', "Dieser Link wurde schon hinzugefügt!");
@@ -111,22 +120,27 @@ io.sockets.on('connection', function(client){
                 db.run('UPDATE meta SET startTime = '+ time +' WHERE slug = "' + data.slug + '"');
             });
 
-            db.run('INSERT INTO data (slug,title,url,time) VALUES ("' + data.slug + '","' + data.title + '","' + data.url + '",'+ time +')');
-            client.emit('add-successful');
+            db.run('INSERT INTO data (slug,title,url,time,isText) VALUES ("' + data.slug + '","' + data.title + '","' + data.url + '", ' + time  + ', ' + data.isText + ')');
+            client.emit('add-successful', {title: title});
           });
-
 
 
           client.broadcast.to(slug).emit('push', {title: data.title, url: data.url});
         } else {
-          client.emit('duplicate');
+          client.emit('duplicate', {title: title, isText: isText});
         }
+
+        console.log(title);
       });
 
     });
-
-
   });
+
+// update the entry (title, link/text)
+
+client.on('update', function(data){
+  db.run('UPDATE data SET title = "' + data.title + '", isText = "' + data.isText + '" WHERE url = "' + data.url + '" AND slug = "' + data.slug + '"');
+});
 
   // Client disconnected
 
