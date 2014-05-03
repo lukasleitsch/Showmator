@@ -45,7 +45,11 @@ io.sockets.on('connection', function(client){
       db.get('SELECT * FROM meta WHERE slug == "' + data.slug + '"', function(err, row){
         if (row) {
           client.emit('shownotes-active');
+          client.emit('getTitleAndPublicSlug', {publicSlug: row.publicSlug, title: row.title});
         };
+        
+        console.log("STATUS")
+        console.log(row);
       });
     });
   });
@@ -59,16 +63,23 @@ io.sockets.on('connection', function(client){
     db.serialize(function() {
 
       db.run('INSERT INTO meta (slug, publicSlug) VALUES ("'+data.slug+'","'+data.publicSlug+'")', function(err1, result){
-        var publicSlug;
-        db.get('SELECT publicSlug FROM meta WHERE slug == "'+data.slug+'"', function(err2, row){
-                if(err1 && err1.errno == 19){
-                  client.emit('status', {publicSlug: row.publicSlug, text: 'Du machst bei den Shownotes "'+data.slug+'" mit.'});
-                }else{
-                  client.emit('status', {publicSlug: row.publicSlug, text: 'Neue Shownotes "'+data.slug+'" sind angelegt. Zeit startet mit erstem Eintrag.'});
-                }
+        db.get('SELECT * FROM meta WHERE slug == "'+data.slug+'"', function(err2, row){
+                //console.log(row);
+                client.emit('getTitleAndPublicSlug', {publicSlug: row.publicSlug, title: row.title});
+                // if(err1 && err1.errno == 19){
+                //   client.emit('status', {publicSlug: row.publicSlug, text: 'Du machst bei den Shownotes "'+data.slug+'" mit.'});
+                // }else{
+                //   client.emit('status', {publicSlug: row.publicSlug, text: 'Neue Shownotes "'+data.slug+'" sind angelegt. Zeit startet mit erstem Eintrag.'});
+                // }
         });
       });
     });
+  });
+
+  // set title of shownotes
+  client.on('set-title', function(data){
+    db.run('UPDATE meta SET title = "' + data.title + '" WHERE slug = "' + data.slug + '"');
+    console.log("Set title");
   });
 
   // Check for dublicate

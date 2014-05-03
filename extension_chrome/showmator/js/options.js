@@ -8,6 +8,7 @@ $(function() {
       activeClass = 'has-active-shownotes',
       $slug       = $('#slug'),
       $blacklist  = $('#blacklist'),
+      $title      = $('#title-shownotes'),
 
       init = function() {
         
@@ -38,6 +39,7 @@ $(function() {
         else
           $blacklist.val(localStorage.blacklist);
 
+
         // set hrefs for links
         $('#live').prop('href', baseUrl + '/live/' + localStorage.publicSlug);
         $('#html').prop('href', baseUrl + '/html/' + localStorage.slug);
@@ -59,8 +61,7 @@ $(function() {
     
     } else {
       localStorage.slug = slug;
-      localStorage.publicSlug = randomSlug(); // TODO why?
-      socket.emit('new', {slug: slug, publicSlug: localStorage.publicSlug});
+      socket.emit('new', {slug: slug, publicSlug: randomSlug()});
       $slug.val(slug);
       $('body').addClass(activeClass);
       $('#slug-static').text(slug);
@@ -73,6 +74,12 @@ $(function() {
     localStorage.publicSlug = data.publicSlug;
   });
 
+  //save title changes
+  $title.keyup(function() {
+    socket.emit('set-title', {slug: localStorage.slug, title: $(this).val()});
+    $('em#title-shownotes-alert').text($(this).val());
+    console.log("Title");
+  });
 
   // save blacklist changes
   $blacklist.keyup(function(){
@@ -87,6 +94,21 @@ $(function() {
     e.preventDefault();
     localStorage.clear();
     init();
+  });
+
+
+  // get publicSlug and title from the server
+
+  socket.on('getTitleAndPublicSlug', function(data){
+    $title.val(data.title);
+    if(data.title){
+      $('em#title-shownotes-alert').text(data.title);
+    }
+    console.log('TITLEEL '+data.title);
+    localStorage.publicSlug = data.publicSlug;
+
+    // set hrefs for links
+    $('#live').prop('href', baseUrl + '/live/' + localStorage.publicSlug);
   });
 
 
