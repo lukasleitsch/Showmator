@@ -1,25 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Popup</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/popup.css">
+  <title>Showmator Popup</title>
   <script src="js/jquery.min.js"></script>
   <script src="js/socket.io.js"></script>
   <script src="js/popup.js"></script>
-  <link rel="stylesheet" type="text/css" href="css/popup.css">
 </head>
 <body>
-<div id="dublicate"></div>
-<div id="badUrl"></div>
-<div>
-  <input name="title" id="title" tabindex="2">
-</div>
-<div>
-  <input type="checkbox" name="text" value="true" id="text" class="text" tabindex="3"><label class="text" for="text">Nur Text speichern</label>  
-</div>
-<div>
-  <button id="insert" tabindex="1">Einfügen</button>
-  <button id="delete">Letzten Eintrag löschen</button>
-</div>
+  
+  <div class="alert alert-info">
+    <p>
+      <span class="glyphicon glyphicon-ok"></span>
+      Der Link wurde erfolgreich gespeichert
+    </p>
+  </div>
+
+  <div class="form-inline">
+    <label for="kind-link">
+      <input type="radio" name="kind" value="link" id="kind-link" checked />
+      Link
+    </label>
+    <label for="kind-text-only">
+      <input type="radio" name="kind" value="text-only" id="kind-text-only" />
+      Texteintrag
+    </label>
+  </div>
+
+  <!-- TODO delete placeholder -->
+  <input type="text" name="title" id="title" class="form-control" placeholder="iEnno – ein Macianer auf seinem Spielplatz" tabindex="1" />
+
+  <button class="btn btn-primary disabled" id="save-changes">
+    <span class="glyphicon glyphicon-pencil"></span>
+    Änderung speichern
+  </button>
+
+  <br />
+
+  <button class="btn btn-xs btn-default" id="remove-entry">
+    <span class="glyphicon glyphicon-trash"></span>
+    Eintrag entfernen
+  </button>
+
+
+  <!-- TODO delete -->
+  <div style="display:none;">
+    <div id="dublicate"></div>
+    <div id="badUrl"></div>
+    <div>
+      <input name="title" id="title" tabindex="2">
+    </div>
+    <div>
+      <input type="checkbox" name="text" value="true" id="text" class="text" tabindex="3"><label class="text" for="text">Nur Text speichern</label>  
+    </div>
+    <div>
+      <button id="insert" tabindex="1">Einfügen</button>
+      <button id="delete">Letzten Eintrag löschen</button>
+    </div>    
+  </div>
+
 </body>
 </html>
