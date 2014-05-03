@@ -1,17 +1,17 @@
 var express = require('express'),
-    app = express()
-  , server = require('http').createServer(app)
-  , io = require('socket.io').listen(server, { log: false });
+    app     = express(),
+    server  = require('http').createServer(app),
+    io      = require('socket.io').listen(server, { log: false });
 
 server.listen(63685);
 
-var fs = require("fs");
-var file = "data.db";
+var fs     = require("fs");
+var file   = "data.db";
 var exists = fs.existsSync(file);
 
 var slug;
 
-if(!exists) {
+if (!exists) {
   console.log("Creating DB file.");
   fs.openSync(file, "w");
 }
@@ -20,7 +20,7 @@ io.sockets.on('connection', function(client){
   console.log('Client connected ...');
 
   var sqlite3 = require("sqlite3").verbose();
-  var db = new sqlite3.Database(file);
+  var db      = new sqlite3.Database(file);
 
   // Falls Tabellen noch nicht angelegt sind, werden diese erzeugt
 
@@ -42,14 +42,17 @@ io.sockets.on('connection', function(client){
 
   client.on('status', function(data){
     db.serialize(function() {
-      db.get('SELECT * FROM meta WHERE slug == "' + data.slug + '"', function(err, row){
-        if (row) {
+      db.get('SELECT * FROM meta WHERE slug == "' + data.slug + '"', function(err, row) {
+        if (row)
           client.emit('shownotes-active');
+<<<<<<< HEAD
           client.emit('getTitleAndPublicSlug', {publicSlug: row.publicSlug, title: row.title});
         };
         
         console.log("STATUS")
         console.log(row);
+=======
+>>>>>>> 82e0ace830552da85b80bb1f9791e0108fb50d1c
       });
     });
   });
@@ -63,6 +66,7 @@ io.sockets.on('connection', function(client){
     db.serialize(function() {
 
       db.run('INSERT INTO meta (slug, publicSlug) VALUES ("'+data.slug+'","'+data.publicSlug+'")', function(err1, result){
+<<<<<<< HEAD
         db.get('SELECT * FROM meta WHERE slug == "'+data.slug+'"', function(err2, row){
                 //console.log(row);
                 client.emit('getTitleAndPublicSlug', {publicSlug: row.publicSlug, title: row.title});
@@ -71,11 +75,21 @@ io.sockets.on('connection', function(client){
                 // }else{
                 //   client.emit('status', {publicSlug: row.publicSlug, text: 'Neue Shownotes "'+data.slug+'" sind angelegt. Zeit startet mit erstem Eintrag.'});
                 // }
+=======
+        var publicSlug;
+        db.get('SELECT publicSlug FROM meta WHERE slug == "'+data.slug+'"', function(err2, row){
+          if (err1 && err1.errno == 19) {
+            client.emit('status', {publicSlug: row.publicSlug, text: 'Du machst bei den Shownotes "'+data.slug+'" mit.'});
+          } else {
+            client.emit('status', {publicSlug: row.publicSlug, text: 'Neue Shownotes "'+data.slug+'" sind angelegt. Zeit startet mit erstem Eintrag.'});
+          }
+>>>>>>> 82e0ace830552da85b80bb1f9791e0108fb50d1c
         });
       });
     });
   });
 
+<<<<<<< HEAD
   // set title of shownotes
   client.on('set-title', function(data){
     db.run('UPDATE meta SET title = "' + data.title + '" WHERE slug = "' + data.slug + '"');
@@ -83,19 +97,21 @@ io.sockets.on('connection', function(client){
   });
 
   // Check for dublicate
+=======
+  // Check for duplicate
+>>>>>>> 82e0ace830552da85b80bb1f9791e0108fb50d1c
 
-  client.on('check_dublicate', function(data){
-    console.log("--- Check dublicate ----");
+  client.on('check_duplicate', function(data){
+    console.log("--- Check duplicate ----");
     console.log(data.url);
 
     db.serialize(function(){
       db.each('SELECT url from data WHERE url == "'+data.url+'" AND slug == "'+data.slug+'"', function(err, row) {
-
+        // do nothing
       }, function(err, row){
         console.log('Doppelte Einträge: '+row);
-        if(row > 0){
-          client.emit('dublicate', "Dieser Link wurde schon hinzugefügt!");
-        }
+        if (row > 0)
+          client.emit('duplicate', "Dieser Link wurde schon hinzugefügt!");
       });
 
     });
@@ -106,7 +122,7 @@ io.sockets.on('connection', function(client){
   client.on('add', function(data){
     var time = new Date().getTime();
     insert(data.slug, data.title, data.url, time);
-    console.log("---- Add -----")
+    console.log("---- Add -----");
     console.log("Slug: "+slug);
     console.log(data);
     client.broadcast.to(slug).emit('push', {title: data.title, url: data.url});
@@ -141,30 +157,25 @@ io.sockets.on('connection', function(client){
 
     db.serialize(function() {
       db.each('SELECT startTime from meta WHERE slug == "'+slug+'"', function(err, row) {
-        if (row.startTime == null){
+        if (row.startTime == null)
           db.run('UPDATE meta SET startTime = '+ time +' WHERE slug = "'+slug+'"');
-        }
-        
       });
 
       db.run('INSERT INTO data (slug,title,url,time) VALUES ("'+slug+'","'+title+'","'+url+'",'+ time +')');
-
       client.emit('close');
-
     });
-  };
+  }
 
 
 // Current connections of clients
 
   function counter(slug){
-    var length = 0;
+    var length  = 0;
     var clients = io.sockets.clients(slug);
-    for (val in clients){
+    for (var val in clients)
       length++;
-    }
     return length;
-  };
+  }
 
 });
 
@@ -172,8 +183,8 @@ io.sockets.on('connection', function(client){
 
 app.get('/live/:publicslug', function (req, res) {
 
-  var sqlite3 = require("sqlite3").verbose();
-  var db = new sqlite3.Database(file);
+  var sqlite3    = require("sqlite3").verbose();
+  var db         = new sqlite3.Database(file);
   var publicslug = req.params.publicslug;
 
   var items = [];
@@ -200,8 +211,8 @@ app.get('/live/:publicslug', function (req, res) {
 app.get('/html/:slug', function (req, res) {
 
   var sqlite3 = require("sqlite3").verbose();
-  var db = new sqlite3.Database(file);
-  var slug = req.params.slug;
+  var db      = new sqlite3.Database(file);
+  var slug    = req.params.slug;
 
   var items = [];
   var startTime;
@@ -228,9 +239,9 @@ app.get('/html/:slug', function (req, res) {
 app.get('/html/:slug/:offset', function (req, res) {
 
   var sqlite3 = require("sqlite3").verbose();
-  var db = new sqlite3.Database(file);
-  var slug = req.params.slug;
-  var offset = req.params.offset;
+  var db      = new sqlite3.Database(file);
+  var slug    = req.params.slug;
+  var offset  = req.params.offset;
 
   var items = [];
   var startTime;
@@ -242,12 +253,12 @@ app.get('/html/:slug/:offset', function (req, res) {
       if (row1) {
         db.each('SELECT * FROM data WHERE slug =="'+slug+'" ORDER BY time', function (err2,row2){
           items.push(row2);
-        },function(){
+        },function() {
           res.render('html.ejs', {items: items, start: row1.startTime, slug: slug, offset: row1.offset});
         });
       } else {
         res.writeHead(200);
-        res.write ("Diese Shownotes existieren nicht.");
+        res.write("Diese Shownotes existieren nicht.");
         res.end();
       }
     });
