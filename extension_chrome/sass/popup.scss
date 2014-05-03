@@ -1,7 +1,10 @@
 @import "shared";
 
 body {width:300px; padding:20px; text-align:center;}
-.alert-info {margin-bottom:40px;}
+.alert-info {margin-bottom:40px;
+	&.alert-successful, &.alert-dublicate {display: none;}
+	&.alert-show {display: block;}
+}
 label {margin-right:20px; font-weight:normal;}
 .form-inline input {margin-right:4px;}
 .form-control {margin:8px 0 12px;}

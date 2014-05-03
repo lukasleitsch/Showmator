@@ -43,7 +43,7 @@ io.sockets.on('connection', function(client){
   client.on('status', function(data){
     db.serialize(function() {
       db.get('SELECT * FROM meta WHERE slug == "' + data.slug + '"', function(err, row) {
-        if (row)
+        if (row) {
           client.emit('shownotes-active');
           client.emit('getTitleAndPublicSlug', {publicSlug: row.publicSlug, title: row.title});
         };
@@ -82,7 +82,12 @@ io.sockets.on('connection', function(client){
     console.log("Set title");
   });
 
-  client.on('check_duplicate', function(data){
+
+  // Add new item
+
+  client.on('add', function(data){
+    var time = new Date().getTime();
+
     console.log("--- Check duplicate ----");
     console.log(data.url);
 
@@ -91,22 +96,36 @@ io.sockets.on('connection', function(client){
         // do nothing
       }, function(err, row){
         console.log('Doppelte Einträge: '+row);
-        if (row > 0)
-          client.emit('duplicate', "Dieser Link wurde schon hinzugefügt!");
+        if (row == 0){
+          // client.emit('duplicate', "Dieser Link wurde schon hinzugefügt!");
+
+          console.log("---- Add entry ----");
+          console.log("Slug: " + data.slug);
+          console.log("Title: " + data.title);
+          console.log("Url: " + data.url);
+          console.log("Time: " + time);
+
+          db.serialize(function() {
+            db.each('SELECT startTime from meta WHERE slug == "' + data.slug + '"', function(err, row) {
+              if (row.startTime == null)
+                db.run('UPDATE meta SET startTime = '+ time +' WHERE slug = "' + data.slug + '"');
+            });
+
+            db.run('INSERT INTO data (slug,title,url,time) VALUES ("' + data.slug + '","' + data.title + '","' + data.url + '",'+ time +')');
+            client.emit('add-successful');
+          });
+
+
+
+          client.broadcast.to(slug).emit('push', {title: data.title, url: data.url});
+        } else {
+          client.emit('duplicate');
+        }
       });
 
     });
-  });
 
-  // Add new item
 
-  client.on('add', function(data){
-    var time = new Date().getTime();
-    insert(data.slug, data.title, data.url, time);
-    console.log("---- Add -----");
-    console.log("Slug: "+slug);
-    console.log(data);
-    client.broadcast.to(slug).emit('push', {title: data.title, url: data.url});
   });
 
   // Client disconnected
@@ -127,27 +146,6 @@ io.sockets.on('connection', function(client){
   });
 
 
-  // Funktion zum Eintragen in die Datenbank
-
-  function insert(slug, title, url, time) {
-    console.log("---- Insert function ----");
-    console.log("Slug: "+slug);
-    console.log("Title: "+title);
-    console.log("Url: "+url);
-    console.log("Time: "+time);
-
-    db.serialize(function() {
-      db.each('SELECT startTime from meta WHERE slug == "'+slug+'"', function(err, row) {
-        if (row.startTime == null)
-          db.run('UPDATE meta SET startTime = '+ time +' WHERE slug = "'+slug+'"');
-      });
-
-      db.run('INSERT INTO data (slug,title,url,time) VALUES ("'+slug+'","'+title+'","'+url+'",'+ time +')');
-      client.emit('close');
-    });
-  }
-
-
 // Current connections of clients
 
   function counter(slug){
@@ -160,7 +158,7 @@ io.sockets.on('connection', function(client){
 
 });
 
-/* Live-Shownotes */
+// Live-Shownotes
 
 app.get('/live/:publicslug', function (req, res) {
 
@@ -187,7 +185,7 @@ app.get('/live/:publicslug', function (req, res) {
   });
 });
 
-/* Shownotes in HMTL*/
+// Shownotes in HTML
 
 app.get('/html/:slug', function (req, res) {
 

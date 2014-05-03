@@ -6,9 +6,11 @@ $(function() {
       
       socket = io.connect('http://localhost:63685'),
 
-      $title       = $('#title'),
-      $saveChanges = $('#save-changes'),
-      $alertInfo   = $('.alert-info'),
+      $title            = $('#title'),
+      $saveChanges      = $('#save-changes'),
+      $alertInfo        = $('.alert-info'),
+      $alertSuccessful  = $('.alert-successful'),
+      $alertDublicate   = $('.alert-dublicate'),
 
       htmlEntities = function(str) {
         // TODO why `String()`?
@@ -46,15 +48,14 @@ $(function() {
 
   // prevent duplication
   socket.on('duplicate', function(){
-    $('#duplicate').html('<div class="alert alert-error">Dieser Link ist schon eingetragen!</div>');
-    $('#insert').html("Trotzdem einfügen");
+    $alertDublicate.addClass('alert-show');
   });
 
 
-  // Ist der Link eingetragen, meldet der Server dies und das Popup wird geschlossen und das Badget wird gesetzt
-  socket.on('close', function(){
+  // show alert-successful abd badget if server respond
+  socket.on('add-successful', function(){
     chrome.extension.getBackgroundPage().badget("OK", "#33cc00");
-    window.close();
+    $alertSuccessful.addClass('alert-show');
   });
 
 
@@ -103,7 +104,7 @@ $(function() {
 
     // check duplicates
     // TODO necessary? better: check server-side when link is sent → react on response error
-    socket.emit('check_duplicate', {slug: localStorage.slug, url: htmlEntities(url)});
+    //socket.emit('check_duplicate', {slug: localStorage.slug, url: htmlEntities(url)});
 
     // add link
     // TODO badge on success
