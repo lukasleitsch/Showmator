@@ -2,7 +2,7 @@
 
 body {width:300px; padding:20px; text-align:center;}
 .alert-info {margin-bottom:40px;
-	&.alert-successful, &.alert-dublicate {display: none;}
+	&.alert-successful, &.alert-dublicate, &.alert-error {display: none;}
 	&.alert-show {display: block;}
 }
 label {margin-right:20px; font-weight:normal;}

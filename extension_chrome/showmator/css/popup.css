@@ -17,7 +17,7 @@ body {
 
 .alert-info {
   margin-bottom: 40px; }
-  .alert-info.alert-successful, .alert-info.alert-dublicate {
+  .alert-info.alert-successful, .alert-info.alert-dublicate, .alert-info.alert-error {
     display: none; }
   .alert-info.alert-show {
     display: block; }

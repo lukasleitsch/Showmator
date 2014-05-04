@@ -11,6 +11,7 @@ $(function() {
       $alertInfo        = $('.alert-info'),
       $alertSuccessful  = $('.alert-successful'),
       $alertDublicate   = $('.alert-dublicate'),
+      $alertError       = $('.alert-error'),
 
       htmlEntities = function(str) {
         // TODO why `String()`?
@@ -97,6 +98,14 @@ $(function() {
     $saveChanges.removeClass('disabled');
   });
 
+  // if slug not set
+
+  if (typeof(localStorage.slug) == "undefined") {
+    $alertError.addClass('alert-show');
+    $('#link-options').prop('href', chrome.extension.getURL("options.html"));
+    
+  }
+
   
 
   // get tab title and url + send link to server
@@ -125,6 +134,7 @@ $(function() {
 
     // add link
     // TODO badge on success
-    socket.emit('add', {slug: localStorage.slug, title: title, url: url, isText: 0});
+    if (typeof(localStorage.slug) != "undefined")
+      socket.emit('add', {slug: localStorage.slug, title: title, url: url, isText: 0});
   });
 });
