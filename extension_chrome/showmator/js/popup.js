@@ -104,7 +104,7 @@ $(function() {
     $alertError.addClass('alert-show');
     $('#link-options').prop('href', chrome.extension.getURL("options.html"));
     
-  }
+  };
 
   
 
@@ -134,7 +134,9 @@ $(function() {
 
     // add link
     // TODO badge on success
-    if (typeof(localStorage.slug) != "undefined")
+    if (typeof(localStorage.slug) != "undefined") {
       socket.emit('add', {slug: localStorage.slug, title: title, url: url, isText: 0});
+      console.log("slug "+typeof(localStorage.slug));
+    }
   });
 });
