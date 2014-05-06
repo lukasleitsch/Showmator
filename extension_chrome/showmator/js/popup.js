@@ -2,6 +2,10 @@
 /*global io */
 
 $(function() {
+
+  // vars and functions
+  // -----------------------------------------------------------------------------
+
   var title, url,
       
       socket = io.connect('http://localhost:63685'),
@@ -9,8 +13,8 @@ $(function() {
       $title            = $('#title'),
       $saveChanges      = $('#save-changes'),
       $alertInfo        = $('.alert-info'),
-      $alertSuccessful  = $('.alert-successful'),
-      $alertDublicate   = $('.alert-dublicate'),
+      // $alertSuccessful  = $('.alert-successful'),
+      $alertDuplicate   = $('.alert-duplicate'),
       $alertError       = $('.alert-error'),
 
       htmlEntities = function(str) {
@@ -32,13 +36,12 @@ $(function() {
     if ($(this).hasClass('disabled'))
       return;
 
-    title = htmlEntities($title.val());
-    if ($('#kind-text-only').is(":checked"))
-      var isText = 1;
-    if ($('#kind-link').is(":checked"))
-      var isText = 0;
-    // TODO make change event
-    socket.emit('update', {slug: localStorage.slug, title: title, url: url, isText: isText});
+    socket.emit('linkUpdated', {
+      slug:   localStorage.slug,
+      title:  htmlEntities($title.val()),
+      url:    url,
+      isText: $('#kind-text-only').is(':checked') ? 1 : 0
+    });
     window.close();
   });
 
@@ -47,26 +50,6 @@ $(function() {
   $('remove-entry').click(function() {
     // TODO works with just the slug? even with non-links?
     socket.emit('delete', {slug: localStorage.slug});
-  });
-
-
-  // prevent duplication
-  socket.on('duplicate', function(data){
-    $alertDublicate.addClass('alert-show');
-    if(data.title)
-      $title.val(data.title);
-    if(data.isText == 1)
-      $('#kind-text-only').prop('checked', true);
-    console.log(data.isText);
-  });
-
-
-  // show alert-successful abd badget if server respond
-  socket.on('add-successful', function(data){
-    chrome.extension.getBackgroundPage().badget("OK", "#33cc00");
-    $alertSuccessful.addClass('alert-show');
-    if(data.title)
-      $title.val(data.title);
   });
 
 
@@ -92,51 +75,64 @@ $(function() {
   });
 
 
-  // if radio-button text change
-  $('#kind-text-only, #kind-link').change(function(){
+  // hide alert if mode for link/text-only changes
+  $('#kind-text-only, #kind-link').change(function() {
     $alertInfo.slideUp();
     $saveChanges.removeClass('disabled');
   });
 
-  // if slug not set
 
-  if (typeof(localStorage.slug) == "undefined") {
-    $alertError.addClass('alert-show');
-    $('#link-options').prop('href', chrome.extension.getURL("options.html"));
-    
-  };
 
+  // socket events
+  // -----------------------------------------------------------------------------
   
+  // prevent duplication
+  socket.on('duplicate', function(data) {
+    // TODO make overlay
+    $alertDuplicate.addClass('alert-show');
+    if(data.title)
+      $title.val(data.title);
+    if (data.isText == 1)
+      $('#kind-text-only').prop('checked', true);
+  });
+
+
+  // show badget if server sends success event
+  socket.on('linkAddedSuccess', function() {
+    chrome.extension.getBackgroundPage().badget("OK", "#33cc00");
+  });
+  
+
 
   // get tab title and url + send link to server
   // -----------------------------------------------------------------------------
   
-  chrome.tabs.getSelected(null, function(tab) {
-    title = htmlEntities(tab.title);
-    url   = tab.url;
+  // show warning if slug is not set
+  if (typeof(localStorage.slug) == "undefined") {
+    $alertError.addClass('alert-show');
+    $('#link-options').prop('href', chrome.extension.getURL("options.html"));
 
-    $title.val(title);
+  // get tab data und send add-event
+  } else {
+    chrome.tabs.getSelected(null, function(tab) {
+      title = htmlEntities(tab.title);
+      url   = tab.url;
 
-    // prevent if on blacklist
-    // TODO make forEach
-    // TODO control via body class
-    var blacklist = localStorage.blacklist.split('\n'); // TODO works on windows?
-    for (var i = 0; i < blacklist.length; i++) {
-      if (url == blacklist[i]) {
-        $('#badUrl').html('<div class="alert alert-error">Böse URL: Kann nicht eingetragen werden!</div>');
-        $('#insert, #text, .text, #title, #duplicate, #delete').remove();
+      $title.val(title);
+
+      // prevent if on blacklist
+      // TODO make forEach
+      // TODO make overlay
+      var blacklist = localStorage.blacklist.split('\n'); // TODO works on windows?
+      for (var i = 0; i < blacklist.length; i++) {
+        if (url == blacklist[i]) {
+          $('#badUrl').html('<div class="alert alert-error">Böse URL: Kann nicht eingetragen werden!</div>');
+          $('#insert, #text, .text, #title, #duplicate, #delete').remove();
+        }
       }
-    }
 
-    // check duplicates
-    // TODO necessary? better: check server-side when link is sent → react on response error
-    //socket.emit('check_duplicate', {slug: localStorage.slug, url: htmlEntities(url)});
-
-    // add link
-    // TODO badge on success
-    if (typeof(localStorage.slug) != "undefined") {
-      socket.emit('add', {slug: localStorage.slug, title: title, url: url, isText: 0});
-      console.log("slug "+typeof(localStorage.slug));
-    }
-  });
+      // add link
+      socket.emit('linkAdded', {slug: localStorage.slug, title: title, url: url, isText: 0});
+    });
+  }
 });

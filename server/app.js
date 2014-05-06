@@ -7,11 +7,10 @@ var express = require('express'),
 
 server.listen(63685);
 
-var fs     = require("fs");
-var file   = "data.db";
-var exists = fs.existsSync(file);
-
-var slug;
+var fs     = require("fs"),
+    file   = "data.db",
+    exists = fs.existsSync(file),
+    slug;
 
 if (!exists) {
   console.log("Creating DB file.");
@@ -21,15 +20,14 @@ if (!exists) {
 io.sockets.on('connection', function(client){
   console.log('Client connected ...');
 
-  var sqlite3 = require("sqlite3").verbose();
-  var db      = new sqlite3.Database(file);
+  var sqlite3 = require("sqlite3").verbose(),
+      db      = new sqlite3.Database(file);
 
-  // Falls Tabellen noch nicht angelegt sind, werden diese erzeugt
-
+  // Create tables if not present
   db.serialize(function(){
     db.run('CREATE TABLE IF NOT EXISTS meta (slug TEXT PRIMARY KEY NOT NULL, startTime INTEGER, offset INTEGER, publicSlug TEXT, title TEXT)');
     db.run('CREATE TABLE IF NOT EXISTS data (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, title TEXT, url TEXT, time INTEGER, isText INTEGER, FOREIGN KEY (slug) REFERENCES meta(slug))');
-    // Aktiviert Foreign in SQLITE
+    // activates foreign keys in SQlite
     db.run('PRAGMA foreign_keys = ON');
   });
 
@@ -41,7 +39,6 @@ io.sockets.on('connection', function(client){
 
 
   // Check status of shownotes
-
   client.on('statusRequest', function(data){
     db.serialize(function() {
       db.get('SELECT * FROM meta WHERE slug == "' + data.slug + '"', function(err, row) {
@@ -62,7 +59,6 @@ io.sockets.on('connection', function(client){
   });
 
   // Create new shownotes
-
   client.on('new', function(data){
     console.log("---- Create new Shownotes ----");
     console.log(data);
@@ -92,17 +88,15 @@ io.sockets.on('connection', function(client){
 
   // Add new entry
 
-  client.on('add', function(data){
-    var time = new Date().getTime();
+  client.on('linkAdded', function(data){
+    var time = new Date().getTime()
+        title, isText;
 
     console.log("--- Check duplicate ----");
     console.log(data.url);
 
-    var title, isText;
-
     db.serialize(function(){
       db.each('SELECT * from data WHERE url == "'+data.url+'" AND slug == "'+data.slug+'"', function(err, row) {
-        // do nothing
         title = row.title;
         isText = row.isText;
         console.log(row.isText);
@@ -110,8 +104,6 @@ io.sockets.on('connection', function(client){
 
         console.log('Doppelte Einträge: '+row);
         if (row == 0){
-          // client.emit('duplicate', "Dieser Link wurde schon hinzugefügt!");
-
           console.log("---- Add entry ----");
           console.log("Slug: " + data.slug);
           console.log("Title: " + data.title);
@@ -125,11 +117,12 @@ io.sockets.on('connection', function(client){
             });
 
             db.run('INSERT INTO data (slug,title,url,time,isText) VALUES ("' + data.slug + '","' + data.title + '","' + data.url + '", ' + time  + ', ' + data.isText + ')');
-            client.emit('add-successful', {title: title});
+            client.emit('linkAddedSuccess'/*, {title: title}*/);
           });
 
 
           client.broadcast.to(slug).emit('push', {title: data.title, url: data.url});
+        
         } else {
           client.emit('duplicate', {title: title, isText: isText});
         }
@@ -140,22 +133,24 @@ io.sockets.on('connection', function(client){
     });
   });
 
-  // update the entry (title, link/text)
 
-  client.on('update', function(data){
+  // update the entry (title, link/text)
+  client.on('linkUpdated', function(data) {
     db.run('UPDATE data SET title = "' + data.title + '", isText = "' + data.isText + '" WHERE url = "' + data.url + '" AND slug = "' + data.slug + '"');
+    // TODO impement in live shownotes
+    client.broadcast.to(data.slug).emit('linkUpdated', {title: data.title, url: data.url});
   });
 
-  // Client disconnected
 
+  // Client disconnected
   client.on('disconnect', function(){
     console.log("Client disconnected ...");
     io.sockets.in(slug).emit("counter", counter(slug)-1);
     db.close();
   });
 
-  // delete last item
 
+  // delete last item
   client.on('delete', function(data){
     db.run('DELETE FROM data WHERE id IN (SELECT id FROM (SELECT id FROM data WHERE slug = "'+data.slug+'" group by slug)x)',function (err,row){
       client.broadcast.to(slug).emit('reload');
@@ -165,10 +160,9 @@ io.sockets.on('connection', function(client){
 
 
   // Current connections of clients
-
   function counter(slug){
-    var length  = 0;
-    var clients = io.sockets.clients(slug);
+    var length  = 0,
+        clients = io.sockets.clients(slug);
     for (var val in clients)
       length++;
     return length;
@@ -176,15 +170,15 @@ io.sockets.on('connection', function(client){
 
 });
 
-// Live-Shownotes
 
+// Live-Shownotes
 app.get('/live/:publicslug', function (req, res) {
 
-  var sqlite3    = require("sqlite3").verbose();
-  var db         = new sqlite3.Database(file);
-  var publicslug = req.params.publicslug;
+  var sqlite3    = require("sqlite3").verbose(),
+      db         = new sqlite3.Database(file),
+      publicslug = req.params.publicslug,
+      items = [];
 
-  var items = [];
   db.serialize(function(){
     db.get('SELECT slug FROM meta WHERE publicSlug == "'+publicslug+'"',function(err, row){
       if (row){
@@ -203,16 +197,15 @@ app.get('/live/:publicslug', function (req, res) {
   });
 });
 
-// Shownotes in HTML
 
+// Shownotes in HTML
 app.get('/html/:slug', function (req, res) {
 
-  var sqlite3 = require("sqlite3").verbose();
-  var db      = new sqlite3.Database(file);
-  var slug    = req.params.slug;
-
-  var items = [];
-  var startTime;
+  var sqlite3 = require("sqlite3").verbose(),
+      db      = new sqlite3.Database(file),
+      slug    = req.params.slug,
+      items   = [],
+      startTime;
 
   db.serialize(function(){
     db.get('SELECT startTime,offset FROM meta WHERE slug == "'+slug+'"',function (err1, row1){
@@ -231,17 +224,16 @@ app.get('/html/:slug', function (req, res) {
   });
 });
 
-/* Offset */
 
+// Offset
 app.get('/html/:slug/:offset', function (req, res) {
 
-  var sqlite3 = require("sqlite3").verbose();
-  var db      = new sqlite3.Database(file);
-  var slug    = req.params.slug;
-  var offset  = req.params.offset;
-
-  var items = [];
-  var startTime;
+  var sqlite3 = require("sqlite3").verbose(),
+      db      = new sqlite3.Database(file),
+      slug    = req.params.slug,
+      offset  = req.params.offset,
+      items   = [],
+      startTime;
 
   db.serialize(function(){
     db.run('UPDATE meta set offset = "'+offset+'" where slug =="'+slug+'"');
