@@ -240,8 +240,8 @@
 		},
 	"\/showmator\/js\/background.js": {
 		"fileType": 64,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
+		"ignore": 1,
+		"ignoreWasSetByUser": 1,
 		"inputAbbreviatedPath": "\/showmator\/js\/background.js",
 		"outputAbbreviatedPath": "\/showmator\/js\/min\/background-ck.js",
 		"outputPathIsOutsideProject": 0,
@@ -251,8 +251,8 @@
 		},
 	"\/showmator\/js\/bootstrap.min.js": {
 		"fileType": 64,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
+		"ignore": 1,
+		"ignoreWasSetByUser": 1,
 		"inputAbbreviatedPath": "\/showmator\/js\/bootstrap.min.js",
 		"outputAbbreviatedPath": "\/showmator\/js\/min\/bootstrap.min-ck.js",
 		"outputPathIsOutsideProject": 0,
@@ -262,8 +262,8 @@
 		},
 	"\/showmator\/js\/jquery.min.js": {
 		"fileType": 64,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
+		"ignore": 1,
+		"ignoreWasSetByUser": 1,
 		"inputAbbreviatedPath": "\/showmator\/js\/jquery.min.js",
 		"outputAbbreviatedPath": "\/showmator\/js\/min\/jquery.min-ck.js",
 		"outputPathIsOutsideProject": 0,
@@ -279,13 +279,13 @@
 		"outputAbbreviatedPath": "\/showmator\/js\/min\/options-ck.js",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
-		"outputStyle": 0,
-		"syntaxCheckerStyle": 0
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
 		},
 	"\/showmator\/js\/popup.js": {
 		"fileType": 64,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
+		"ignore": 1,
+		"ignoreWasSetByUser": 1,
 		"inputAbbreviatedPath": "\/showmator\/js\/popup.js",
 		"outputAbbreviatedPath": "\/showmator\/js\/min\/popup-ck.js",
 		"outputPathIsOutsideProject": 0,
@@ -295,8 +295,8 @@
 		},
 	"\/showmator\/js\/socket.io.js": {
 		"fileType": 64,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
+		"ignore": 1,
+		"ignoreWasSetByUser": 1,
 		"inputAbbreviatedPath": "\/showmator\/js\/socket.io.js",
 		"outputAbbreviatedPath": "\/showmator\/js\/min\/socket.io-ck.js",
 		"outputPathIsOutsideProject": 0,

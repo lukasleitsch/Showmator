@@ -42,15 +42,20 @@ io.sockets.on('connection', function(client){
 
   // Check status of shownotes
 
-  client.on('status', function(data){
+  client.on('statusRequest', function(data){
     db.serialize(function() {
       db.get('SELECT * FROM meta WHERE slug == "' + data.slug + '"', function(err, row) {
+        var data = {};
         if (row) {
-          client.emit('shownotes-active');
-          client.emit('getTitleAndPublicSlug', {publicSlug: row.publicSlug, title: row.title});
+          data = {
+            active:     true,
+            publicSlug: row.publicSlug,
+            title:      row.title
+          };
         };
+        client.emit('statusResponse', data);
         
-        console.log("STATUS")
+        console.log("STATUS");
         console.log(row);
       });
     });
@@ -67,7 +72,7 @@ io.sockets.on('connection', function(client){
       db.run('INSERT INTO meta (slug, publicSlug) VALUES ("'+data.slug+'","'+data.publicSlug+'")', function(err1, result){
         db.get('SELECT * FROM meta WHERE slug == "'+data.slug+'"', function(err2, row){
                 //console.log(row);
-                client.emit('getTitleAndPublicSlug', {publicSlug: row.publicSlug, title: row.title});
+                // client.emit('getTitleAndPublicSlug', {publicSlug: row.publicSlug, title: row.title});
                 // if(err1 && err1.errno == 19){
                 //   client.emit('status', {publicSlug: row.publicSlug, text: 'Du machst bei den Shownotes "'+data.slug+'" mit.'});
                 // }else{
@@ -93,8 +98,7 @@ io.sockets.on('connection', function(client){
     console.log("--- Check duplicate ----");
     console.log(data.url);
 
-    var title,
-        isText;
+    var title, isText;
 
     db.serialize(function(){
       db.each('SELECT * from data WHERE url == "'+data.url+'" AND slug == "'+data.slug+'"', function(err, row) {
@@ -136,11 +140,11 @@ io.sockets.on('connection', function(client){
     });
   });
 
-// update the entry (title, link/text)
+  // update the entry (title, link/text)
 
-client.on('update', function(data){
-  db.run('UPDATE data SET title = "' + data.title + '", isText = "' + data.isText + '" WHERE url = "' + data.url + '" AND slug = "' + data.slug + '"');
-});
+  client.on('update', function(data){
+    db.run('UPDATE data SET title = "' + data.title + '", isText = "' + data.isText + '" WHERE url = "' + data.url + '" AND slug = "' + data.slug + '"');
+  });
 
   // Client disconnected
 
@@ -160,7 +164,7 @@ client.on('update', function(data){
   });
 
 
-// Current connections of clients
+  // Current connections of clients
 
   function counter(slug){
     var length  = 0;

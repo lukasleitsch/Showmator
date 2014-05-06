@@ -29,7 +29,7 @@
       <label for="">Kürzel eintragen:</label>
       <div class="input-group-wrap">
         <div class="input-group">
-          <input id="slug" class="form-control input-lg" type="text" value="r4nd0mS†r1ng" />
+          <input id="slug" class="form-control input-lg" type="text" />
           <div class="input-group-btn">
             <button id="submit-slug" class="btn btn-primary btn-lg">loslegen</button>
           </div>
@@ -45,7 +45,7 @@
     <div class="alert alert-info">
       <h3>Es sind Shownotes aktiv.</h3>
       <p>
-        Um die aktiven Shownotes (<em id="title-shownotes-alert">Phasentheater 005</em>) und das zugehörige Kürzel zu verwerfen, klicke auf <a href="#" id="alert-link-create-new" class="alert-link">neue Shownotes erstellen</a>.
+        Um die aktiven Shownotes (<em id="title-shownotes-alert">kein Titel festgelegt</em>) und das zugehörige Kürzel zu verwerfen, klicke auf <a href="#" id="alert-link-create-new" class="alert-link">neue Shownotes erstellen</a>.
       </p>
     </div>
 
@@ -83,7 +83,7 @@
         <label class="control-label">Blacklist:</label>
         <div class="form-control-wrap">
           <textarea id="blacklist" type="text" class="input-lg form-control" placeholder="z.B. http://www.google.de"></textarea>
-          <p class="help-block">Hier gelistete Links tauchen nicht in den Shownotes auf. 1 Link pro Zeile.</p>
+          <p class="help-block">Hier gelistete Links tauchen nicht in den Shownotes auf. 1 Link pro Zeile. Wird beim Tippen automatisch gespeichert.</p>
         </div>
       </div>
 
@@ -99,44 +99,7 @@
 
     </div> <!-- /.form-horizontal -->
   </div> <!-- /.show-on-active-shownotes -->
-
-
-<!-- <p>Zum Erstellen von neuen Shownotes muss das Kürzel ausgefühlt sein. Man kann einfach das generierte Kürzel verwenden. Damit andere bei den Shownotes mitarbeiten können, muss das Kürzel weitergeben werden und bei dem Partner eigetragen werden.</p>
-
-<p>Die Zeit wird mit dem ersten Eintrag gestartet. Wenn man die Shownotes exportiert, kann der Zeitpunkt des ersten Eintrags definiert werden.</p>
-<h2>Neue Shownotes erstellen oder mitmachen.</h2>
-<p>Geben hier ein Kürzel für die Shownotes ein. Mehrere Personen können das gleiche Kürzel verwenden und so gemeinsam eine Liste erstellen.</p>
-<br>
-<div class="row">
-  <div class="col-md-3">
-    <div class="input-group">
-      <input type="text" class="form-control" id="slug">
-      <span class="input-group-btn">
-        <button class="btn btn-default" type="button" id="submit">Los!</button>
-      </span>
-    </div>
-  </div>
-  <div class="col-md-8">
-     <span id="status" class="alert alert-success" style="display:none;"></span>
-  </div>
-
-</div>
-<h2>Shownotes live verfolgen oder als HTML exportieren</h2>
-<p>Das Kürzel, dass bei den Live-Shownotes in der URL verwendet wird, ist nicht das gleiche, wie das, das hier festgelegt worden ist. Der Link kann an die Hörer weitergegeben werden.</p>
-<div>
-  <button id="live" class="btn btn-default">Live-Shownotes</button>
-  <button id="html" class="btn btn-default">Shownotes in HTML</button>
-</div>
-<h2>Böse URLs</h2>
-<p>Pro Zeile eine URL, die nicht in die Shownotes eingetragen wird. Kann z.B. dafür genutzt werden, dass keine internen Links ausversehen in die Shownotes gelangen.</p>
-<div class="row">
-  <div class="col-md-4">
-  <textarea id="badUrls" style="width:100%;" class="form-control"></textarea>
-</div>
-<div class="col-md-4">
-  <div id="status_url" class="alert alert-success" style="display: none;"></div>
-</div>
-</div> -->
+  
 
 <footer>
   <a href="http://leitsch.org">Showmator by Lukas Leitsch</a> &bull; <a href="https://leitsch.org/projects/showmator">Changelog</a>

@@ -1,55 +1,70 @@
-// TODO title stuff
+/*global io */
 
+// TODO error handling (no slug found, duplicated slug on #submit-slug)
 $(function() {
 
-  var baseUrl = 'http://localhost:63685', // TODO should come from server
+  // vars and functions
+  // -----------------------------------------------------------------------------
+
+  var baseUrl = 'http://localhost:63685',
       socket  = io.connect(baseUrl),
 
-      activeClass = 'has-active-shownotes',
+      extendedFormClass = 'has-active-shownotes',
+
+      $body       = $('body'),
       $slug       = $('#slug'),
+      $slugStatic = $('#slug-static'),
       $blacklist  = $('#blacklist'),
       $title      = $('#title-shownotes'),
+      $titleAlert = $('#title-shownotes-alert'),
 
+
+      // checks active status + inserts data if available
       init = function() {
-        
-        // toggle class based on current status
+        socket.emit('statusRequest', {slug: localStorage.slug});
+        socket.on('statusResponse', function(data) {
 
-        $('body').removeClass(activeClass);
+          // if active: show extended form and replace title
+          if (data.active) {
+            $body.addClass(extendedFormClass);
+            if (data.title) {
+              $title.val(data.title);
+              $titleAlert.text(data.title);
+            }
+            localStorage.publicSlug = data.publicSlug;
 
-        socket.emit('status', {slug: localStorage.slug});
+          // if new: generate slugs
+          } else {
+            localStorage.slug       = randomSlug();
+            localStorage.publicSlug = randomSlug();
+          }
 
-        socket.on('shownotes-active', function(){
-          console.log("Shownotes active");
-          $('body').addClass(activeClass);
+          // enter slug into fields
+          $slug.val(localStorage.slug);
+          $slugStatic.text(localStorage.slug);
+
+          // check blacklist
+          if (typeof(localStorage.blacklist) == "undefined")
+            localStorage.blacklist = '';
+          else
+            $blacklist.val(localStorage.blacklist);
+
+          // update href attributes for external links
+          $('#live').prop('href', baseUrl + '/live/' + localStorage.publicSlug);
+          $('#html').prop('href', baseUrl + '/html/' + localStorage.slug);
         });
-
-        // set slug in option
-        $('#slug-static').text(localStorage.slug);
-        
-        
-        if (typeof(localStorage.slug) == "undefined")
-          localStorage.slug = randomSlug();
-        $slug.val(localStorage.slug);
-
-        if (typeof(localStorage.publicSlug) == "undefined")
-          localStorage.publicSlug = randomSlug();
-
-        if (typeof(localStorage.blacklist) == "undefined")
-          localStorage.blacklist = '';
-        else
-          $blacklist.val(localStorage.blacklist);
-
-
-        // set hrefs for links
-        $('#live').prop('href', baseUrl + '/live/' + localStorage.publicSlug);
-        $('#html').prop('href', baseUrl + '/html/' + localStorage.slug);
       },
 
 
+      // helper for slug generation
       randomSlug = function() {
         return Math.random().toString(36).substring(7);
       };
 
+
+
+  // bind events
+  // -----------------------------------------------------------------------------
 
   // submit new slug and show more options
   $('#submit-slug').click(function() {
@@ -60,32 +75,26 @@ $(function() {
       $('#status').show().html("Bitte ein Kürzel eingeben!").delay(5000).fadeOut(3000);
     
     } else {
-      localStorage.slug = slug;
-      socket.emit('new', {slug: slug, publicSlug: randomSlug()});
-      $slug.val(slug);
-      $('body').addClass(activeClass);
-      $('#slug-static').text(slug);
+      // TODO make common request and wait for success response (so we can validate slug on server)
+      socket.emit('new', {slug: slug, publicSlug: localStorage.publicSlug});
+      $body.addClass(extendedFormClass);
     }
   });
 
 
-  socket.on('status', function(data){
-    $('#status').show().html(data.text).delay(5000).fadeOut(3000);
-    localStorage.publicSlug = data.publicSlug;
+  // save title changes
+  $title.keyup(function() {
+    var val = $(this).val();
+    $titleAlert.text(val);
+
+    // TODO only when nothing has changed after 1000ms
+    socket.emit('set-title', {slug: localStorage.slug, title: val});
   });
 
-  //save title changes
-  $title.keyup(function() {
-    socket.emit('set-title', {slug: localStorage.slug, title: $(this).val()});
-    $('em#title-shownotes-alert').text($(this).val());
-    console.log("Title");
-  });
 
   // save blacklist changes
-  $blacklist.keyup(function(){
+  $blacklist.keyup(function() {
     localStorage.blacklist = $(this).val();
-    // TODO necessary?
-    $('#status_url').show().html("Gespeichert").delay(5000).fadeOut(3000);
   });
 
 
@@ -93,22 +102,8 @@ $(function() {
   $('#create-new, #alert-link-create-new').click(function(e) {
     e.preventDefault();
     localStorage.clear();
+    $body.removeClass(extendedFormClass);
     init();
-  });
-
-
-  // get publicSlug and title from the server
-
-  socket.on('getTitleAndPublicSlug', function(data){
-    $title.val(data.title);
-    if(data.title){
-      $('em#title-shownotes-alert').text(data.title);
-    }
-    console.log('TITLEEL '+data.title);
-    localStorage.publicSlug = data.publicSlug;
-
-    // set hrefs for links
-    $('#live').prop('href', baseUrl + '/live/' + localStorage.publicSlug);
   });
 
 
