@@ -24,6 +24,8 @@ $(function() {
         socket.emit('statusRequest', {slug: localStorage.slug});
         socket.on('statusResponse', function(data) {
 
+          var slug, publicSlug;
+
           // if active: show extended form and replace title
           if (data.active) {
             $body.addClass(extendedFormClass);
@@ -31,17 +33,19 @@ $(function() {
               $title.val(data.title);
               $titleAlert.text(data.title);
             }
-            localStorage.publicSlug = data.publicSlug;
+            publicSlug = data.publicSlug;
+            slug       = localStorage.slug;
 
           // if new: generate slugs
           } else {
-            localStorage.slug       = randomSlug();
-            localStorage.publicSlug = randomSlug();
+            slug       = randomSlug();
+            publicSlug = randomSlug();
+            localStorage.publicSlug = publicSlug;
           }
 
           // enter slug into fields
-          $slug.val(localStorage.slug);
-          $slugStatic.text(localStorage.slug);
+          $slug.val(slug);
+          $slugStatic.text(slug);
 
           // check blacklist
           if (typeof(localStorage.blacklist) == "undefined")
@@ -50,8 +54,8 @@ $(function() {
             $blacklist.val(localStorage.blacklist);
 
           // update href attributes for external links
-          $('#live').prop('href', baseUrl + '/live/' + localStorage.publicSlug);
-          $('#html').prop('href', baseUrl + '/html/' + localStorage.slug);
+          $('#live').prop('href', baseUrl + '/live/' + publicSlug);
+          $('#html').prop('href', baseUrl + '/html/' + slug);
         });
       },
 
