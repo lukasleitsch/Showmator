@@ -65,16 +65,8 @@ io.sockets.on('connection', function(client){
     console.log("------------------------------");
     db.serialize(function() {
 
-      db.run('INSERT INTO meta (slug, publicSlug) VALUES ("'+data.slug+'","'+data.publicSlug+'")', function(err1, result){
-        db.get('SELECT * FROM meta WHERE slug == "'+data.slug+'"', function(err2, row){
-                //console.log(row);
-                // client.emit('getTitleAndPublicSlug', {publicSlug: row.publicSlug, title: row.title});
-                // if(err1 && err1.errno == 19){
-                //   client.emit('status', {publicSlug: row.publicSlug, text: 'Du machst bei den Shownotes "'+data.slug+'" mit.'});
-                // }else{
-                //   client.emit('status', {publicSlug: row.publicSlug, text: 'Neue Shownotes "'+data.slug+'" sind angelegt. Zeit startet mit erstem Eintrag.'});
-                // }
-        });
+      db.run('INSERT INTO meta (slug, publicSlug) VALUES ("'+data.slug+'","'+data.publicSlug+'")', function(err, result){
+
       });
     });
   });
@@ -89,7 +81,7 @@ io.sockets.on('connection', function(client){
   // Add new entry
 
   client.on('linkAdded', function(data){
-    var time = new Date().getTime()
+    var time = new Date().getTime(),
         title, isText;
 
     console.log("--- Check duplicate ----");
@@ -116,8 +108,14 @@ io.sockets.on('connection', function(client){
                 db.run('UPDATE meta SET startTime = '+ time +' WHERE slug = "' + data.slug + '"');
             });
 
-            db.run('INSERT INTO data (slug,title,url,time,isText) VALUES ("' + data.slug + '","' + data.title + '","' + data.url + '", ' + time  + ', ' + data.isText + ')');
-            client.emit('linkAddedSuccess'/*, {title: title}*/);
+            db.run('INSERT INTO data (slug,title,url,time,isText) VALUES ("' + data.slug + '","' + data.title + '","' + data.url + '", ' + time  + ', ' + data.isText + ')', function(err, result){
+              console.log("ADD-ERROR: "+err);
+              if(err){
+                client.emit('linkAddedError');
+              } else {
+                client.emit('linkAddedSuccess'/*, {title: title}*/);
+              }
+            });
           });
 
 

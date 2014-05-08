@@ -101,6 +101,11 @@ $(function() {
   socket.on('linkAddedSuccess', function() {
     chrome.extension.getBackgroundPage().badget("OK", "#33cc00");
   });
+
+  socket.on('linkAddedError', function(){
+    $alertError.addClass('alert-show');
+    $('#link-options').prop('href', chrome.extension.getURL("options.html"));
+  });
   
 
 
@@ -108,12 +113,12 @@ $(function() {
   // -----------------------------------------------------------------------------
   
   // show warning if slug is not set
-  if (typeof(localStorage.slug) == "undefined") {
-    $alertError.addClass('alert-show');
-    $('#link-options').prop('href', chrome.extension.getURL("options.html"));
+  // if (typeof(localStorage.slug) == "undefined") {
+  //   $alertError.addClass('alert-show');
+  //   $('#link-options').prop('href', chrome.extension.getURL("options.html"));
 
-  // get tab data und send add-event
-  } else {
+  // // get tab data und send add-event
+  // } else {
     chrome.tabs.getSelected(null, function(tab) {
       title = htmlEntities(tab.title);
       url   = tab.url;
@@ -134,5 +139,5 @@ $(function() {
       // add link
       socket.emit('linkAdded', {slug: localStorage.slug, title: title, url: url, isText: 0});
     });
-  }
+  // }
 });
