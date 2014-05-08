@@ -18,13 +18,15 @@ $(function() {
       $title      = $('#title-shownotes'),
       $titleAlert = $('#title-shownotes-alert'),
 
+      publicSlug,
+
 
       // checks active status + inserts data if available
       init = function() {
         socket.emit('statusRequest', {slug: localStorage.slug});
         socket.on('statusResponse', function(data) {
 
-          var slug, publicSlug;
+          var slug;
 
           // if active: show extended form and replace title
           if (data.active) {
@@ -33,14 +35,13 @@ $(function() {
               $title.val(data.title);
               $titleAlert.text(data.title);
             }
-            publicSlug = data.publicSlug;
             slug       = localStorage.slug;
+            publicSlug = data.publicSlug;
 
           // if new: generate slugs
           } else {
             slug       = randomSlug();
             publicSlug = randomSlug();
-            localStorage.publicSlug = publicSlug;
           }
 
           // enter slug into fields
@@ -48,14 +49,12 @@ $(function() {
           $slugStatic.text(slug);
 
           // check blacklist
-          if (typeof(localStorage.blacklist) == "undefined")
-            localStorage.blacklist = '';
-          else
+          if (typeof(localStorage.blacklist) != "undefined")
             $blacklist.val(localStorage.blacklist);
 
           // update href attributes for external links
-          $('#live').prop('href', baseUrl + '/live/' + publicSlug);
           $('#html').prop('href', baseUrl + '/html/' + slug);
+          $('#live').prop('href', baseUrl + '/live/' + publicSlug);
         });
       },
 
@@ -80,7 +79,9 @@ $(function() {
     
     } else {
       // TODO make common request and wait for success response (so we can validate slug on server)
-      socket.emit('new', {slug: slug, publicSlug: localStorage.publicSlug});
+      socket.emit('new', {slug: slug, publicSlug: publicSlug});
+      localStorage.slug = slug;
+      $slugStatic.text(slug);
       $body.addClass(extendedFormClass);
     }
   });

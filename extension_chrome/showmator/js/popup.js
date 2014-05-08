@@ -46,13 +46,6 @@ $(function() {
   });
 
 
-  // delete entry
-  $('remove-entry').click(function() {
-    // TODO works with just the slug? even with non-links?
-    socket.emit('delete', {slug: localStorage.slug});
-  });
-
-
   // react on enter/escape + hide alert when title is changed
   $title.keyup(function(e) {
 
@@ -102,7 +95,7 @@ $(function() {
     chrome.extension.getBackgroundPage().badget("OK", "#33cc00");
   });
 
-  socket.on('linkAddedError', function(){
+  socket.on('genericError', function(){
     $alertError.addClass('alert-show');
     $('#link-options').prop('href', chrome.extension.getURL("options.html"));
   });
@@ -113,12 +106,12 @@ $(function() {
   // -----------------------------------------------------------------------------
   
   // show warning if slug is not set
-  // if (typeof(localStorage.slug) == "undefined") {
-  //   $alertError.addClass('alert-show');
-  //   $('#link-options').prop('href', chrome.extension.getURL("options.html"));
+  if (typeof(localStorage.slug) == "undefined") {
+    $alertError.addClass('alert-show');
+    $('#link-options').prop('href', chrome.extension.getURL("options.html"));
 
   // // get tab data und send add-event
-  // } else {
+  } else {
     chrome.tabs.getSelected(null, function(tab) {
       title = htmlEntities(tab.title);
       url   = tab.url;
@@ -128,16 +121,18 @@ $(function() {
       // prevent if on blacklist
       // TODO make forEach
       // TODO make overlay
-      var blacklist = localStorage.blacklist.split('\n'); // TODO works on windows?
-      for (var i = 0; i < blacklist.length; i++) {
-        if (url == blacklist[i]) {
-          $('#badUrl').html('<div class="alert alert-error">Böse URL: Kann nicht eingetragen werden!</div>');
-          $('#insert, #text, .text, #title, #duplicate, #delete').remove();
+      if (!!localStorage.blacklist) {
+        var blacklist = localStorage.blacklist.split('\n'); // TODO works on windows?
+        for (var i = 0; i < blacklist.length; i++) {
+          if (url == blacklist[i]) {
+            $('#badUrl').html('<div class="alert alert-error">Böse URL: Kann nicht eingetragen werden!</div>');
+            $('#insert, #text, .text, #title, #duplicate, #delete').remove();
+          }
         }
       }
 
       // add link
       socket.emit('linkAdded', {slug: localStorage.slug, title: title, url: url, isText: 0});
     });
-  // }
+  }
 });

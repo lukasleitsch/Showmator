@@ -21,7 +21,12 @@ io.sockets.on('connection', function(client){
   console.log('Client connected ...');
 
   var sqlite3 = require("sqlite3").verbose(),
-      db      = new sqlite3.Database(file);
+      db      = new sqlite3.Database(file),
+
+      emitError = function(err) {
+        comsole.log("caught exception:", err);
+        client.emit("genericError");
+      };
 
   // Create tables if not present
   db.serialize(function(){
@@ -79,7 +84,6 @@ io.sockets.on('connection', function(client){
 
 
   // Add new entry
-
   client.on('linkAdded', function(data){
     var time = new Date().getTime(),
         title, isText;
@@ -111,7 +115,7 @@ io.sockets.on('connection', function(client){
             db.run('INSERT INTO data (slug,title,url,time,isText) VALUES ("' + data.slug + '","' + data.title + '","' + data.url + '", ' + time  + ', ' + data.isText + ')', function(err, result){
               console.log("ADD-ERROR: "+err);
               if(err){
-                client.emit('linkAddedError');
+                emitError(err);
               } else {
                 client.emit('linkAddedSuccess'/*, {title: title}*/);
               }
