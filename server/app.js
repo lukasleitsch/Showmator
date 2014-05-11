@@ -24,7 +24,7 @@ io.sockets.on('connection', function(client){
       db      = new sqlite3.Database(file),
 
       emitError = function(err) {
-        comsole.log("caught exception:", err);
+        console.log("caught exception:", err);
         client.emit("genericError");
       };
 

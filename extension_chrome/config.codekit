@@ -271,17 +271,6 @@
 		"outputStyle": 1,
 		"syntaxCheckerStyle": 1
 		},
-	"\/showmator\/js\/min\/popup-ck.js": {
-		"fileType": 64,
-		"ignore": 1,
-		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/showmator\/js\/min\/popup-ck.js",
-		"outputAbbreviatedPath": "\/showmator\/js\/min\/min\/popup-ck-ck.js",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
-		"outputStyle": 1,
-		"syntaxCheckerStyle": 1
-		},
 	"\/showmator\/js\/options.js": {
 		"fileType": 64,
 		"ignore": 1,

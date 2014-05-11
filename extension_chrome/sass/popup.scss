@@ -9,8 +9,10 @@ body {width:300px; padding:20px; text-align:center;}
 .show-on-empty-slug, .show-on-duplicate {display:none;}
 .on-duplicate .show-on-duplicate,
 .on-empty-slug .show-on-empty-slug {display:table-cell; vertical-align:middle;}
-.on-duplicate .overlay,
-.on-empty-slug .overlay {display:table;}
+.on-duplicate, .on-empty-slug {
+  .overlay {display:table;}
+}
+.on-empty-slug .alert-info {display:none;}  
 
 .alert-info {margin-bottom:40px;
   .glyphicon {margin-right:3px;}
