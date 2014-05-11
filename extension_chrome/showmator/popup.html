@@ -10,26 +10,23 @@
   <script src="js/popup.js"></script>
 </head>
 <body>
+
+  <div class="overlay">
+    <p class="show-on-duplicate">
+      <span class="glyphicon glyphicon-info-sign"></span>
+      Link wurde bereits hinzugefügt!
+    </p>
+    <p class="show-on-empty-slug">
+      <span class="glyphicon glyphicon-exclamation-sign"></span>
+      Bitte erst ein Kürzel in den <a id="link-options" class="alert-link" target="_blank">Einstellungen</a> festlegen!
+    </p>
+  </div>
+
   
   <div class="alert alert-info alert-successful">
     <p>
       <span class="glyphicon glyphicon-ok"></span>
       Der Link wurde erfolgreich gespeichert
-    </p>
-  </div>
-
-
-  <!-- TODO make overlays -->
-  <div class="alert alert-info alert-duplicate">
-    <p>
-      <span class="glyphicon glyphicon-info-sign"></span>
-      Dieser Link wurde schon hinzugefügt!
-    </p>
-  </div>  
-  <div class="alert alert-info alert-error">
-    <p>
-      <span class="glyphicon glyphicon-exclamation-sign"></span>
-      Erst ein Kürzel in den <a id="link-options" class="alert-link" target="_blank">Einstellungen</a> festlegen!
     </p>
   </div>
 
@@ -45,37 +42,12 @@
     </label>
   </div>
 
-  <!-- TODO delete placeholder -->
   <input type="text" name="title" id="title" class="form-control" tabindex="1" />
 
   <button class="btn btn-primary disabled" id="save-changes">
     <span class="glyphicon glyphicon-pencil"></span>
     Änderung speichern
   </button>
-
-  <br />
-
-  <button class="btn btn-xs btn-default" id="remove-entry">
-    <span class="glyphicon glyphicon-trash"></span>
-    Eintrag entfernen
-  </button>
-
-
-  <!-- TODO delete -->
-  <!-- <div style="display:none;">
-    <div id="duplicate"></div>
-    <div id="badUrl"></div>
-    <div>
-      <input name="title" id="title" tabindex="2">
-    </div>
-    <div>
-      <input type="checkbox" name="text" value="true" id="text" class="text" tabindex="3"><label class="text" for="text">Nur Text speichern</label>  
-    </div>
-    <div>
-      <button id="insert" tabindex="1">Einfügen</button>
-      <button id="delete">Letzten Eintrag löschen</button>
-    </div>    
-  </div> -->
 
 </body>
 </html>

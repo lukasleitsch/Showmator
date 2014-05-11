@@ -10,12 +10,10 @@ $(function() {
       
       socket = io.connect('http://localhost:63685'),
 
-      $title            = $('#title'),
-      $saveChanges      = $('#save-changes'),
-      $alertInfo        = $('.alert-info'),
-      // $alertSuccessful  = $('.alert-successful'),
-      $alertDuplicate   = $('.alert-duplicate'),
-      $alertError       = $('.alert-error'),
+      $title       = $('#title'),
+      $saveChanges = $('#save-changes'),
+      $alertInfo   = $('.alert-info'),
+      $body        = $('body'),
 
       htmlEntities = function(str) {
         // TODO why `String()`?
@@ -46,6 +44,12 @@ $(function() {
   });
 
 
+  // function tp hide alert and enable update button
+  var enableUpdate = function() {
+    $alertInfo.slideUp();
+    $saveChanges.removeClass('disabled');
+  };
+
   // react on enter/escape + hide alert when title is changed
   $title.keyup(function(e) {
 
@@ -60,19 +64,14 @@ $(function() {
       return;
     }
 
-    // if title has changed: hide alert and enable save button
-    if ($alertInfo.is(':hidden') && htmlEntities($title.val()) != title) {
-      $alertInfo.slideUp();
-      $saveChanges.removeClass('disabled');
-    }
+    // if title has changed: enable update
+    if ($alertInfo.is(':visible') && htmlEntities($title.val()) != title)
+      enableUpdate();
   });
 
 
-  // hide alert if mode for link/text-only changes
-  $('#kind-text-only, #kind-link').change(function() {
-    $alertInfo.slideUp();
-    $saveChanges.removeClass('disabled');
-  });
+  // enable update if mode for link/text-only changes
+  $('#kind-text-only, #kind-link').one('change', enableUpdate);
 
 
 
@@ -81,8 +80,7 @@ $(function() {
   
   // prevent duplication
   socket.on('duplicate', function(data) {
-    // TODO make overlay
-    $alertDuplicate.addClass('alert-show');
+    $body.addClass('on-duplicate');
     if(data.title)
       $title.val(data.title);
     if (data.isText == 1)
@@ -95,10 +93,10 @@ $(function() {
     chrome.extension.getBackgroundPage().badget("OK", "#33cc00");
   });
 
-  socket.on('genericError', function(){
-    $alertError.addClass('alert-show');
-    $('#link-options').prop('href', chrome.extension.getURL("options.html"));
-  });
+  // TODO generic error
+  // socket.on('genericError', function(){
+  //   $alertError.addClass('alert-show');
+  // });
   
 
 
@@ -107,7 +105,7 @@ $(function() {
   
   // show warning if slug is not set
   if (typeof(localStorage.slug) == "undefined") {
-    $alertError.addClass('alert-show');
+    $body.addClass('on-empty-slug');
     $('#link-options').prop('href', chrome.extension.getURL("options.html"));
 
   // // get tab data und send add-event
