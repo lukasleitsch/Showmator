@@ -197,13 +197,13 @@ app.get('/live/:publicslug', function(req, res) {
       items = [];
 
   db.serialize(function() {
-    db.get('SELECT slug FROM meta WHERE publicSlug == "'+publicslug+'"', function(err, row) {
-      if (row) {
-        db.each('SELECT * FROM data WHERE slug == "'+row.slug+'" ORDER BY time DESC', function(err, row) {
-          // console.log(row);
-          items.push(row);
+    db.get('SELECT slug, startTime, offset FROM meta WHERE publicSlug == "'+publicslug+'"', function(err, row1) {
+      if (row1) {
+        db.each('SELECT * FROM data WHERE slug == "'+row1.slug+'" ORDER BY time DESC', function(err, row2) {
+          console.log(row2);
+          items.push(row2);
         }, function() {
-          res.render('live.ejs', {items: items, slug: publicslug});
+          res.render('live.ejs', {items: items, slug: publicslug, title: row1.title, start: row1.startTime, offset: row1.offset});
         });
       } else {
         render404(res);
@@ -213,6 +213,7 @@ app.get('/live/:publicslug', function(req, res) {
 });
 
 
+// TODO make one with offset
 // Shownotes in HTML
 app.get('/html/:slug', function(req, res) {
 
@@ -223,9 +224,9 @@ app.get('/html/:slug', function(req, res) {
       startTime*/;
 
   db.serialize(function() {
-    db.get('SELECT startTime,offset FROM meta WHERE slug == "'+slug+'"', function(err1, row1) {
+    db.get('SELECT startTime, offset FROM meta WHERE slug == "'+slug+'"', function(err1, row1) {
       if (row1) {
-        db.each('SELECT * FROM data WHERE slug =="'+slug+'" ORDER BY time', function(err2, row2){
+        db.each('SELECT * FROM data WHERE slug =="'+slug+'" ORDER BY time', function(err2, row2) {
           items.push(row2);
         }, function() {
           res.render('html.ejs', {items: items, start: row1.startTime, slug: slug, offset: row1.offset});

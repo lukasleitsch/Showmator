@@ -1,14 +1,20 @@
 // Vars
 // -----------------------------------------------------------------------------
 
-$colorPrimary:#ef6560;
-$borderPrimary:#db4d48;
+$colorPrimary:  #ef6560;
+$borderPrimary: #db4d48;
+$maxWidth:      600px;
 
 
 // Components
 // -----------------------------------------------------------------------------
 
-.alert-info {max-width:600px; margin:0 auto 30px; background-color:$colorPrimary; border-color:$borderPrimary; color:#fff;
+.jumbo-header {margin-bottom:40px; padding:30px 0; background-color:$colorPrimary; color:white; text-align:center;
+  h1 {margin:0;}
+  img {margin:-4px 10px 0 0;}
+}
+
+.alert-info {max-width:$maxWidth; margin:0 auto 30px; background-color:$colorPrimary; border-color:$borderPrimary; color:#fff;
   h3 {margin-top:0;}
   .alert-link {color:white; font-weight:bold;}
 }

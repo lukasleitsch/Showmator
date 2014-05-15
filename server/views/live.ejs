@@ -2,70 +2,105 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <!-- TODO make static server -->
   <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/live.css">
   <title>Live-Shownotes</title>
 </head>
-<body class="container">
+
+<body class="page-live<% if (items.length < 1) { %> on-empty<% } %>">
+
+
+  <header class="jumbo-header">
+    <h1>
+      <img src="/img/icon48_white.png" alt=""> <%= title || "Live" %> Shownotes
+    </h1>
+  </header>
+
+
+  <p class="post-jumbo-info text-muted">
+    (Seite aktualisiert automatisch, <strong id="counter">0</strong> aktive Besucher)
+  </p>
+
+
+  <div class="alert alert-info">
+    Bitte noch etwas Geduld. Im Moment sind noch keine Shownotes eingetragen.
+  </div>
+
   
-<h1>Live-Shownotes</h1>
-<input type="checkbox" name="auto" id="auto"> <label for="auto">Neue Links automatisch öffnen</label> | Aktuelle Betrachter: <span id="counter"></span> | Seite aktualisiert automatisch
-<div id="info"></div>
-<div id="result" style="padding-top: 30px;">
-  <% items.forEach(function(item) { %>
-    <% if (item.url != 'null') { %>
-      <p><a href="<%= item.url %>" target="_blank"><%= item.title %></a></p>
-    <% } else { %>
-      <p><%= item.title %></p>
-    <% } %>
-  <% }); %>
-</div>
-<hr>
-<a href="https://leitsch.org/projects/showmator" target="_blank">Shownotes were created with Showmator</a>
+  <ul id="result" data-start="<%= start || 0 %>" data-offset="<%= offset || 0 %>">
+    <% items.forEach(function(item) { %>
+      <li>
+        <!-- TODO convert time to readabale format -->
+        <%
+          var hours   = Math.floor(((item.time-start+offset) / (1000*60*60)) % 24) 
+          var minutes = Math.floor(((item.time-start+offset) / (1000*60)) % 60) 
+          var seconds = Math.floor(((item.time-start+offset) / (1000)) % 60) 
+          if(hours <= 9) hours = "0"+hours
+          if(minutes <= 9) minutes = "0"+minutes
+          if(seconds <= 9) seconds = "0"+seconds
+        %>
+        <span class="time"><%= hours %>:<%= minutes %>:<%= seconds %></span>
+        <!-- TODO 'null' as string? -->
+        <% if (item.url != 'null') { %>
+          <a href="<%= item.url %>" target="_blank"><%= item.title %></a>
+        <% } else { %>
+          <%= item.title %>
+        <% } %>
+      </li>
+    <% }); %>
+  </ul>
 
 
-<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
-<script src="/socket.io/socket.io.js"></script>
-<!-- TODO make static server -->
-<script src="/js/live.js"></script>
-<script>
-  var socket = io.connect('http://localhost:63685');
+  <div class="form-inline">
+    <input type="checkbox" name="auto" id="auto" />
+    <label for="auto">neu hinzugefügte Links automatisch öffnen</label>
+  </div>
 
-  socket.on('connect', function () {
-    socket.emit('live', '<%= slug %>');
-  });
 
-  socket.on('push', function(data){
-    console.log(data.url);
-    if ($('#auto').is(":checked") && data.url != null){
-      window.open(data.url, '_blank');
-    }
-    
-    if(data.url != null){
-      $('#result').prepend('<p><a href="'+data.url+'" target="_blank">'+data.title+'</a></p>');
-    } else {
-      $('#result').prepend('<p>'+data.title+'</p>');
-    }
-    
-    $('.leer').fadeOut(3000);
+  <hr>
 
-  });
+  <footer class="text-muted">
+    Shownotes werden mit
+    <a href="https://leitsch.org/projects/showmator" target="_blank">
+      Showmator
+    </a> 
+    erstellt   
+  </footer>
 
-  socket.on('counter', function(data){
-    $('#counter').html(data);
-  });
 
-  socket.on('reload', function(){
-     location.reload();
-  });
+  <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/live.js"></script>
+  <script>
+    var socket = io.connect('http://localhost:63685');
 
-  $(document).ready(function(){
-    if($('#result').children().children().length == 0){
-      $('#info').html('<div class="leer alert alert-warning">Bitte noch etwas Geduld. Im Moment sind noch keine Shownotes eingetragen.</div>');
-    }
-  });
-</script>
+    socket.on('connect', function () {
+      socket.emit('live', '<%= slug %>');
+    });
+
+    socket.on('push', function(data) {
+      // TODO if first: set start
+      console.log(data.url);
+      if ($('#auto').is(':checked') && data.url != null)
+        window.open(data.url, '_blank');
+      
+      if(data.url != null){
+        $('#result').prepend('<p><a href="'+data.url+'" target="_blank">'+data.title+'</a></p>');
+      } else {
+        $('#result').prepend('<p>'+data.title+'</p>');
+      }
+      
+      $('.alert-info').fadeOut(3000);
+    });
+
+    socket.on('counter', function(data) {
+      $('#counter').html(data);
+    });
+
+    socket.on('reload', function() {
+      location.reload();
+    });
+  </script>
 
 </body>
 </html>
