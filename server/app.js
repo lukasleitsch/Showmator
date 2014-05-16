@@ -7,26 +7,43 @@
 var express = require('express'),
     app     = express(),
     server  = require('http').createServer(app),
-    io      = require('socket.io').listen(server, { log: false });
+    io      = require('socket.io').listen(server, { log: false }),
+    sqlite3 = require("sqlite3").verbose(),
+    fs      = require("fs"),
+    file    = "data.db",
+    slug; // TODO what for?
 
-server.listen(63685);
-
-var fs     = require("fs"),
-    file   = "data.db",
-    exists = fs.existsSync(file),
-    slug;
-
-if (!exists) {
+if (!fs.existsSync(file)) {
   console.log("Creating DB file.");
   fs.openSync(file, "w");
 }
+server.listen(63685);
+
+var db = new sqlite3.Database(file);
+
+
+var render404 = function(res) {
+      res.writeHead(404);
+      res.write("Diese Shownotes existieren nicht.");
+      res.end();
+    },
+    
+    padZero = function(num) {
+      return num < 10 ? "0" + num : num;
+    },
+    // item.time-start+offset
+    formatTime = function(milliseconds) {
+      var seconds = Math.floor(milliseconds / 1000),
+          hours   = Math.floor(seconds / 3600),
+          minutes = Math.floor((seconds / 60) % 60);
+      return padZero(hours) + ':' + padZero(minutes) + ':' + padZero(seconds % 60);
+    };
+
 
 io.sockets.on('connection', function(client){
   console.log('Client connected ...');
 
-  var sqlite3 = require("sqlite3").verbose(),
-      db      = new sqlite3.Database(file),
-
+  var db = new sqlite3.Database(file),
       emitError = function(err) {
         console.log("caught exception:", err);
         client.emit("genericError");
@@ -111,23 +128,24 @@ io.sockets.on('connection', function(client){
           console.log("Time: " + time);
 
           db.serialize(function() {
-            db.each('SELECT startTime from meta WHERE slug == "' + data.slug + '"', function(err, row) {
+            db.each('SELECT startTime, offset from meta WHERE slug == "' + data.slug + '"', function(err, row) {
               if (row.startTime === null)
                 db.run('UPDATE meta SET startTime = '+ time +' WHERE slug = "' + data.slug + '"');
-            });
 
-            db.run('INSERT INTO data (slug,title,url,time,isText) VALUES ("' + data.slug + '","' + data.title + '","' + data.url + '", ' + time  + ', ' + data.isText + ')', function(err/*, result*/){
-              console.log("ADD-ERROR: "+err);
-              if (err)
-                emitError(err);
-              else
-                client.emit('linkAddedSuccess'/*, {title: title}*/);
+              db.run('INSERT INTO data (slug,title,url,time,isText) VALUES ("' + data.slug + '","' + data.title + '","' + data.url + '", ' + time  + ', ' + data.isText + ')', function(err/*, result*/){
+                if (err) {
+                  console.log("ADD-ERROR: "+err);
+                  emitError(err);
+                } else {
+                  client.emit('linkAddedSuccess');
+                  var startTime = row.startTime || time,
+                      offset    = row.offset || 0;
+                  client.broadcast.to(slug).emit('push', {title: data.title, url: data.url, isText: data.isText, time: formatTime(time - startTime - offset)});
+                }
+              });
             });
           });
 
-
-          client.broadcast.to(slug).emit('push', {title: data.title, url: data.url});
-        
         } else {
           client.emit('duplicate', {title: title, isText: isText});
         }
@@ -177,11 +195,6 @@ io.sockets.on('connection', function(client){
 });
 
 
-var render404 = function(res) {
-  res.writeHead(404);
-  res.write("Diese Shownotes existieren nicht.");
-  res.end();
-};
 
 // search for route first, then static file
 app.use(app.router);
@@ -191,19 +204,18 @@ app.use(express.static(__dirname + '/public'));
 // Live-Shownotes
 app.get('/live/:publicslug', function(req, res) {
 
-  var sqlite3    = require("sqlite3").verbose(),
-      db         = new sqlite3.Database(file),
-      publicslug = req.params.publicslug,
+  var publicslug = req.params.publicslug,
       items = [];
 
   db.serialize(function() {
     db.get('SELECT slug, startTime, offset FROM meta WHERE publicSlug == "'+publicslug+'"', function(err, row1) {
       if (row1) {
+        var startTime = row1.startTime + row1.offset;
         db.each('SELECT * FROM data WHERE slug == "'+row1.slug+'" ORDER BY time DESC', function(err, row2) {
-          console.log(row2);
+          row2.time = formatTime(row2.time - startTime);
           items.push(row2);
         }, function() {
-          res.render('live.ejs', {items: items, slug: publicslug, title: row1.title, start: row1.startTime, offset: row1.offset});
+          res.render('live.ejs', {items: items, slug: publicslug, title: row1.title});
         });
       } else {
         render404(res);
@@ -217,9 +229,7 @@ app.get('/live/:publicslug', function(req, res) {
 // Shownotes in HTML
 app.get('/html/:slug', function(req, res) {
 
-  var sqlite3 = require("sqlite3").verbose(),
-      db      = new sqlite3.Database(file),
-      slug    = req.params.slug,
+  var slug    = req.params.slug,
       items   = []/*,
       startTime*/;
 
@@ -242,9 +252,7 @@ app.get('/html/:slug', function(req, res) {
 // Offset
 app.get('/html/:slug/:offset', function(req, res) {
 
-  var sqlite3 = require("sqlite3").verbose(),
-      db      = new sqlite3.Database(file),
-      slug    = req.params.slug,
+  var slug    = req.params.slug,
       offset  = req.params.offset,
       items   = []/*,
       startTime*/;

@@ -7,7 +7,7 @@
   <title>Live-Shownotes</title>
 </head>
 
-<body class="page-live<% if (items.length < 1) { %> on-empty<% } %>">
+<body class="page-live<% if (items.length < 1) { %> on-empty<% } %>" data-slug="<%= slug %>">
 
 
   <header class="jumbo-header">
@@ -27,19 +27,10 @@
   </div>
 
   
-  <ul id="result" data-start="<%= start || 0 %>" data-offset="<%= offset || 0 %>">
+  <ul id="result">
     <% items.forEach(function(item) { %>
       <li>
-        <!-- TODO convert time to readabale format -->
-        <%
-          var hours   = Math.floor(((item.time-start+offset) / (1000*60*60)) % 24) 
-          var minutes = Math.floor(((item.time-start+offset) / (1000*60)) % 60) 
-          var seconds = Math.floor(((item.time-start+offset) / (1000)) % 60) 
-          if(hours <= 9) hours = "0"+hours
-          if(minutes <= 9) minutes = "0"+minutes
-          if(seconds <= 9) seconds = "0"+seconds
-        %>
-        <span class="time"><%= hours %>:<%= minutes %>:<%= seconds %></span>
+        <span class="time"><%= item.time %></span>
         <!-- TODO 'null' as string? -->
         <% if (item.url != 'null') { %>
           <a href="<%= item.url %>" target="_blank"><%= item.title %></a>
@@ -71,36 +62,5 @@
   <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/live.js"></script>
-  <script>
-    var socket = io.connect('http://localhost:63685');
-
-    socket.on('connect', function () {
-      socket.emit('live', '<%= slug %>');
-    });
-
-    socket.on('push', function(data) {
-      // TODO if first: set start
-      console.log(data.url);
-      if ($('#auto').is(':checked') && data.url != null)
-        window.open(data.url, '_blank');
-      
-      if(data.url != null){
-        $('#result').prepend('<p><a href="'+data.url+'" target="_blank">'+data.title+'</a></p>');
-      } else {
-        $('#result').prepend('<p>'+data.title+'</p>');
-      }
-      
-      $('.alert-info').fadeOut(3000);
-    });
-
-    socket.on('counter', function(data) {
-      $('#counter').html(data);
-    });
-
-    socket.on('reload', function() {
-      location.reload();
-    });
-  </script>
-
 </body>
 </html>
