@@ -209,10 +209,8 @@ app.get('/live/:publicslug', function(req, res) {
       items = [],
       d = new Date().getTimezoneOffset()*60000;  // Different between UTC and local time
 
-      console.log(d);
-
   db.serialize(function() {
-    db.get('SELECT slug, startTime, offset FROM meta WHERE publicSlug == "'+publicslug+'"', function(err, row1) {
+    db.get('SELECT * FROM meta WHERE publicSlug == "'+publicslug+'"', function(err, row1) {
       if (row1) {
         var startTime = row1.startTime + row1.offset;
         db.each('SELECT * FROM data WHERE slug == "'+row1.slug+'" ORDER BY time DESC', function(err, row2) {
