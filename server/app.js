@@ -36,7 +36,7 @@ var render404 = function(res) {
       var seconds = Math.floor(milliseconds / 1000),
           hours   = Math.floor(seconds / 3600),
           minutes = Math.floor((seconds / 60) % 60);
-      return padZero(hours) + ':' + padZero(minutes) + ':' + padZero(seconds % 60);
+      return padZero(hours % 24) + ':' + padZero(minutes) + ':' + padZero(seconds % 60);
     };
 
 
@@ -107,7 +107,8 @@ io.sockets.on('connection', function(client){
   // Add new entry
   client.on('linkAdded', function(data) {
     var time = new Date().getTime(),
-        title, isText;
+        title, isText,
+        d = new Date().getTimezoneOffset()*60000;  // Different between UTC and local time;
 
     console.log("--- Check duplicate ----");
     console.log(data.url);
@@ -140,7 +141,7 @@ io.sockets.on('connection', function(client){
                   client.emit('linkAddedSuccess');
                   var startTime = row.startTime || time,
                       offset    = row.offset || 0;
-                  client.broadcast.to(slug).emit('push', {title: data.title, url: data.url, isText: data.isText, time: formatTime(time - startTime - offset)});
+                  client.broadcast.to(slug).emit('push', {title: data.title, url: data.url, isText: data.isText, time: formatTime(time-d)});
                 }
               });
             });
@@ -205,14 +206,17 @@ app.use(express.static(__dirname + '/public'));
 app.get('/live/:publicslug', function(req, res) {
 
   var publicslug = req.params.publicslug,
-      items = [];
+      items = [],
+      d = new Date().getTimezoneOffset()*60000;  // Different between UTC and local time
+
+      console.log(d);
 
   db.serialize(function() {
     db.get('SELECT slug, startTime, offset FROM meta WHERE publicSlug == "'+publicslug+'"', function(err, row1) {
       if (row1) {
         var startTime = row1.startTime + row1.offset;
         db.each('SELECT * FROM data WHERE slug == "'+row1.slug+'" ORDER BY time DESC', function(err, row2) {
-          row2.time = formatTime(row2.time - startTime);
+          row2.time = formatTime(row2.time-d);
           items.push(row2);
         }, function() {
           res.render('live.ejs', {items: items, slug: publicslug, title: row1.title});
