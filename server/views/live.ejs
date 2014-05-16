@@ -32,7 +32,7 @@
       <li>
         <span class="time"><%= item.time %></span>
         <!-- TODO 'null' as string? -->
-        <% if (item.url != 'null') { %>
+        <% if (!item.isText) { %>
           <a href="<%= item.url %>" target="_blank"><%= item.title %></a>
         <% } else { %>
           <%= item.title %>

@@ -211,6 +211,7 @@ app.get('/live/:publicslug', function(req, res) {
 
   db.serialize(function() {
     db.get('SELECT * FROM meta WHERE publicSlug == "'+publicslug+'"', function(err, row1) {
+      console.log(row1);
       if (row1) {
         var startTime = row1.startTime + row1.offset;
         db.each('SELECT * FROM data WHERE slug == "'+row1.slug+'" ORDER BY time DESC', function(err, row2) {
