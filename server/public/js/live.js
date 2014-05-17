@@ -11,7 +11,7 @@ socket.on('connect', function () {
 });
 
 socket.on('push', function(data) {
-  if ($('#auto').is(':checked') && data.url !== null)
+  if ($('#auto').is(':checked') && !data.isText)
     window.open(data.url, '_blank');
   
   var markup = '<span class="time">' + data.time + '</span>';

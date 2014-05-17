@@ -11,8 +11,8 @@ var express = require('express'),
     sqlite3 = require("sqlite3").verbose(),
     fs      = require("fs"),
     file    = "data.db",
-    publicslug, // TODO what for?
-    pushTime; 
+    publicslug,         // PublicSlug for socket.io-room on live shwnotes
+    pushTime;           // time of the entry after adding for the push
 
 if (!fs.existsSync(file)) {
   console.log("Creating DB file.");
@@ -118,7 +118,6 @@ io.sockets.on('connection', function(client){
       db.each('SELECT * from data WHERE url == "'+data.url+'" AND slug == "'+data.slug+'"', function(err, row) {
         title = row.title;
         isText = row.isText;
-        console.log(row.isText);
       }, function(err, row) {
 
         console.log('Doppelte Einträge: ' + row);
@@ -143,11 +142,7 @@ io.sockets.on('connection', function(client){
                   var startTime = row.startTime || time,
                       offset    = row.offset || 0;
 
-                  pushTitle = data.title;
-                  pushUrl = data.url;
-                  pushIsText = data.isText;
-                  pushTime = formatTime(time-d);
-                  // client.broadcast.to(publicslug).emit('push', {title: data.title, url: data.url, isText: data.isText, time: formatTime(time-d)});
+                  pushTime = formatTime(time-d); // save time of entry for push
                 }
               });
             });
@@ -156,8 +151,6 @@ io.sockets.on('connection', function(client){
         } else {
           client.emit('duplicate', {title: title, isText: isText});
         }
-
-        console.log(title);
       });
 
     });
