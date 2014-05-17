@@ -4,6 +4,8 @@
 
 // TODO FOREIGN KEY constraint failed: Insert entry without create shownotes
 
+// TODO escape string. app.js crached if insert " in the title field. maybe with this module https://www.npmjs.org/package/string-escape
+
 var express = require('express'),
     app     = express(),
     server  = require('http').createServer(app),
@@ -62,6 +64,7 @@ io.sockets.on('connection', function(client){
     client.join(data);
     publicslug = data;
     io.sockets.in(publicslug).emit("counter", counter(publicslug));
+    console.log(publicslug);
   });
 
 
@@ -101,7 +104,9 @@ io.sockets.on('connection', function(client){
   // set title of shownotes
   client.on('set-title', function(data) {
     db.run('UPDATE meta SET title = "' + data.title + '" WHERE slug = "' + data.slug + '"');
-    console.log("Set title");
+    client.broadcast.to(publicslug).emit('set-title-live', data.title);
+    console.log("Set title: "+data.title);
+    console.log(publicslug);
   });
 
 

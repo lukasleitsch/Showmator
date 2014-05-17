@@ -8,7 +8,7 @@ $(function() {
 
   var title, url,
       
-      socket = io.connect('http://localhost:63685'),
+      socket = io.connect('http://192.168.2.153:63685'),
 
       $title       = $('#title'),
       $saveChanges = $('#save-changes'),
