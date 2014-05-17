@@ -11,7 +11,8 @@ var express = require('express'),
     sqlite3 = require("sqlite3").verbose(),
     fs      = require("fs"),
     file    = "data.db",
-    slug; // TODO what for?
+    publicslug, // TODO what for?
+    pushTime; 
 
 if (!fs.existsSync(file)) {
   console.log("Creating DB file.");
@@ -59,8 +60,8 @@ io.sockets.on('connection', function(client){
 
   client.on('live', function(data) {
     client.join(data);
-    slug = data;
-    io.sockets.in(slug).emit("counter", counter(slug));
+    publicslug = data;
+    io.sockets.in(publicslug).emit("counter", counter(publicslug));
   });
 
 
@@ -141,7 +142,12 @@ io.sockets.on('connection', function(client){
                   client.emit('linkAddedSuccess');
                   var startTime = row.startTime || time,
                       offset    = row.offset || 0;
-                  client.broadcast.to(slug).emit('push', {title: data.title, url: data.url, isText: data.isText, time: formatTime(time-d)});
+
+                  pushTitle = data.title;
+                  pushUrl = data.url;
+                  pushIsText = data.isText;
+                  pushTime = formatTime(time-d);
+                  // client.broadcast.to(publicslug).emit('push', {title: data.title, url: data.url, isText: data.isText, time: formatTime(time-d)});
                 }
               });
             });
@@ -157,6 +163,12 @@ io.sockets.on('connection', function(client){
     });
   });
 
+  // push live shownotes
+
+  client.on('push', function(data){
+    client.broadcast.to(publicslug).emit('push', {title: data.title, url: data.url, isText: data.isText, time: pushTime});
+  });
+
 
   // update the entry (title, link/text)
   client.on('linkUpdated', function(data) {
@@ -169,7 +181,7 @@ io.sockets.on('connection', function(client){
   // Client disconnected
   client.on('disconnect', function() {
     console.log("Client disconnected ...");
-    io.sockets.in(slug).emit("counter", counter(slug)-1);
+    io.sockets.in(publicslug).emit("counter", counter(publicslug)-1);
     db.close();
   });
 
@@ -218,7 +230,7 @@ app.get('/live/:publicslug', function(req, res) {
           row2.time = formatTime(row2.time-d);
           items.push(row2);
         }, function() {
-          res.render('live.ejs', {items: items, slug: publicslug, title: row1.title});
+          res.render('live.ejs', {items: items, publicslug: publicslug, title: row1.title});
         });
       } else {
         render404(res);

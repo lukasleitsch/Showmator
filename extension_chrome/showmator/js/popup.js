@@ -75,6 +75,19 @@ $(function() {
 
 
 
+  // push to live shownote by close popup
+
+  addEventListener("unload", function (event) {
+      if (!$body.hasClass('on-duplicate'))
+        socket.emit('push', {
+          title:  htmlEntities($title.val()),
+          url:    url,
+          isText: $('#kind-text-only').is(':checked') ? 1 : 0
+    });
+  }, true);
+
+
+
   // socket events
   // -----------------------------------------------------------------------------
   
