@@ -6,7 +6,7 @@ $(function() {
   // vars and functions
   // -----------------------------------------------------------------------------
 
-  var baseUrl = 'http://192.168.2.153:63685',
+  var baseUrl = 'http://localhost:63685',
       socket  = io.connect(baseUrl),
 
       extendedFormClass = 'has-active-shownotes',

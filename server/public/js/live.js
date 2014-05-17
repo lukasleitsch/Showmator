@@ -4,7 +4,7 @@
 // TODO title-edits and deletes
 // TODO on delete: check if we have more than one link left, if false: show alert-info again
 
-var socket = io.connect('http://192.168.2.153:63685');
+var socket = io.connect('http://localhost:63685');
 
 socket.on('connect', function () {
   socket.emit('live', $('body').data('publicslug'));
