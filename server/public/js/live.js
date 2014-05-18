@@ -31,3 +31,7 @@ socket.on('counter', function(data) {
 socket.on('reload', function() {
   location.reload();
 });
+
+socket.on('titleUpdatedSuccess', function(data) {
+  $('#title').text(data.title);
+});

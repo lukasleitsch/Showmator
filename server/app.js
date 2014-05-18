@@ -99,9 +99,11 @@ io.sockets.on('connection', function(client){
   });
 
   // set title of shownotes
-  client.on('set-title', function(data) {
-    db.run('UPDATE meta SET title = "' + data.title + '" WHERE slug = "' + data.slug + '"');
-    console.log("Set title");
+  client.on('titleUpdated', function(data) {
+    db.run('UPDATE meta SET title = "' + data.title + '" WHERE slug = "' + data.slug + '"', function() {
+      client.broadcast.to(publicslug).emit('titleUpdatedSuccess', {title: data.title});
+      console.log("Set title", data.title);
+    });
   });
 
 

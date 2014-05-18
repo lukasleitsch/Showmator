@@ -18,6 +18,8 @@ $(function() {
       $title      = $('#title-shownotes'),
       $titleAlert = $('#title-shownotes-alert'),
 
+      noTitleText = $titleAlert.data('no-title'),
+
       publicSlug,
 
 
@@ -31,10 +33,9 @@ $(function() {
           // if active: show extended form and replace title
           if (data.active) {
             $body.addClass(extendedFormClass);
-            if (data.title) {
-              $title.val(data.title);
-              $titleAlert.text(data.title);
-            }
+            $title.val(data.title);
+            $titleAlert.text(data.title || noTitleText);
+
             slug       = localStorage.slug;
             publicSlug = data.publicSlug;
 
@@ -42,6 +43,8 @@ $(function() {
           } else {
             slug       = randomSlug();
             publicSlug = randomSlug();
+
+            $titleAlert.text(noTitleText);
           }
 
           // enter slug into fields
@@ -93,7 +96,7 @@ $(function() {
     $titleAlert.text(val);
 
     // TODO only when nothing has changed after 1000ms
-    socket.emit('set-title', {slug: localStorage.slug, title: val});
+    socket.emit('titleUpdated', {slug: localStorage.slug, title: val});
   });
 
 
