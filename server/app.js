@@ -28,17 +28,6 @@ var render404 = function(res) {
       res.writeHead(404);
       res.write("Diese Shownotes existieren nicht.");
       res.end();
-    },
-    
-    padZero = function(num) {
-      return num < 10 ? "0" + num : num;
-    },
-    // item.time-start+offset
-    formatTime = function(milliseconds) {
-      var seconds = Math.floor(milliseconds / 1000),
-          hours   = Math.floor(seconds / 3600),
-          minutes = Math.floor((seconds / 60) % 60);
-      return padZero(hours % 24) + ':' + padZero(minutes) + ':' + padZero(seconds % 60);
     };
 
 
@@ -112,9 +101,7 @@ io.sockets.on('connection', function(client){
 
   // Add new entry
   client.on('linkAdded', function(data) {
-    var time     = new Date().getTime(),
-        // TODO timezone offset is client dependant, not server dependant
-        tzOffset = new Date().getTimezoneOffset() * 60000;  // Different between UTC and local time
+    var time     = new Date().getTime();
 
     db.serialize(function() {
       // TODO why each and not something like fetchOne?
@@ -140,7 +127,7 @@ io.sockets.on('connection', function(client){
                   emitError(err);
                 } else {
                   console.log('successfully added link');
-                  client.broadcast.to(publicslug).emit('push', {title: data.title, url: data.url, isText: data.isText, time: formatTime(time - tzOffset)});
+                  client.broadcast.to(publicslug).emit('push', {title: data.title, url: data.url, isText: data.isText, time: time});
                 }
               });
             });
@@ -217,15 +204,12 @@ app.use(express.static(__dirname + '/public'));
 app.get('/live/:publicslug', function(req, res) {
 
   var publicslug = req.params.publicslug,
-      items      = [],
-      // TODO timezone offset is client dependant, not server dependant
-      tzOffset   = new Date().getTimezoneOffset() * 60000;  // Different between UTC and local time
+      items      = [];
 
   db.serialize(function() {
     db.get('SELECT * FROM meta WHERE publicSlug == "'+publicslug+'"', function(err, row1) {
       if (row1) {
         db.each('SELECT * FROM data WHERE slug == "'+row1.slug+'" ORDER BY time DESC', function(err, row2) {
-          row2.time = formatTime(row2.time - tzOffset);
           items.push(row2);
         }, function() {
           res.render('live.ejs', {items: items, publicslug: publicslug, title: row1.title});
