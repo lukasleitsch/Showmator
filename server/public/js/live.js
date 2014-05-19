@@ -32,6 +32,6 @@ socket.on('reload', function() {
   location.reload();
 });
 
-socket.on('set-title-live', function(data) {
-  $('span#title').text(data);
+socket.on('titleUpdatedSuccess', function(data) {
+  $('#title').text(data.title);
 });
