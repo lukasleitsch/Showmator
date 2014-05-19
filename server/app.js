@@ -3,7 +3,6 @@
 /*global __dirname */
 
 // TODO FOREIGN KEY constraint failed: Insert entry without create shownotes
-
 // TODO escape string. app.js crached if insert " in the title field. maybe with this module https://www.npmjs.org/package/string-escape
 
 var express = require('express'),
@@ -13,8 +12,8 @@ var express = require('express'),
     sqlite3 = require("sqlite3").verbose(),
     fs      = require("fs"),
     file    = "data.db",
-    publicslug,         // PublicSlug for socket.io-room on live shwnotes
-    pushTime;           // time of the entry after adding for the push
+    // TODO global publicSlug?
+    publicslug;
 
 if (!fs.existsSync(file)) {
   console.log("Creating DB file.");
@@ -53,6 +52,7 @@ io.sockets.on('connection', function(client){
       };
 
   // Create tables if not present
+  // TODO why on connection and not on start of server?
   db.serialize(function() {
     db.run('CREATE TABLE IF NOT EXISTS meta (slug TEXT PRIMARY KEY NOT NULL, startTime INTEGER, offset INTEGER, publicSlug TEXT, title TEXT)');
     db.run('CREATE TABLE IF NOT EXISTS data (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, title TEXT, url TEXT, time INTEGER, isText INTEGER, FOREIGN KEY (slug) REFERENCES meta(slug))');
@@ -112,21 +112,17 @@ io.sockets.on('connection', function(client){
 
   // Add new entry
   client.on('linkAdded', function(data) {
-    var time = new Date().getTime(),
-        title, isText,
-        d = new Date().getTimezoneOffset()*60000;  // Different between UTC and local time;
-
-    console.log("--- Check duplicate ----");
-    console.log(data.url);
+    var time     = new Date().getTime(),
+        // TODO timezone offset is client dependant, not server dependant
+        tzOffset = new Date().getTimezoneOffset() * 60000;  // Different between UTC and local time
 
     db.serialize(function() {
-      db.each('SELECT * from data WHERE url == "'+data.url+'" AND slug == "'+data.slug+'"', function(err, row) {
-        title = row.title;
-        isText = row.isText;
-      }, function(err, row) {
+      // TODO why each and not something like fetchOne?
+      db.each('SELECT * from data WHERE url == "' + data.url + '" AND slug == "' + data.slug + '"', function(/*err, row*/) {
+        // we have duplicates, do nothing
 
-        console.log('Doppelte Einträge: ' + row);
-        if (row === 0){
+      }, function(err, row) {
+        if (row === 0) {
           console.log("---- Add entry ----");
           console.log("Slug: " + data.slug);
           console.log("Title: " + data.title);
@@ -138,40 +134,45 @@ io.sockets.on('connection', function(client){
               if (row.startTime === null)
                 db.run('UPDATE meta SET startTime = '+ time +' WHERE slug = "' + data.slug + '"');
 
-              db.run('INSERT INTO data (slug,title,url,time,isText) VALUES ("' + data.slug + '","' + data.title + '","' + data.url + '", ' + time  + ', ' + data.isText + ')', function(err/*, result*/){
+              db.run('INSERT INTO data (slug,title,url,time,isText) VALUES ("' + data.slug + '","' + data.title + '","' + data.url + '", ' + time  + ', ' + data.isText + ')', function(err/*, result*/) {
                 if (err) {
-                  console.log("ADD-ERROR: "+err);
+                  console.log("ADD-ERROR", err);
                   emitError(err);
                 } else {
-                  client.emit('linkAddedSuccess');
-                  var startTime = row.startTime || time,
-                      offset    = row.offset || 0;
-
-                  pushTime = formatTime(time-d); // save time of entry for push
+                  console.log('successfully added link');
+                  client.broadcast.to(publicslug).emit('push', {title: data.title, url: data.url, isText: data.isText, time: formatTime(time - tzOffset)});
                 }
               });
             });
           });
-
-        } else {
-          client.emit('duplicate', {title: title, isText: isText});
         }
       });
-
     });
   });
 
-  // push live shownotes
-
-  client.on('push', function(data){
-    client.broadcast.to(publicslug).emit('push', {title: data.title, url: data.url, isText: data.isText, time: pushTime});
+  
+  // check for duplicates when popup opens
+  client.on('popupOpened', function(data) {
+    db.serialize(function() {
+      var title, isText;
+      // TODO why each and not something like fetchOne?
+      db.each('SELECT * from data WHERE url == "' + data.url + '" AND slug == "' + data.slug + '"', function(err, row) {
+        title  = row.title;
+        isText = row.isText;
+      }, function(err, row) {
+        if (row) {
+          console.log('found duplicate');
+          client.emit('duplicate', {title: title, isText: isText});
+        }
+      });
+    });
   });
 
 
   // update the entry (title, link/text)
   client.on('linkUpdated', function(data) {
     db.run('UPDATE data SET title = "' + data.title + '", isText = "' + data.isText + '" WHERE url = "' + data.url + '" AND slug = "' + data.slug + '"');
-    // TODO impement in live shownotes
+    // TODO implement in live shownotes
     client.broadcast.to(data.slug).emit('linkUpdated', {title: data.title, url: data.url});
   });
 
@@ -179,7 +180,7 @@ io.sockets.on('connection', function(client){
   // Client disconnected
   client.on('disconnect', function() {
     console.log("Client disconnected ...");
-    io.sockets.in(publicslug).emit("counter", counter(publicslug)-1);
+    io.sockets.in(publicslug).emit("counter", counter(publicslug) - 1);
     db.close();
   });
 
@@ -187,14 +188,14 @@ io.sockets.on('connection', function(client){
   // delete last item
   client.on('delete', function(data) {
     db.run('DELETE FROM data WHERE id IN (SELECT id FROM (SELECT id FROM data WHERE slug = "'+data.slug+'" group by slug)x)', function(/*err, row*/) {
-      client.broadcast.to(slug).emit('reload');
+      client.broadcast.to(data.slug).emit('reload');
     });
     console.log("---- Delete -----");
   });
 
 
   // Current connections of clients
-  function counter(slug){
+  function counter(slug) {
     var length  = 0,
         clients = io.sockets.clients(slug);
     // TODO why via for loop?
@@ -216,20 +217,20 @@ app.use(express.static(__dirname + '/public'));
 app.get('/live/:publicslug', function(req, res) {
 
   var publicslug = req.params.publicslug,
-      items = [],
-      d = new Date().getTimezoneOffset()*60000;  // Different between UTC and local time
+      items      = [],
+      // TODO timezone offset is client dependant, not server dependant
+      tzOffset   = new Date().getTimezoneOffset() * 60000;  // Different between UTC and local time
 
   db.serialize(function() {
     db.get('SELECT * FROM meta WHERE publicSlug == "'+publicslug+'"', function(err, row1) {
-      console.log(row1);
       if (row1) {
-        var startTime = row1.startTime + row1.offset;
         db.each('SELECT * FROM data WHERE slug == "'+row1.slug+'" ORDER BY time DESC', function(err, row2) {
-          row2.time = formatTime(row2.time-d);
+          row2.time = formatTime(row2.time - tzOffset);
           items.push(row2);
         }, function() {
           res.render('live.ejs', {items: items, publicslug: publicslug, title: row1.title});
         });
+
       } else {
         render404(res);
       }
@@ -243,8 +244,7 @@ app.get('/live/:publicslug', function(req, res) {
 app.get('/html/:slug', function(req, res) {
 
   var slug    = req.params.slug,
-      items   = []/*,
-      startTime*/;
+      items   = [];
 
   db.serialize(function() {
     db.get('SELECT startTime, offset FROM meta WHERE slug == "'+slug+'"', function(err1, row1) {
@@ -267,8 +267,7 @@ app.get('/html/:slug/:offset', function(req, res) {
 
   var slug    = req.params.slug,
       offset  = req.params.offset,
-      items   = []/*,
-      startTime*/;
+      items   = [];
 
   db.serialize(function() {
     db.run('UPDATE meta set offset = "'+offset+'" where slug =="'+slug+'"');

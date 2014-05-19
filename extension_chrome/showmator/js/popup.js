@@ -29,7 +29,7 @@ $(function() {
   // bind events
   // -----------------------------------------------------------------------------
 
-  // change title
+  // update title
   $saveChanges.click(function() {
     if ($(this).hasClass('disabled'))
       return;
@@ -75,19 +75,6 @@ $(function() {
 
 
 
-  // push to live shownote by close popup
-
-  addEventListener("unload", function (event) {
-      if (!$body.hasClass('on-duplicate'))
-        socket.emit('push', {
-          title:  htmlEntities($title.val()),
-          url:    url,
-          isText: $('#kind-text-only').is(':checked') ? 1 : 0
-    });
-  }, true);
-
-
-
   // socket events
   // -----------------------------------------------------------------------------
   
@@ -100,11 +87,18 @@ $(function() {
       $('#kind-text-only').prop('checked', true);
   });
 
-
-  // show badget if server sends success event
-  socket.on('linkAddedSuccess', function() {
-    chrome.extension.getBackgroundPage().badget("OK", "#33cc00");
-  });
+  // add link when popup closes
+  addEventListener('unload', function() {
+    if (!$body.hasClass('on-duplicate')) {
+      socket.emit('linkAdded', {
+        slug:   localStorage.slug,
+        title:  htmlEntities($title.val()),
+        url:    url,
+        isText: $('#kind-text-only').is(':checked') ? 1 : 0
+      });
+      chrome.extension.getBackgroundPage().badget("OK", "#33cc00");
+    }
+  }, true);
 
   // TODO generic error
   // socket.on('genericError', function(){
@@ -132,6 +126,7 @@ $(function() {
       // prevent if on blacklist
       // TODO make forEach
       // TODO make overlay
+      // TODO works?
       if (!!localStorage.blacklist) {
         var blacklist = localStorage.blacklist.split('\n'); // TODO works on windows?
         for (var i = 0; i < blacklist.length; i++) {
@@ -142,8 +137,8 @@ $(function() {
         }
       }
 
-      // add link
-      socket.emit('linkAdded', {slug: localStorage.slug, title: title, url: url, isText: 0});
+      // checks for duplicate
+      socket.emit('popupOpened', {slug: localStorage.slug, url: url});
     });
   }
 });
