@@ -11674,6 +11674,15 @@
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0
 		},
+	"\/server\/public\/css\/html.css": {
+		"fileType": 16,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/server\/public\/css\/html.css",
+		"outputAbbreviatedPath": "No Output Path",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0
+		},
 	"\/server\/public\/css\/live.css": {
 		"fileType": 16,
 		"ignore": 1,
@@ -11700,6 +11709,17 @@
 		"ignoreWasSetByUser": 1,
 		"inputAbbreviatedPath": "\/server\/public\/js\/bootstrap.min.js",
 		"outputAbbreviatedPath": "\/server\/public\/js\/min\/bootstrap.min-ck.js",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
+		},
+	"\/server\/public\/js\/formatTime.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 1,
+		"inputAbbreviatedPath": "\/server\/public\/js\/formatTime.js",
+		"outputAbbreviatedPath": "\/server\/public\/js\/min\/formatTime-ck.js",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1,

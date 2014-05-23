@@ -1,26 +1,14 @@
 /*global io */
+/*global formatTime */
 
 // TODO title-edits and deletes
 // TODO on delete: check if we have more than one link left, if false: show alert-info again
 
-// vars and functions
+// vars
 // -----------------------------------------------------------------------------
 
-var socket = io.connect('http://localhost:63685'),
-
-    padZero = function(num) {
-      return num < 10 ? "0" + num : num;
-    },
-
-    formatTime = function(milliseconds) {
-      var seconds = Math.floor(milliseconds / 1000),
-          hours   = Math.floor(seconds / 3600),
-          minutes = Math.floor((seconds / 60) % 60);
-      return padZero(hours % 24) + ':' + padZero(minutes) + ':' + padZero(seconds % 60);
-    },
-
-    tzOffset = new Date().getTimezoneOffset() * 60000,  // Different between UTC and local time
-
+var socket    = io.connect('http://localhost:63685'),
+    tzOffset  = new Date().getTimezoneOffset() * 60000, // Different between UTC and local time
     $autoOpen = $('#auto-open');
 
 
@@ -65,7 +53,7 @@ socket.on('titleUpdatedSuccess', function(data) {
 // format time from timestamp
 $('.time').each(function() {
   var $this = $(this);
-  $this.text(formatTime(parseInt($this.closest('li').data('time')) - tzOffset));
+  $this.text(formatTime(parseInt($this.data('time')) - tzOffset));
 });
 
 if (!!localStorage) {

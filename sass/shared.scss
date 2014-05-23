@@ -4,6 +4,8 @@
 $colorPrimary:  #ef6560;
 $borderPrimary: #db4d48;
 $maxWidth:      600px;
+$formMaxWidth:  500px;
+$labelWidth:    100px;
 
 
 // Components
@@ -18,3 +20,17 @@ $maxWidth:      600px;
   h3 {margin-top:0;}
   .alert-link {color:white; font-weight:bold;}
 }
+
+.form-horizontal {max-width:$formMaxWidth; margin:0 auto;
+  .form-group {margin:0 0 40px;}
+  .form-group-no-label {margin-left:$labelWidth;}
+  .control-label {float:left; padding-top:12px; text-align:left;}
+  .control-label-static {padding-top:2px;}
+  .form-control {font-size:16px;
+    & + .help-block {margin-top:10px;}
+  }
+}
+.form-control-wrap {float:left; width:$formMaxWidth - $labelWidth; font-size:16px;}
+.help-block {margin-bottom:0; font-size:12px;}
+
+.footer-author {max-width:600px; margin:80px auto 0; padding:12px 0; border-top:1px solid #eee; text-align:center;}

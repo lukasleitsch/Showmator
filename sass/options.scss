@@ -18,32 +18,18 @@
   .input-group-wrap {display:inline-block; width:300px;}
 }
 
-footer {max-width:600px; margin:80px auto 0; padding:12px 0; border-top:1px solid #eee; text-align:center;}
-
 
 // with active shownotes
 // -----------------------------------------------------------------------------
 
-$formMaxWidth:500px;
-$labelWidth:100px;
-
-.form-horizontal {max-width:$formMaxWidth; margin:0 auto;
-  .form-group {margin:0 0 40px;}
-  .form-group-no-label {margin-left:$labelWidth;}
-  .control-label {float:left; width:$labelWidth; padding-top:12px; text-align:left;}
-  .form-control {font-size:16px;
-    & + .help-block {margin-top:10px;}
-  }
+.form-horizontal {
+  .control-label {width:$labelWidth;}
   hr {margin-bottom:50px;}
 }
-.form-control-wrap {float:left; width:$formMaxWidth - $labelWidth; font-size:16px;}
-.help-block {margin-bottom:0; font-size:12px;}
-
-#label-slug-static {padding-top:2px;}
 #slug-static {margin-bottom:0;}
 #title {width:200px;}
 #live {margin-right:10px; background-color:#fff; ;color:$colorPrimary; font-weight:bold;
-  &:hover, &:hover {background-color:#f4f4f4; color:$borderPrimary;}
+  &:hover, &:focus {background-color:#f4f4f4; color:$borderPrimary;}
 }
 #html {font-weight:bold;}
 #blacklist {width:100%; min-height:150px;}

@@ -1,0 +1,13 @@
+@import "shared";
+
+.form-horizontal {
+  .control-label {width:$labelWidth;}
+  .form-group-close-section {margin-bottom:60px;}
+}
+.form-control-wrap {
+  input[type="checkbox"] {margin-right:5px;}
+  label {font-weight:normal;}
+}
+#offset {display:inline-block; width:90px; margin-right:2px; text-align:center;}
+.label-group-last {margin-left:8px;}
+textarea {min-height:200px;}

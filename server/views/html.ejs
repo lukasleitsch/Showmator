@@ -1,119 +1,86 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Shownotes in HTML</title>
-  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-  <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
-
-  <script>
-  $(document).ready(function(){
-
-    $('.list').hide();
-
-    if (localStorage.getItem('time') == "false"){
-      $('.time').toggle();
-      $('#time').text("Zeit einblenden");
-    }
-
-    if (localStorage.getItem('target') == "false"){
-      $('.target').toggle();
-      $('#target').text("Target einblenden");
-    }
-
-    if (localStorage.getItem('list') == "false"){
-      $('.list').toggle();
-      $('#list').text("Liste ausblenden");
-    }
-
-    console.log($('#time').val());
-
-    
-
-    $('#time').click(function(){
-      $('.time').toggle();
-
-      if (localStorage.getItem('time') == 'true' || localStorage.getItem('time') == null){
-        localStorage.setItem('time', false);
-        $('#time').text("Zeit einblenden");
-      } else {
-        localStorage.setItem('time', true);
-        $('#time').text("Zeit ausblenden");
-      }
-    });
-
-    $('#target').click(function(){
-      $('.target').toggle();
-
-      if (localStorage.getItem('target') == 'true' || localStorage.getItem('target') == null){
-        localStorage.setItem('target', false);
-        $('#target').text("Target einblenden");
-      } else {
-        localStorage.setItem('target', true);
-        $('#target').text("Target ausblenden");
-      }
-    });
-
-    $('#list').click(function(){
-      $('.list').toggle();
-
-      if (localStorage.getItem('list') == 'true' || localStorage.getItem('list') == null){
-        localStorage.setItem('list', false);
-        $('#list').text("Liste ausblenden");
-      } else {
-        localStorage.setItem('list', true);
-        $('#list').text("Liste einblenden");
-      }
-    });
-
-    $('#submit_offset').click(function(){
-      var offset_hours = $('#offset_hours').val()*3600000;
-      var offset_minutes = $('#offset_minutes').val()*60000;
-      var offset_seconds = $('#offset_seconds').val()*1000;
-      var offset = offset_hours+offset_minutes+offset_seconds;
-      window.location.assign("/html/<%=slug%>/"+offset);
-    });
-  
-  });
-  </script>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/html.css">
+  <title>HTML exportieren</title>
 </head>
 <body>
-<div class="container">
-  <button class="btn btn-default" id="time">Zeit ausblenden</button>
-  <button class="btn btn-default" id="target">Target ausblenden</button>
-  <button class="btn btn-default" id="list">List einblenden</button>
-  <% var hours_offset = Math.floor(((offset) / (1000*60*60)) % 24) %>
-  <% if(hours_offset <= 9) { hours_offset = "0"+hours_offset }  %>
-  <% var minutes_offset = Math.floor(((offset) / (1000*60)) % 60) %>
-  <% if(minutes_offset <= 9) { minutes_offset = "0"+minutes_offset }  %>
-  <% var seconds_offset = Math.floor(((offset) / (1000)) % 60) %>
-  <% if(seconds_offset <= 9) { seconds_offset = "0"+seconds_offset }  %>
-  Zeit des ersten Eintrags
-  <input type="number" id="offset_hours" value="<%=hours_offset %>" min="0" max="23"> :
-  <input type="number" id="offset_minutes" value="<%=minutes_offset %>" min="0" max="59"> :
-  <input type="number" id="offset_seconds" value="<%=seconds_offset %>" min="0" max="59">
-  <button class="btn btn-default" id="submit_offset" type="button">Ändern</button>
-</div>
-  
 
-  
- 
-</div>
-  <span class="list">&lt;ul&gt;<br></span>
-  <% items.forEach(function(item){ %>
-    <% var hours = Math.floor(((item.time-start+offset) / (1000*60*60)) % 24) %>
-    <% if(hours <= 9) { hours = "0"+hours }  %>
-    <% var minutes = Math.floor(((item.time-start+offset) / (1000*60)) % 60) %>
-    <% if(minutes <= 9) { minutes = "0"+minutes }  %>
-    <% var seconds = Math.floor(((item.time-start+offset) / (1000)) % 60) %>
-    <% if(seconds <= 9) { seconds = "0"+seconds }  %>
-  <% if(item.url != 'null'){ %>
-    <span class="list">&lt;li&gt;</span><span class="time"><%= hours %>:<%= minutes %>:<%= seconds %> </span><span class="ruck">&lt;a href=&quot;<%= item.url %>"<span class="target"> target="_blank"</span>><%= item.title %>&lt;/a&gt;</span><span class="list">&lt;/li&gt;</span><br>
-  <% } else { %>
-    <span class="list">&lt;li&gt;</span><span class="time"><%=hours %>:<%=minutes %>:<%=seconds %> </span><%= item.title %><span class="list"> &lt;li&gt;</span><br>
-  <% } %>
-  
-<% }); %>
-<span class="list">&lt;/ul&gt;<br></span>
-&lt;p&gt;&lt;a href=&quot;https://leitsch.org/projects/showmator&quot; target=&quot;_blank&quot;&gt;Shownotes were created with Showmator&lt;/a&gt;&lt;/p&gt;
+  <header class="jumbo-header">
+    <h1>
+      <!-- <img src="/img/icon48_white.png" alt=""> <span id="title">< %= title || '' %></span> HTML Shownotes -->
+      <img src="/img/icon48_white.png" alt=""> <span id="title"></span> HTML Shownotes
+    </h1>
+  </header>
+
+
+  <div class="form-horizontal">
+
+    <div class="form-group">
+      <label class="control-label control-label-static">Optionen:</label>
+      <div class="form-control-wrap">
+        <label for="as-ul">
+          <input id="as-ul" type="checkbox"> als Liste ausgeben
+        </label>
+        <p class="help-block">Die Shownotes werden als unsortierte Liste (<code>ul</code>) ausgegeben.</p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-control-wrap form-group-no-label">
+        <label for="show-times">
+          <input id="show-times" type="checkbox"> Zeiten anzeigen
+        </label>
+        <label for="offset" class="label-group-last">
+          (Startzeit: <input type="text" id="offset" class="form-control" value="00:00:00" size="8">)
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group form-group-no-label form-group-close-section">
+      <div class="form-control-wrap">
+        <label for="as-ul">
+          <input id="as-ul" type="checkbox"> Links in neuen Tabs öffnen
+        </label>
+        <p class="help-block">Fügt jedem Link das Attribut <code>target="_blank"</code> hinzu.</p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="sourcecode" class="control-label control-label-static">Quellcode:</label>
+      <div class="form-control-wrap">
+        <textarea id="sourcecode" class="form-control"></textarea>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div id="markup-container" data-start="<%= start %>" data-offset="<%= offset || 0 %>">
+    <ul>
+      <% items.forEach(function(item) { %>
+        <li>
+          <span class="time" data-time="<%= item.time %>"></span>
+          <% if (item.isText) { %>
+            <%= item.title %>
+          <% } else { %>
+            <a href="<%= item.url %>"><%= item.title %></a>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+
+
+  <footer class="footer-author">
+    <a href="http://leitsch.org">Showmator by Lukas Leitsch</a> &bull; <a href="https://leitsch.org/projects/showmator">Changelog</a>
+  </footer>
+
+  <script src="/js/jquery.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/formatTime.js"></script>
+  <script src="/js/html.js"></script>
 </body>
 </html>
