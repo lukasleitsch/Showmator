@@ -29,8 +29,8 @@
   
   <ul id="result">
     <% items.forEach(function(item) { %>
-      <li>
-        <span class="time"><%= item.time %></span>
+      <li data-time="<%= item.time %>">
+        <span class="time"></span>
         <!-- TODO 'null' as string? -->
         <% if (!item.isText) { %>
           <a href="<%= item.url %>" target="_blank"><%= item.title %></a>
