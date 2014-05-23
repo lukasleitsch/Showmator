@@ -19,7 +19,9 @@ var socket = io.connect('http://localhost:63685'),
       return padZero(hours % 24) + ':' + padZero(minutes) + ':' + padZero(seconds % 60);
     },
 
-    tzOffset = new Date().getTimezoneOffset() * 60000;  // Different between UTC and local time;
+    tzOffset = new Date().getTimezoneOffset() * 60000,  // Different between UTC and local time
+
+    $autoOpen = $('#auto-open');
 
 
 // socket bindings
@@ -30,7 +32,7 @@ socket.on('connect', function () {
 });
 
 socket.on('push', function(data) {
-  if ($('#auto').is(':checked') && !data.isText)
+  if ($autoOpen.is(':checked') && !data.isText)
     window.open(data.url, '_blank');
   
   var markup = '<span class="time">' + formatTime(data.time - tzOffset) + '</span>';
@@ -65,3 +67,12 @@ $('.time').each(function() {
   var $this = $(this);
   $this.text(formatTime(parseInt($this.closest('li').data('time')) - tzOffset));
 });
+
+if (!!localStorage) {
+  $autoOpen
+    .prop('checked', localStorage.autoOpen == 'true')
+    .on('change', function() {
+      localStorage.autoOpen = $(this).prop('checked');
+    });
+}
+

@@ -100,11 +100,6 @@ $(function() {
     }
   }, true);
 
-  // TODO generic error
-  // socket.on('genericError', function(){
-  //   $alertError.addClass('alert-show');
-  // });
-  
 
 
   // get tab title and url + send link to server
