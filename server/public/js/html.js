@@ -54,6 +54,7 @@ $(function() {
   updateHtml();
   $('#as-ul, #show-times, #open-in-new-tab').change(updateHtml);
 
+
   // select all text when focussing textarea
   $('#sourcecode').one('focus', function() {
     $(this).select().one('mouseup', function(e) {
