@@ -1,76 +1,63 @@
-/*global io */
+/*global formatTime */
+
 $(function() {
+
   // format time from timestamp
-  var $wrap  = $('#markup-container'),
-      start  = $wrap.data('start'),
-      offset = $wrap.data('offset');
+  var $markup = $('#markup-container'),
+      start   = $markup.data('start'),
+      offset  = $markup.data('offset');
   $('.time').each(function() {
     var $this = $(this);
     $this.text(formatTime(parseInt($this.data('time')) - start - offset));
   });
 
+  
+  // TODO localstorage for options
 
 
+  var updateHtml = function() {
+    var showList     = $('#as-ul').is(':checked'),
+        showTimes    = $('#show-times').is(':checked'),
+        openInNewTab = $('#open-in-new-tab').is(':checked'),
+        html         = $markup.html();
 
+    html = html
+      .replace(/ data-time="\d+"/g, '') // strip data-attributes
+      .replace(/\n +/g, '\n')           // strip unnecessary spaces
+      .replace(/\n+/g, '\n')            // multiple linebreaks to one
+      .replace(/(^\n|\n$)/g, '');       // strip linebreaks at start/end
 
-  $('.list').hide();
-
-  if (localStorage.getItem('time') == "false"){
-    $('.time').toggle();
-    $('#time').text("Zeit einblenden");
-  }
-
-  if (localStorage.getItem('target') == "false"){
-    $('.target').toggle();
-    $('#target').text("Target einblenden");
-  }
-
-  if (localStorage.getItem('list') == "false"){
-    $('.list').toggle();
-    $('#list').text("Liste ausblenden");
-  }
-
-  $('#time').click(function(){
-    $('.time').toggle();
-
-    if (localStorage.getItem('time') == 'true' || localStorage.getItem('time') == null){
-      localStorage.setItem('time', false);
-      $('#time').text("Zeit einblenden");
+    if (showList) {
+      // indent lines
+      html = html
+        .replace(/<(\/?)li/g, '  <$1li')
+        .replace(/<(a|span)/g, '    <$1');
     } else {
-      localStorage.setItem('time', true);
-      $('#time').text("Zeit ausblenden");
+      // hide ul/li-tags, insert br-tag
+      html = html
+        .replace(/<\/li>/g, '<br>')
+        .replace(/<\/?(ul|li)>\n/g, '');
     }
-  });
 
-  $('#target').click(function(){
-    $('.target').toggle();
+    // hide span-tags
+    if (!showTimes)
+      html = html.replace(/ *<span[^\/]+<\/span>\n/g, '');
 
-    if (localStorage.getItem('target') == 'true' || localStorage.getItem('target') == null){
-      localStorage.setItem('target', false);
-      $('#target').text("Target einblenden");
-    } else {
-      localStorage.setItem('target', true);
-      $('#target').text("Target ausblenden");
-    }
-  });
+    // hide target-attributes
+    if (!openInNewTab)
+      html = html.replace(/ target="_blank"/g, '');
 
-  $('#list').click(function(){
-    $('.list').toggle();
 
-    if (localStorage.getItem('list') == 'true' || localStorage.getItem('list') == null){
-      localStorage.setItem('list', false);
-      $('#list').text("Liste ausblenden");
-    } else {
-      localStorage.setItem('list', true);
-      $('#list').text("Liste einblenden");
-    }
-  });
+    $('#sourcecode').val(html);
+  };
 
-  $('#submit_offset').click(function(){
-    var offset_hours = $('#offset_hours').val()*3600000;
-    var offset_minutes = $('#offset_minutes').val()*60000;
-    var offset_seconds = $('#offset_seconds').val()*1000;
-    var offset = offset_hours+offset_minutes+offset_seconds;
-    window.location.assign("/html/<%=slug%>/"+offset);
+  updateHtml();
+  $('#as-ul, #show-times, #open-in-new-tab').change(updateHtml);
+
+  // select all text when focussing textarea
+  $('#sourcecode').one('focus', function() {
+    $(this).select().one('mouseup', function(e) {
+      e.preventDefault();
+    });
   });
 });

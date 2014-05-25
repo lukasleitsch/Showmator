@@ -41,8 +41,8 @@
 
     <div class="form-group form-group-no-label form-group-close-section">
       <div class="form-control-wrap">
-        <label for="as-ul">
-          <input id="as-ul" type="checkbox"> Links in neuen Tabs öffnen
+        <label for="open-in-new-tab">
+          <input id="open-in-new-tab" type="checkbox"> Links in neuen Tabs öffnen
         </label>
         <p class="help-block">Fügt jedem Link das Attribut <code>target="_blank"</code> hinzu.</p>
       </div>
@@ -66,7 +66,7 @@
           <% if (item.isText) { %>
             <%= item.title %>
           <% } else { %>
-            <a href="<%= item.url %>"><%= item.title %></a>
+            <a href="<%= item.url %>" target="_blank"><%= item.title %></a>
           <% } %>
         </li>
       <% }) %>
