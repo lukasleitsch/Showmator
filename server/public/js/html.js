@@ -11,10 +11,8 @@ $(function() {
     $this.text(formatTime(parseInt($this.data('time')) - start - offset));
   });
 
-  
-  // TODO localstorage for options
 
-
+  // generate sourcecode in textfield  
   var updateHtml = function() {
     var showList     = $('#as-ul').is(':checked'),
         showTimes    = $('#show-times').is(':checked'),
@@ -49,8 +47,21 @@ $(function() {
 
 
     $('#sourcecode').val(html);
+
+
+    localStorage.showList     = showList ? 1 : 0;
+    localStorage.showTimes    = showTimes ? 1 : 0;
+    localStorage.openInNewTab = openInNewTab ? 1 : 0;
   };
 
+
+  // load checkbox states from localStorage
+  $('#as-ul').prop('checked', parseInt(localStorage.showList) === 1);
+  $('#show-times').prop('checked', parseInt(localStorage.showTimes) === 1);
+  $('#open-in-new-tab').prop('checked', parseInt(localStorage.openInNewTab) === 1);
+
+
+  // intial trigger + binding
   updateHtml();
   $('#as-ul, #show-times, #open-in-new-tab').change(updateHtml);
 
