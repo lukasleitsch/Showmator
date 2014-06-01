@@ -8,7 +8,9 @@
   input[type="checkbox"] {margin-right:5px;}
   label {font-weight:normal;}
 }
-#offset {display:inline-block; width:90px; margin-right:2px; text-align:center;}
+#offset {display:inline-block; width:90px; margin-right:2px; text-align:center;
+  &.error {border-color:#c00;}
+}
 .label-group-last {margin-left:8px;}
 #sourcecode {min-height:200px; font-size:12px; line-height:130%;}
 #markup-container {display:none;}

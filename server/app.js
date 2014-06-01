@@ -31,6 +31,10 @@ var render404 = function(res) {
     };
 
 
+
+// Socket events
+// -----------------------------------------------------------------------------
+
 io.sockets.on('connection', function(client){
   console.log('Client connected ...');
 
@@ -90,18 +94,10 @@ io.sockets.on('connection', function(client){
     });
   });
 
-  // set title of shownotes
-  client.on('titleUpdated', function(data) {
-    db.run('UPDATE meta SET title = "' + data.title + '" WHERE slug = "' + data.slug + '"', function() {
-      client.broadcast.to(publicslug).emit('titleUpdatedSuccess', {title: data.title});
-      console.log("Set title", data.title);
-    });
-  });
-
 
   // Add new entry
   client.on('linkAdded', function(data) {
-    var time     = new Date().getTime();
+    var time = new Date().getTime();
 
     db.serialize(function() {
       // TODO why each and not something like fetchOne?
@@ -137,6 +133,14 @@ io.sockets.on('connection', function(client){
     });
   });
 
+
+  // update the entry (title, link/text)
+  client.on('linkUpdated', function(data) {
+    db.run('UPDATE data SET title = "' + data.title + '", isText = "' + data.isText + '" WHERE url = "' + data.url + '" AND slug = "' + data.slug + '"');
+    // TODO implement in live shownotes
+    client.broadcast.to(data.slug).emit('linkUpdated', {title: data.title, url: data.url});
+  });
+
   
   // check for duplicates when popup opens
   client.on('popupOpened', function(data) {
@@ -156,18 +160,27 @@ io.sockets.on('connection', function(client){
   });
 
 
-  // update the entry (title, link/text)
-  client.on('linkUpdated', function(data) {
-    db.run('UPDATE data SET title = "' + data.title + '", isText = "' + data.isText + '" WHERE url = "' + data.url + '" AND slug = "' + data.slug + '"');
-    // TODO implement in live shownotes
-    client.broadcast.to(data.slug).emit('linkUpdated', {title: data.title, url: data.url});
+  // set title of shownotes
+  client.on('titleUpdated', function(data) {
+    db.run('UPDATE meta SET title = "' + data.title + '" WHERE slug = "' + data.slug + '"', function() {
+      client.broadcast.to(publicslug).emit('titleUpdatedSuccess', {title: data.title});
+      console.log("Set title", data.title);
+    });
+  });
+
+
+  // set time offset
+  client.on('offsetUpdated', function(data) {
+    db.run('UPDATE meta SET offset = "' + data.offset + '" WHERE slug = "' + data.slug + '"', function() {
+      console.log("Set offset", data.offset);
+    });
   });
 
 
   // Client disconnected
   client.on('disconnect', function() {
-    console.log("Client disconnected ...");
-    io.sockets.in(publicslug).emit("counter", counter(publicslug) - 1);
+    console.log('Client disconnected ...');
+    io.sockets.in(publicslug).emit('counter', counter(publicslug) - 1);
     db.close();
   });
 
@@ -194,6 +207,9 @@ io.sockets.on('connection', function(client){
 });
 
 
+
+// Routes
+// -----------------------------------------------------------------------------
 
 // search for route first, then static file
 app.use(app.router);
@@ -223,7 +239,6 @@ app.get('/live/:publicslug', function(req, res) {
 });
 
 
-// TODO make one with offset
 // Shownotes in HTML
 app.get('/html/:slug', function(req, res) {
 
@@ -247,25 +262,25 @@ app.get('/html/:slug', function(req, res) {
 
 
 // Offset
-app.get('/html/:slug/:offset', function(req, res) {
+// app.get('/html/:slug/:offset', function(req, res) {
 
-  var slug    = req.params.slug,
-      offset  = req.params.offset,
-      items   = [];
+//   var slug    = req.params.slug,
+//       offset  = req.params.offset,
+//       items   = [];
 
-  db.serialize(function() {
-    db.run('UPDATE meta set offset = "'+offset+'" where slug =="'+slug+'"');
+//   db.serialize(function() {
+//     db.run('UPDATE meta set offset = "'+offset+'" where slug =="'+slug+'"');
 
-    db.get('SELECT startTime,offset FROM meta WHERE slug == "'+slug+'"', function(err1, row1){
-      if (row1) {
-        db.each('SELECT * FROM data WHERE slug =="'+slug+'" ORDER BY time', function(err2,row2){
-          items.push(row2);
-        }, function() {
-          res.render('html.ejs', {items: items, start: row1.startTime, slug: slug, offset: row1.offset});
-        });
-      } else {
-        render404(res);
-      }
-    });
-  });
-});
+//     db.get('SELECT startTime,offset FROM meta WHERE slug == "'+slug+'"', function(err1, row1){
+//       if (row1) {
+//         db.each('SELECT * FROM data WHERE slug =="'+slug+'" ORDER BY time', function(err2,row2){
+//           items.push(row2);
+//         }, function() {
+//           res.render('html.ejs', {items: items, start: row1.startTime, slug: slug, offset: row1.offset});
+//         });
+//       } else {
+//         render404(res);
+//       }
+//     });
+//   });
+// });
