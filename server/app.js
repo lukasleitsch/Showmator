@@ -53,11 +53,16 @@ io.sockets.on('connection', function(client){
     db.run('PRAGMA foreign_keys = ON');
   });
 
-  client.on('live', function(data) {
-    client.join(data);
-    publicslug = data;
+  // Make clients join their rooms
+  client.on('connectedLiveShownotes', function(publicSlugFromClient) {
+    client.join(publicSlugFromClient);
+    publicslug = publicSlugFromClient;
     io.sockets.in(publicslug).emit("counter", counter(publicslug));
-    console.log(publicslug);
+    console.log("connectedLiveShownotes: " + publicslug);
+  });
+  client.on('connectedHtmlExport', function(slug) {
+    client.join(slug);
+    console.log("html: " + slug);
   });
 
 
@@ -119,7 +124,6 @@ io.sockets.on('connection', function(client){
 
               db.run('INSERT INTO data (slug,title,url,time,isText) VALUES ("' + data.slug + '","' + data.title + '","' + data.url + '", ' + time  + ', ' + data.isText + ')', function(err/*, result*/) {
                 if (err) {
-                  console.log("ADD-ERROR", err);
                   emitError(err);
                 } else {
                   console.log('successfully added link');
@@ -163,7 +167,9 @@ io.sockets.on('connection', function(client){
   // set title of shownotes
   client.on('titleUpdated', function(data) {
     db.run('UPDATE meta SET title = "' + data.title + '" WHERE slug = "' + data.slug + '"', function() {
-      client.broadcast.to(publicslug).emit('titleUpdatedSuccess', {title: data.title});
+      [publicslug, data.slug].forEach(function(val) {
+        client.broadcast.to(val).emit('titleUpdatedSuccess', {title: data.title});
+      });
       console.log("Set title", data.title);
     });
   });
@@ -246,12 +252,18 @@ app.get('/html/:slug', function(req, res) {
       items   = [];
 
   db.serialize(function() {
-    db.get('SELECT startTime, offset FROM meta WHERE slug == "'+slug+'"', function(err1, row1) {
+    db.get('SELECT startTime, offset, title FROM meta WHERE slug == "'+slug+'"', function(err1, row1) {
       if (row1) {
         db.each('SELECT * FROM data WHERE slug =="'+slug+'" ORDER BY time', function(err2, row2) {
           items.push(row2);
         }, function() {
-          res.render('html.ejs', {items: items, start: row1.startTime, slug: slug, offset: row1.offset});
+          res.render('html.ejs', {
+            items:  items,
+            start:  row1.startTime,
+            slug:   slug,
+            offset: row1.offset,
+            title:  row1.title
+          });
         });
       } else {
         render404(res);
@@ -259,28 +271,3 @@ app.get('/html/:slug', function(req, res) {
     });
   });
 });
-
-
-// Offset
-// app.get('/html/:slug/:offset', function(req, res) {
-
-//   var slug    = req.params.slug,
-//       offset  = req.params.offset,
-//       items   = [];
-
-//   db.serialize(function() {
-//     db.run('UPDATE meta set offset = "'+offset+'" where slug =="'+slug+'"');
-
-//     db.get('SELECT startTime,offset FROM meta WHERE slug == "'+slug+'"', function(err1, row1){
-//       if (row1) {
-//         db.each('SELECT * FROM data WHERE slug =="'+slug+'" ORDER BY time', function(err2,row2){
-//           items.push(row2);
-//         }, function() {
-//           res.render('html.ejs', {items: items, start: row1.startTime, slug: slug, offset: row1.offset});
-//         });
-//       } else {
-//         render404(res);
-//       }
-//     });
-//   });
-// });

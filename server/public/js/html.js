@@ -2,7 +2,6 @@
 /*global formatTime */
 /*global isFormattedTime */
 /*global formattedTimeToMilliseconds */
-/*global console */
 
 $(function() {
 
@@ -96,7 +95,7 @@ $(function() {
       $this.addClass('error');
     else {
       $this.removeClass('error');
-      newOffset = formattedTimeToMilliseconds(val);
+      var newOffset = formattedTimeToMilliseconds(val);
       if (newOffset != offset) {
         offset = newOffset;
         socket.emit('offsetUpdated', {slug: slug, offset: offset});
@@ -112,5 +111,14 @@ $(function() {
     $(this).select().one('mouseup', function(e) {
       e.preventDefault();
     });
+  });
+
+
+  // update title if changed
+  socket.on('connect', function () {
+    socket.emit('connectedHtmlExport', slug);
+  });
+  socket.on('titleUpdatedSuccess', function(data) {
+    $('#title').text(data.title);
   });
 });
