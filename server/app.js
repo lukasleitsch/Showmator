@@ -11,9 +11,7 @@ var express = require('express'),
     io      = require('socket.io').listen(server, { log: false }),
     sqlite3 = require("sqlite3").verbose(),
     fs      = require("fs"),
-    file    = "data.db",
-    // TODO global publicSlug?
-    publicslug;
+    file    = "data.db";
 
 if (!fs.existsSync(file)) {
   console.log("Creating DB file.");
@@ -54,11 +52,11 @@ io.sockets.on('connection', function(client){
   });
 
   // Make clients join their rooms
-  client.on('connectedLiveShownotes', function(publicSlugFromClient) {
-    client.join(publicSlugFromClient);
-    publicslug = publicSlugFromClient;
-    io.sockets.in(publicslug).emit("counter", counter(publicslug));
-    console.log("connectedLiveShownotes: " + publicslug);
+  client.on('connectedLiveShownotes', function(publicSlug) {
+    client.publicSlug = publicSlug;
+    client.join(publicSlug);
+    io.sockets.in(publicSlug).emit("counter", counter(publicSlug));
+    console.log("connectedLiveShownotes: " + publicSlug);
   });
   client.on('connectedHtmlExport', function(slug) {
     client.join(slug);
@@ -118,7 +116,7 @@ io.sockets.on('connection', function(client){
           console.log("Time: " + time);
 
           db.serialize(function() {
-            db.each('SELECT startTime, offset from meta WHERE slug == "' + data.slug + '"', function(err, row) {
+            db.each('SELECT startTime, offset, publicSlug from meta WHERE slug == "' + data.slug + '"', function(err, row) {
               if (row.startTime === null)
                 db.run('UPDATE meta SET startTime = '+ time +' WHERE slug = "' + data.slug + '"');
 
@@ -127,7 +125,7 @@ io.sockets.on('connection', function(client){
                   emitError(err);
                 } else {
                   console.log('successfully added link');
-                  client.broadcast.to(publicslug).emit('push', {title: data.title, url: data.url, isText: data.isText, time: time});
+                  client.broadcast.to(row.publicSlug).emit('push', {title: data.title, url: data.url, isText: data.isText, time: time});
                 }
               });
             });
@@ -167,7 +165,8 @@ io.sockets.on('connection', function(client){
   // set title of shownotes
   client.on('titleUpdated', function(data) {
     db.run('UPDATE meta SET title = "' + data.title + '" WHERE slug = "' + data.slug + '"', function() {
-      [publicslug, data.slug].forEach(function(val) {
+      // publicSlug for live shownotes, private slug for html shownotes
+      [client.publicSlug, data.slug].forEach(function(val) {
         client.broadcast.to(val).emit('titleUpdatedSuccess', {title: data.title});
       });
       console.log("Set title", data.title);
@@ -185,8 +184,8 @@ io.sockets.on('connection', function(client){
 
   // Client disconnected
   client.on('disconnect', function() {
-    console.log('Client disconnected ...');
-    io.sockets.in(publicslug).emit('counter', counter(publicslug) - 1);
+    console.log('Client disconnected ...', client.publicSlug);
+    io.sockets.in(client.publicSlug).emit('counter', counter(client.publicSlug) - 1);
     db.close();
   });
 
@@ -202,12 +201,7 @@ io.sockets.on('connection', function(client){
 
   // Current connections of clients
   function counter(slug) {
-    var length  = 0,
-        clients = io.sockets.clients(slug);
-    // TODO why via for loop?
-    for (var val in clients)
-      length++;
-    return length;
+    return io.sockets.clients(slug).length;
   }
 
 });
@@ -223,18 +217,18 @@ app.use(express.static(__dirname + '/public'));
 
 
 // Live-Shownotes
-app.get('/live/:publicslug', function(req, res) {
+app.get('/live/:publicSlug', function(req, res) {
 
-  var publicslug = req.params.publicslug,
+  var publicSlug = req.params.publicSlug,
       items      = [];
 
   db.serialize(function() {
-    db.get('SELECT * FROM meta WHERE publicSlug == "'+publicslug+'"', function(err, row1) {
+    db.get('SELECT * FROM meta WHERE publicSlug == "'+publicSlug+'"', function(err, row1) {
       if (row1) {
         db.each('SELECT * FROM data WHERE slug == "'+row1.slug+'" ORDER BY time DESC', function(err, row2) {
           items.push(row2);
         }, function() {
-          res.render('live.ejs', {items: items, publicslug: publicslug, title: row1.title});
+          res.render('live.ejs', {items: items, publicSlug: publicSlug, title: row1.title});
         });
 
       } else {

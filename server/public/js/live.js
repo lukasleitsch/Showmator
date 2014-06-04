@@ -16,7 +16,7 @@ var socket    = io.connect('http://localhost:63685'),
 // -----------------------------------------------------------------------------
 
 socket.on('connect', function () {
-  socket.emit('connectedLiveShownotes', $('body').data('publicslug'));
+  socket.emit('connectedLiveShownotes', $('body').data('publicSlug'));
 });
 
 socket.on('push', function(data) {
