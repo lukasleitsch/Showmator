@@ -90,13 +90,17 @@ $(function() {
   });
 
 
-  // save title changes
+  // save title changes (only when nothing has changed after 1000ms)
+  var timer,
+      saveDelay = 1000,
+      saveTitleOnServer = function() {
+        socket.emit('titleUpdated', {slug: localStorage.slug, title: $title.val()});
+      };
   $title.keyup(function() {
-    var val = $(this).val();
-    $titleAlert.text(val);
-
-    // TODO only when nothing has changed after 1000ms
-    socket.emit('titleUpdated', {slug: localStorage.slug, title: val});
+    $titleAlert.text($(this).val());
+    if (!!timer)
+      clearTimeout(timer);
+    timer = setTimeout(saveTitleOnServer, saveDelay);
   });
 
 
