@@ -15,6 +15,7 @@ $(function() {
       $body       = $('body'),
       $slug       = $('#slug'),
       $slugStatic = $('#slug-static'),
+      $shortcut   = $('#shortcut'),
       $blacklist  = $('#blacklist'),
       $title      = $('#title-shownotes'),
       $titleAlert = $('#title-shownotes-alert'),
@@ -69,12 +70,19 @@ $(function() {
 
       // read current shortcut and insert it as text
       displayShortcut = function() {
+        var hasShortcut = false;
+        
         chrome.commands.getAll(function(commands) {
           $.each(commands, function(key, val) {
-            if (val.name == '_execute_browser_action' && val.shortcut !== '')
-              $('#shortcut').text(val.shortcut);
+            if (val.name == '_execute_browser_action' && val.shortcut !== '') {
+              hasShortcut = true;
+              $shortcut.text(val.shortcut);
+            }
           });
         });
+        
+        if (!hasShortcut)
+          $shortcut.html('<em>' + $shortcut.data('no-shortcut') + '</em>');
       },
 
 
