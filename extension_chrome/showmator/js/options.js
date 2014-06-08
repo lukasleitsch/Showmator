@@ -45,6 +45,8 @@ $(function() {
             publicSlug = randomSlug();
 
             $titleAlert.text(noTitleText);
+
+            $title.val(''); // clear title fild after create new shownotes
           }
 
           // enter slug into fields
