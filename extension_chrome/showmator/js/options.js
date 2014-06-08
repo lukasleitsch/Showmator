@@ -115,7 +115,9 @@ $(function() {
   // 'create new' button triggers new shownotes' init
   $('#create-new, #alert-link-create-new').click(function(e) {
     e.preventDefault();
-    localStorage.clear();
+    // localStorage.clear();
+    localStorage.removeItem('slug');
+    localStorage.removeItem('publicSlug');
     $body.removeClass(extendedFormClass);
     init();
   });

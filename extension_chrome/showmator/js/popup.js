@@ -89,7 +89,7 @@ $(function() {
 
   // add link when popup closes
   addEventListener('unload', function() {
-    if (!$body.hasClass('on-duplicate')) {
+    if (!$body.hasClass('on-duplicate') && !$body.hasClass('on-blacklist')) {
       socket.emit('linkAdded', {
         slug:   localStorage.slug,
         title:  htmlEntities($title.val()),
@@ -119,17 +119,15 @@ $(function() {
       $title.val(title);
 
       // prevent if on blacklist
-      // TODO make forEach
-      // TODO make overlay
       // TODO works?
       if (!!localStorage.blacklist) {
         var blacklist = localStorage.blacklist.split('\n'); // TODO works on windows?
-        for (var i = 0; i < blacklist.length; i++) {
-          if (url == blacklist[i]) {
-            $('#badUrl').html('<div class="alert alert-error">Böse URL: Kann nicht eingetragen werden!</div>');
-            $('#insert, #text, .text, #title, #duplicate, #delete').remove();
-          }
-        }
+
+        blacklist.forEach(function(entry) {
+            if(entry == url){
+              $body.addClass('on-blacklist');
+            }
+        });
       }
 
       // checks for duplicate

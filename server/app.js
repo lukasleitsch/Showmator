@@ -123,11 +123,12 @@ io.sockets.on('connection', function(client){
 
           db.serialize(function() {
             db.each('SELECT startTime, offset, publicSlug from meta WHERE slug == ?', data.slug, function(err, row) {
-              if (row.startTime === null)
+              if (row.startTime === null) {
                 db.run('UPDATE meta SET startTime = ? WHERE slug = ?', [
                     time,
                     data.slug
                   ]);
+              }
 
               db.run('INSERT INTO data (slug,title,url,time,isText) VALUES (?, ?, ?, ?, ?)', [
                   data.slug,

@@ -6,10 +6,11 @@ body {width:300px; padding:20px; text-align:center;}
   .glyphicon {display:block; margin-bottom:12px; font-size:24px;}
   .alert-link {font-weight:bold; color:$borderPrimary;}
 }
-.show-on-empty-slug, .show-on-duplicate {display:none;}
+.show-on-empty-slug, .show-on-duplicate, .show-on-blacklist {display:none;}
 .on-duplicate .show-on-duplicate,
-.on-empty-slug .show-on-empty-slug {display:table-cell; vertical-align:middle;}
-.on-duplicate, .on-empty-slug {
+.on-empty-slug .show-on-empty-slug,
+.on-blacklist .show-on-blacklist {display:table-cell; vertical-align:middle;}
+.on-duplicate, .on-empty-slug, .on-blacklist {
   .overlay {display:table;}
 }
 .on-empty-slug .alert-info {display:none;}  
