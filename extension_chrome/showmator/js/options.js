@@ -1,4 +1,5 @@
 /*global io */
+/*global chrome */
 
 // TODO error handling (no slug found, duplicated slug on #submit-slug)
 $(function() {
@@ -23,7 +24,7 @@ $(function() {
       publicSlug,
 
 
-      // checks active status + inserts data if available
+      // checks active status + inserts data if available + inserts shortcut
       init = function() {
         socket.emit('statusRequest', {slug: localStorage.slug});
         socket.on('statusResponse', function(data) {
@@ -60,6 +61,14 @@ $(function() {
           // update href attributes for external links
           $('#html').prop('href', baseUrl + '/html/' + slug);
           $('#live').prop('href', baseUrl + '/live/' + publicSlug);
+        });
+
+        chrome.commands.getAll(function(commands) {
+          console.log("commands:", commands);
+          $.each(commands, function(key, val) {
+            if (val.name == '_execute_browser_action' && val.shortcut != '')
+              $('#shortcut').text(val.shortcut);
+          });
         });
       },
 
@@ -103,6 +112,13 @@ $(function() {
     if (!!timer)
       clearTimeout(timer);
     timer = setTimeout(saveTitleOnServer, saveDelay);
+  });
+
+
+  // shortcut link (non-http doesn't work with a-tags)
+  $('#link-to-shortcut-options').click(function(e) {
+    e.preventDefault();
+    chrome.tabs.create({url: 'chrome://extensions/configureCommands'});
   });
 
 
