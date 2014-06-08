@@ -76,6 +76,7 @@ io.sockets.on('connection', function(client){
           };
         }
         client.emit('statusResponse', data);
+        client.publicSlug = row.publicSlug;
         
         console.log("STATUS");
         console.log(row);
@@ -90,9 +91,9 @@ io.sockets.on('connection', function(client){
     console.log("------------------------------");
     db.serialize(function() {
 
-      db.run('INSERT INTO meta (slug, publicSlug) VALUES (? , ?)', [data.slug, data.publicSlug]/*, function(err, result) {
-
-      }*/);
+      db.run('INSERT INTO meta (slug, publicSlug) VALUES (? , ?)', [data.slug, data.publicSlug], function(/*err, result*/) {
+        client.publicSlug = data.publicSlug;
+      });
     });
   });
 
@@ -165,6 +166,7 @@ io.sockets.on('connection', function(client){
   client.on('titleUpdated', function(data) {
     db.run('UPDATE meta SET title = ? WHERE slug = ?', [data.title, data.slug], function() {
       // publicSlug for live shownotes, private slug for html shownotes
+      console.log('title slugs', client.publicSlug, data.slug);
       [client.publicSlug, data.slug].forEach(function(val) {
         client.broadcast.to(val).emit('titleUpdatedSuccess', {title: data.title});
       });
@@ -199,8 +201,8 @@ io.sockets.on('connection', function(client){
 
 
   // Current connections of clients
-  function counter(slug) {
-    return io.sockets.clients(slug).length;
+  function counter(publicSlug) {
+    return io.sockets.clients(publicSlug).length;
   }
 
 });
