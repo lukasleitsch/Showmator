@@ -4,10 +4,10 @@
   "description": "Klick dir deine Shownotes",
   "main": "app.js",
   "dependencies": {
-    "express": "~3.4.8",
     "ejs": "~0.8.5",
-    "sqlite3": "~2.2.0",
-    "socket.io": "~0.9.16"
+    "express": "~3.4.8",
+    "socket.io": "~0.9.16",
+    "sqlite3": "~2.2.0"
   },
   "devDependencies": {},
   "scripts": {

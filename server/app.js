@@ -3,7 +3,6 @@
 /*global __dirname */
 
 // TODO FOREIGN KEY constraint failed: Insert entry without create shownotes
-// TODO escape string. app.js crached if insert " in the title field. maybe with this module https://www.npmjs.org/package/string-escape
 
 var express = require('express'),
     app     = express(),
@@ -67,7 +66,7 @@ io.sockets.on('connection', function(client){
   // Check status of shownotes
   client.on('statusRequest', function(data) {
     db.serialize(function() {
-      db.get('SELECT * FROM meta WHERE slug == "' + data.slug + '"', function(err, row) {
+      db.get('SELECT * FROM meta WHERE slug == ?', data.slug, function(err, row) {
         var data = {};
         if (row) {
           data = {
@@ -91,7 +90,10 @@ io.sockets.on('connection', function(client){
     console.log("------------------------------");
     db.serialize(function() {
 
-      db.run('INSERT INTO meta (slug, publicSlug) VALUES ("'+data.slug+'","'+data.publicSlug+'")'/*, function(err, result) {
+      db.run('INSERT INTO meta (slug, publicSlug) VALUES (? , ?)', [
+        data.slug,
+        data.publicSlug
+      ]/*, function(err, result) {
 
       }*/);
     });
@@ -104,7 +106,11 @@ io.sockets.on('connection', function(client){
 
     db.serialize(function() {
       // TODO why each and not something like fetchOne?
-      db.each('SELECT * from data WHERE url == "' + data.url + '" AND slug == "' + data.slug + '"', function(/*err, row*/) {
+      db.each('SELECT * from data WHERE url == ? AND slug == ?', [
+          data.url,
+          data.slug
+        ],
+        function(/*err, row*/) {
         // we have duplicates, do nothing
 
       }, function(err, row) {
@@ -116,11 +122,21 @@ io.sockets.on('connection', function(client){
           console.log("Time: " + time);
 
           db.serialize(function() {
-            db.each('SELECT startTime, offset, publicSlug from meta WHERE slug == "' + data.slug + '"', function(err, row) {
+            db.each('SELECT startTime, offset, publicSlug from meta WHERE slug == ?', data.slug, function(err, row) {
               if (row.startTime === null)
-                db.run('UPDATE meta SET startTime = '+ time +' WHERE slug = "' + data.slug + '"');
+                db.run('UPDATE meta SET startTime = ? WHERE slug = ?', [
+                    time,
+                    data.slug
+                  ]);
 
-              db.run('INSERT INTO data (slug,title,url,time,isText) VALUES ("' + data.slug + '","' + data.title + '","' + data.url + '", ' + time  + ', ' + data.isText + ')', function(err/*, result*/) {
+              db.run('INSERT INTO data (slug,title,url,time,isText) VALUES (?, ?, ?, ?, ?)', [
+                  data.slug,
+                  data.title,
+                  data.url,
+                  time,
+                  data.isText
+                ], 
+                function(err/*, result*/) {
                 if (err) {
                   emitError(err);
                 } else {
@@ -138,7 +154,12 @@ io.sockets.on('connection', function(client){
 
   // update the entry (title, link/text)
   client.on('linkUpdated', function(data) {
-    db.run('UPDATE data SET title = "' + data.title + '", isText = "' + data.isText + '" WHERE url = "' + data.url + '" AND slug = "' + data.slug + '"');
+    db.run('UPDATE data SET title = ?, isText = ? WHERE url = ? AND slug = ?', [
+        data.title,
+        data.isText,
+        data.url,
+        data.slug
+      ]);
     // TODO implement in live shownotes
     client.broadcast.to(data.slug).emit('linkUpdated', {title: data.title, url: data.url});
   });
@@ -149,7 +170,11 @@ io.sockets.on('connection', function(client){
     db.serialize(function() {
       var title, isText;
       // TODO why each and not something like fetchOne?
-      db.each('SELECT * from data WHERE url == "' + data.url + '" AND slug == "' + data.slug + '"', function(err, row) {
+      db.each('SELECT * from data WHERE url == ? AND slug == ?', [
+          data.url,
+          data.slug
+        ],
+        function(err, row) {
         title  = row.title;
         isText = row.isText;
       }, function(err, row) {
@@ -164,7 +189,10 @@ io.sockets.on('connection', function(client){
 
   // set title of shownotes
   client.on('titleUpdated', function(data) {
-    db.run('UPDATE meta SET title = "' + data.title + '" WHERE slug = "' + data.slug + '"', function() {
+    db.run('UPDATE meta SET title = ? WHERE slug = ?', [
+        data.title,
+        data.slug
+      ], function() {
       // publicSlug for live shownotes, private slug for html shownotes
       [client.publicSlug, data.slug].forEach(function(val) {
         client.broadcast.to(val).emit('titleUpdatedSuccess', {title: data.title});
@@ -176,7 +204,10 @@ io.sockets.on('connection', function(client){
 
   // set time offset
   client.on('offsetUpdated', function(data) {
-    db.run('UPDATE meta SET offset = "' + data.offset + '" WHERE slug = "' + data.slug + '"', function() {
+    db.run('UPDATE meta SET offset = ? WHERE slug = ?', [
+        data.offset,
+        data.slug
+      ], function() {
       console.log("Set offset", data.offset);
     });
   });
@@ -192,7 +223,7 @@ io.sockets.on('connection', function(client){
 
   // delete last item
   client.on('delete', function(data) {
-    db.run('DELETE FROM data WHERE id IN (SELECT id FROM (SELECT id FROM data WHERE slug = "'+data.slug+'" group by slug)x)', function(/*err, row*/) {
+    db.run('DELETE FROM data WHERE id IN (SELECT id FROM (SELECT id FROM data WHERE slug = ? group by slug)x)', data.slug, function(/*err, row*/) {
       client.broadcast.to(data.slug).emit('reload');
     });
     console.log("---- Delete -----");
@@ -223,9 +254,9 @@ app.get('/live/:publicSlug', function(req, res) {
       items      = [];
 
   db.serialize(function() {
-    db.get('SELECT * FROM meta WHERE publicSlug == "'+publicSlug+'"', function(err, row1) {
+    db.get('SELECT * FROM meta WHERE publicSlug == ?', publicSlug, function(err, row1) {
       if (row1) {
-        db.each('SELECT * FROM data WHERE slug == "'+row1.slug+'" ORDER BY time DESC', function(err, row2) {
+        db.each('SELECT * FROM data WHERE slug == ? ORDER BY time DESC', row1.slug, function(err, row2) {
           items.push(row2);
         }, function() {
           res.render('live.ejs', {items: items, publicSlug: publicSlug, title: row1.title});
@@ -246,9 +277,9 @@ app.get('/html/:slug', function(req, res) {
       items   = [];
 
   db.serialize(function() {
-    db.get('SELECT startTime, offset, title FROM meta WHERE slug == "'+slug+'"', function(err1, row1) {
+    db.get('SELECT startTime, offset, title FROM meta WHERE slug == ?', slug, function(err1, row1) {
       if (row1) {
-        db.each('SELECT * FROM data WHERE slug =="'+slug+'" ORDER BY time', function(err2, row2) {
+        db.each('SELECT * FROM data WHERE slug == ? ORDER BY time', slug, function(err2, row2) {
           items.push(row2);
         }, function() {
           res.render('html.ejs', {
