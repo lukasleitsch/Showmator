@@ -64,7 +64,6 @@ $(function() {
         });
 
         chrome.commands.getAll(function(commands) {
-          console.log("commands:", commands);
           $.each(commands, function(key, val) {
             if (val.name == '_execute_browser_action' && val.shortcut != '')
               $('#shortcut').text(val.shortcut);

@@ -90,10 +90,7 @@ io.sockets.on('connection', function(client){
     console.log("------------------------------");
     db.serialize(function() {
 
-      db.run('INSERT INTO meta (slug, publicSlug) VALUES (? , ?)', [
-        data.slug,
-        data.publicSlug
-      ]/*, function(err, result) {
+      db.run('INSERT INTO meta (slug, publicSlug) VALUES (? , ?)', [data.slug, data.publicSlug]/*, function(err, result) {
 
       }*/);
     });
@@ -106,11 +103,7 @@ io.sockets.on('connection', function(client){
 
     db.serialize(function() {
       // TODO why each and not something like fetchOne?
-      db.each('SELECT * from data WHERE url == ? AND slug == ?', [
-          data.url,
-          data.slug
-        ],
-        function(/*err, row*/) {
+      db.each('SELECT * from data WHERE url == ? AND slug == ?', [data.url, data.slug], function(/*err, row*/) {
         // we have duplicates, do nothing
 
       }, function(err, row) {
@@ -123,21 +116,10 @@ io.sockets.on('connection', function(client){
 
           db.serialize(function() {
             db.each('SELECT startTime, offset, publicSlug from meta WHERE slug == ?', data.slug, function(err, row) {
-              if (row.startTime === null) {
-                db.run('UPDATE meta SET startTime = ? WHERE slug = ?', [
-                    time,
-                    data.slug
-                  ]);
-              }
+              if (row.startTime === null)
+                db.run('UPDATE meta SET startTime = ? WHERE slug = ?', [time, data.slug]);
 
-              db.run('INSERT INTO data (slug,title,url,time,isText) VALUES (?, ?, ?, ?, ?)', [
-                  data.slug,
-                  data.title,
-                  data.url,
-                  time,
-                  data.isText
-                ], 
-                function(err/*, result*/) {
+              db.run('INSERT INTO data (slug, title, url, time, isText) VALUES (?, ?, ?, ?, ?)', [data.slug, data.title, data.url, time, data.isText], function(err/*, result*/) {
                 if (err) {
                   emitError(err);
                 } else {
@@ -155,12 +137,7 @@ io.sockets.on('connection', function(client){
 
   // update the entry (title, link/text)
   client.on('linkUpdated', function(data) {
-    db.run('UPDATE data SET title = ?, isText = ? WHERE url = ? AND slug = ?', [
-        data.title,
-        data.isText,
-        data.url,
-        data.slug
-      ]);
+    db.run('UPDATE data SET title = ?, isText = ? WHERE url = ? AND slug = ?', [data.title, data.isText, data.url, data.slug]);
     // TODO implement in live shownotes
     client.broadcast.to(data.slug).emit('linkUpdated', {title: data.title, url: data.url});
   });
@@ -171,11 +148,7 @@ io.sockets.on('connection', function(client){
     db.serialize(function() {
       var title, isText;
       // TODO why each and not something like fetchOne?
-      db.each('SELECT * from data WHERE url == ? AND slug == ?', [
-          data.url,
-          data.slug
-        ],
-        function(err, row) {
+      db.each('SELECT * from data WHERE url == ? AND slug == ?', [data.url, data.slug], function(err, row) {
         title  = row.title;
         isText = row.isText;
       }, function(err, row) {
@@ -190,10 +163,7 @@ io.sockets.on('connection', function(client){
 
   // set title of shownotes
   client.on('titleUpdated', function(data) {
-    db.run('UPDATE meta SET title = ? WHERE slug = ?', [
-        data.title,
-        data.slug
-      ], function() {
+    db.run('UPDATE meta SET title = ? WHERE slug = ?', [data.title, data.slug], function() {
       // publicSlug for live shownotes, private slug for html shownotes
       [client.publicSlug, data.slug].forEach(function(val) {
         client.broadcast.to(val).emit('titleUpdatedSuccess', {title: data.title});
@@ -205,10 +175,7 @@ io.sockets.on('connection', function(client){
 
   // set time offset
   client.on('offsetUpdated', function(data) {
-    db.run('UPDATE meta SET offset = ? WHERE slug = ?', [
-        data.offset,
-        data.slug
-      ], function() {
+    db.run('UPDATE meta SET offset = ? WHERE slug = ?', [data.offset, data.slug], function() {
       console.log("Set offset", data.offset);
     });
   });

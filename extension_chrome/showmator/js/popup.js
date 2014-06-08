@@ -119,14 +119,11 @@ $(function() {
       $title.val(title);
 
       // prevent if on blacklist
-      // TODO works?
+      // TODO works on windows?
       if (!!localStorage.blacklist) {
-        var blacklist = localStorage.blacklist.split('\n'); // TODO works on windows?
-
-        blacklist.forEach(function(entry) {
-            if(entry == url){
+        localStorage.blacklist.split('\n').forEach(function(entry) {
+            if (entry == url || entry + '/' == url || entry == url + '/')
               $body.addClass('on-blacklist');
-            }
         });
       }
 
