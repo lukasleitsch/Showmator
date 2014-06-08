@@ -63,9 +63,15 @@ $(function() {
           $('#live').prop('href', baseUrl + '/live/' + publicSlug);
         });
 
+        displayShortcut();
+      },
+
+
+      // read current shortcut and insert it as text
+      displayShortcut = function() {
         chrome.commands.getAll(function(commands) {
           $.each(commands, function(key, val) {
-            if (val.name == '_execute_browser_action' && val.shortcut != '')
+            if (val.name == '_execute_browser_action' && val.shortcut !== '')
               $('#shortcut').text(val.shortcut);
           });
         });
@@ -119,6 +125,9 @@ $(function() {
     e.preventDefault();
     chrome.tabs.create({url: 'chrome://extensions/configureCommands'});
   });
+
+  // check for changed shortcut when window is activated
+  $(window).focus(displayShortcut);
 
 
   // save blacklist changes

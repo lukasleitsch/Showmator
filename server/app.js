@@ -90,7 +90,6 @@ io.sockets.on('connection', function(client){
     console.log(data);
     console.log("------------------------------");
     db.serialize(function() {
-
       db.run('INSERT INTO meta (slug, publicSlug) VALUES (? , ?)', [data.slug, data.publicSlug], function(/*err, result*/) {
         client.publicSlug = data.publicSlug;
       });
