@@ -52,7 +52,7 @@ $(function() {
           // hide ul/li-tags, insert br-tag
           html = html
             .replace(/<\/li>/g, '<br>')
-            .replace(/<\/?(ul|li)( class="")?>\n/g, '');
+            .replace(/<\/?(ul|li)( class="")?>\n?/g, '');
         }
 
         // hide span-tags
