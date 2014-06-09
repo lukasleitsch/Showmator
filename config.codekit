@@ -212,6 +212,17 @@
 		"outputStyle": 1,
 		"syntaxCheckerStyle": 1
 		},
+	"\/extension_chrome\/showmator\/js\/min\/options-ck.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/extension_chrome\/showmator\/js\/min\/options-ck.js",
+		"outputAbbreviatedPath": "\/extension_chrome\/showmator\/js\/min\/min\/options-ck-ck.js",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
+		},
 	"\/extension_chrome\/showmator\/js\/options.js": {
 		"fileType": 64,
 		"ignore": 1,
@@ -240,6 +251,17 @@
 		"ignoreWasSetByUser": 1,
 		"inputAbbreviatedPath": "\/extension_chrome\/showmator\/js\/socket.io.js",
 		"outputAbbreviatedPath": "\/extension_chrome\/showmator\/js\/min\/socket.io-ck.js",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
+		},
+	"\/extension_chrome\/showmator\/js\/tooltip.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 1,
+		"inputAbbreviatedPath": "\/extension_chrome\/showmator\/js\/tooltip.js",
+		"outputAbbreviatedPath": "\/extension_chrome\/showmator\/js\/min\/tooltip-ck.js",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1,

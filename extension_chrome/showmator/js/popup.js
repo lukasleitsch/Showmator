@@ -96,7 +96,6 @@ $(function() {
         url:    url,
         isText: $('#kind-text-only').is(':checked') ? 1 : 0
       });
-      chrome.extension.getBackgroundPage().badget("OK", "#33cc00");
     }
   }, true);
 

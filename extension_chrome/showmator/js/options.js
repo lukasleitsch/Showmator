@@ -14,6 +14,7 @@ $(function() {
 
       $body       = $('body'),
       $slug       = $('#slug'),
+      $submit     = $('#submit-slug'),
       $slugStatic = $('#slug-static'),
       $shortcut   = $('#shortcut'),
       $blacklist  = $('#blacklist'),
@@ -97,32 +98,42 @@ $(function() {
   // -----------------------------------------------------------------------------
 
   // submit new slug and show more options
-  $('#submit-slug').click(function() {
-    var slug = $.trim($slug.val()).replace(/ /g,'');
-    var patt = new RegExp(/^[a-zA-Z0-9]+$/g); // check that slug is valid
+  $submit.click(function() {
+    var slug    = $.trim($slug.val()).replace(/ /g,''),
+        showTooltip = function(text, allowHtml) {
+          $slug.tooltip({
+            title:     text,
+            placement: 'bottom',
+            trigger:   'manual',
+            html:      !!allowHtml
+          }).tooltip('show')
+          .one('keyup', function() {
+            $slug.tooltip('destroy');
+          });
+        };
     
+    // if empty: tooltip
     if (!slug) {
-      // TODO make tooltip
-      $('#status').show().html("Bitte ein Kürzel eingeben!").delay(5000).fadeOut(3000);
-      $("#slug").tooltip({
-              title : 'Bitte ein Kürzel eingeben',
-              placement: 'bottom'
-          });
-      $('#slug').tooltip('show');
+      showTooltip($slug.data('empty'));
     
-    } else if (!patt.test(slug)) {
-      $("#slug").tooltip({
-              title : 'Kürzel ist nicht zulässig',
-              placement: 'bottom'
-          });
-      $('#slug').tooltip('show');
+    // if invalid: tooltip
+    } else if (!/^[a-zA-Z0-9]+$/g.test(slug)) {
+      showTooltip($slug.data('invalid'), true);
+
+    // if valid: send event to server, save in localStorage and show active form
     } else {
-      // TODO make common request and wait for success response (so we can validate slug on server)
       socket.emit('new', {slug: slug, publicSlug: publicSlug});
       localStorage.slug = slug;
       $slugStatic.text(slug);
       $body.addClass(extendedFormClass);
     }
+  });
+  
+
+  // trigger submit on enter
+  $slug.keyup(function(e) {
+    if (e.keyCode == 13)
+      $submit.click();
   });
 
 

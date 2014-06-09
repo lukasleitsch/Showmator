@@ -74,9 +74,9 @@ io.sockets.on('connection', function(client){
             publicSlug: row.publicSlug,
             title:      row.title
           };
+          client.publicSlug = row.publicSlug;
         }
         client.emit('statusResponse', data);
-        client.publicSlug = row.publicSlug;
         
         console.log("STATUS");
         console.log(row);
