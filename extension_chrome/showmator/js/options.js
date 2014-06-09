@@ -99,11 +99,23 @@ $(function() {
   // submit new slug and show more options
   $('#submit-slug').click(function() {
     var slug = $.trim($slug.val()).replace(/ /g,'');
+    var patt = new RegExp(/^[a-zA-Z0-9]+$/g); // check that slug is valid
     
     if (!slug) {
       // TODO make tooltip
       $('#status').show().html("Bitte ein Kürzel eingeben!").delay(5000).fadeOut(3000);
+      $("#slug").tooltip({
+              title : 'Bitte ein Kürzel eingeben',
+              placement: 'bottom'
+          });
+      $('#slug').tooltip('show');
     
+    } else if (!patt.test(slug)) {
+      $("#slug").tooltip({
+              title : 'Kürzel ist nicht zulässig',
+              placement: 'bottom'
+          });
+      $('#slug').tooltip('show');
     } else {
       // TODO make common request and wait for success response (so we can validate slug on server)
       socket.emit('new', {slug: slug, publicSlug: publicSlug});
