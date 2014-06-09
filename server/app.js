@@ -78,8 +78,9 @@ io.sockets.on('connection', function(client){
         }
         client.emit('statusResponse', data);
         
-        console.log("STATUS");
-        console.log(row);
+        console.log("STATUS", row ? client.publicSlug : 'no rows (=no slug yet)');
+        if (row)
+          console.log(row);
       });
     });
   });
@@ -126,9 +127,12 @@ io.sockets.on('connection', function(client){
                   console.log('successfully added link');
                   client.broadcast.to(row.publicSlug).emit('push', {title: data.title, url: data.url, isText: data.isText, time: time});
                 }
+                db.close();
               });
             });
           });
+        } else {
+          db.close();
         }
       });
     });
@@ -136,15 +140,17 @@ io.sockets.on('connection', function(client){
 
 
   // update the entry (title, link/text)
-  client.on('linkUpdated', function(data) {
-    db.run('UPDATE data SET title = ?, isText = ? WHERE url = ? AND slug = ?', [data.title, data.isText, data.url, data.slug]);
-    // TODO implement in live shownotes
-    client.broadcast.to(data.slug).emit('linkUpdated', {title: data.title, url: data.url});
-  });
+  // client.on('linkUpdated', function(data) {
+  //   db.run('UPDATE data SET title = ?, isText = ? WHERE url = ? AND slug = ?', [data.title, data.isText, data.url, data.slug]);
+  //   // TODO implement in live shownotes
+  //   client.broadcast.to(data.slug).emit('linkUpdated', {title: data.title, url: data.url});
+  // });
 
   
   // check for duplicates when popup opens
   client.on('popupOpened', function(data) {
+    client.isPopup = true;
+    console.log("set is popup");
     db.serialize(function() {
       var title, isText;
       // TODO why each and not something like fetchOne?
@@ -184,9 +190,11 @@ io.sockets.on('connection', function(client){
 
   // Client disconnected
   client.on('disconnect', function() {
-    console.log('Client disconnected ...', client.publicSlug);
+    console.log('Client disconnected ...', client.isPopup ? 'no slug (popup)' : client.publicSlug);
     io.sockets.in(client.publicSlug).emit('counter', counter(client.publicSlug) - 1);
-    db.close();
+    console.log(new Date().getTime());
+    if (!client.isPopup)
+      db.close();
   });
 
 

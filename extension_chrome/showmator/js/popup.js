@@ -34,12 +34,12 @@ $(function() {
     if ($(this).hasClass('disabled'))
       return;
 
-    socket.emit('linkUpdated', {
-      slug:   localStorage.slug,
-      title:  htmlEntities($title.val()),
-      url:    url,
-      isText: $('#kind-text-only').is(':checked') ? 1 : 0
-    });
+    // socket.emit('linkUpdated', {
+    //   slug:   localStorage.slug,
+    //   title:  htmlEntities($title.val()),
+    //   url:    url,
+    //   isText: $('#kind-text-only').is(':checked') ? 1 : 0
+    // });
     window.close();
   });
 
