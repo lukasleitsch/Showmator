@@ -1,19 +1,20 @@
 <?php 
     include("function.php");
+    include("config.php");
     header_ausgeben("Live Shownotes");
-
+    echo msg("test");
     if (isset($_GET['slug'])) {
         $slug = $_GET['slug'];
         htmlentities($slug);
     }
 ?>
 
-<script src="http://phasenkasper.de:63123/socket.io/socket.io.js"></script>
-<!-- <script src="http://localhost:63123/socket.io/socket.io.js"></script>  -->  <!-- DEV -->
+<script src="<? echo "http://{$config['host_address']}:{$config['port']}" ?>/socket.io/socket.io.js"></script>
+<!-- <script src="<? echo "http://{$config['host_address']}:{$config['port']}" ?>/socket.io/socket.io.js"></script>  -->  <!-- DEV -->
 <script>
-	var slug = '<?php echo $slug ?>';
+	var slug = '<?php echo (isset($slug) ? $slug: "") ?>';
 
-  var socket = io.connect('http://phasenkasper.de:63123');
+  var socket = io.connect('<? echo "http://{$config['host_address']}:{$config['port']}" ?>');
   // var socket = io.connect('http://localhost:63123');    //DEV
 
 
@@ -41,7 +42,7 @@
     $("#result").empty();
 
        if(data == "{}"){
-       $('#result').prepend('<div class="alert">Bitte noch etwas Geduld. Im Moment sind noch keine Shownotes eingetragen.</div>');
+       $('#result').prepend('<div class="alert"><?php echo msg('no_notes'); ?></div>');
     }
 
     // Übermittelte Daten werden weiterverabeitet. Text in Text und Links in Links gewandelt.
@@ -81,8 +82,8 @@
         <div class="span12">
             <h2>Live-Shownotes</h2>
             <div id="settings">
-               <!-- <input type="checkbox" name="tab" id="tab" style="float: left;"> <label for="tab" style="margin-left: 15px;">Neue Links automatisch öffnen</label> -->
-               <p>Aktuelle Betrachter: <span id="counter"></span> | Die Seite aktualisiert sich automatisch.</p>
+               <!-- <input type="checkbox" name="tab" id="tab" style="float: left;"> <label for="tab" style="margin-left: 15px;"><?php echo msg('auto_open'); ?></label> -->
+               <p><?php echo msg('cur_viewer'); ?>: <span id="counter"></span> | <?php echo msg('auto_refresh'); ?></p>
 
             </div>
             <div id="result"></div>

@@ -21,9 +21,9 @@
 		
 		if (!file_exists("data/".$slug.".json")) {
 			save($slug, $startTimeUnix);
-			echo 'Die Shownotes "'.$slug.'" wurden angelegt. Zeit wird beim ersten Eintrag gestartet.';
+			printf(msg('show_succ'),$slug);
 		}else{
-			echo "Die Shownotes mit diesem Slug existieren schon. Bitte einen anderen Slug verwenden.";
+			echo  msg('show_err');
 		}
 	}
 
@@ -32,9 +32,9 @@
 	if (!empty($slug) && $join == "true") {
 
 		if (file_exists("data/".$slug.".json")) {
-			echo 'Du kannst jetzt bei den Shownotes  "'.$slug.'" mitmachen';
+			printf(msg('part_succ'),$slug)	
 		}else{
-			echo "Die Shownotes mit diesem Slug existieren nicht. Bitte erst anlegen!";
+			echo msg('part_err');
 		}
 		
 	}

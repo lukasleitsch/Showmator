@@ -1,5 +1,6 @@
 <?php  
 	include("function.php");
+        include("config.php");
 	
 	if (isset($_POST['t'])) {
 		$title = $_POST['t'];
@@ -45,14 +46,14 @@
 		echo date("H:i:s", $time-$startTime)."\n". html_entity_decode($title);
 
 	}else{
-		echo "Link wurde leider NICHT eingetragen!";
+		echo msg('link_failed');
 	}
 
 
 	// Push an NodeJS
 	$ch = curl_init();
 	
-	curl_setopt($ch, CURLOPT_URL, "http://phasenkasper.de:63123/push");
+	curl_setopt($ch, CURLOPT_URL, "http://{$config['host_address']}:{$config['port']}/push");
 	// curl_setopt($ch, CURLOPT_URL, "http://localhost:63123/push");
 	curl_setopt($ch,CURLOPT_POST,true); 
 	// curl_setopt($ch,CURLOPT_MUTE,true); 

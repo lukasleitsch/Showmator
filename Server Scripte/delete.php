@@ -1,5 +1,7 @@
 <?php 
 	include("function.php");
+	include("config.php");
+
 
 	if (isset($_POST['s'])) {
 		$slug = $_POST['s'];
@@ -22,12 +24,13 @@
 
 	file_put_contents("data/".$slug.".json", json_encode($content));
 
-	echo "Erfolgreich gelöscht";
+	echo msg('delete_succ');
 
 	//Push auslösen
 
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "http://phasenkasper.de:63123/push");
+
+	curl_setopt($ch, CURLOPT_URL, "http://{$config['host_address']}:{$config['port']}/push");
 	curl_setopt($ch,CURLOPT_POST,true); 
 	curl_setopt($ch,CURLOPT_MUTE,true); 
 	curl_exec($ch);
