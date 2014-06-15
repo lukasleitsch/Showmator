@@ -1,5 +1,7 @@
 <?php 
 
+$LANG = explode ( "_" , locale_get_default())[0];
+include("lang.php");
 date_default_timezone_set('UTC');
 
 function header_ausgeben($title){

@@ -1,6 +1,6 @@
 <?php 
   include("function.php"); 
-  header_ausgeben();
+  header_ausgeben("Showmator");
 ?> 
   		<div class="container">
   			<div class="row">
