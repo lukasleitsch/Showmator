@@ -1,6 +1,7 @@
 <?php 
 
 $LANG = explode ( "_" , locale_get_default())[0];
+#$LANG = "de"; 
 include("lang.php");
 date_default_timezone_set('UTC');
 
@@ -23,7 +24,7 @@ function footer_ausgeben(){
 
 	echo'	
 			<br />
-			<div class="container"><a href="https://leitsch.org/projects/showmator" target="_blank">Shownotes were created with Showmator</a></div>
+			<div class="container"><a href="https://leitsch.org/projects/showmator" target="_blank">'.msg('show_create').'</a></div>
 		  	</body>
 			</html>
 	';
@@ -33,7 +34,7 @@ function footer_ausgeben(){
 function check_version($version){
 	global $sVersion;
 	if($sVersion != $version){
-		echo "Auf dem Server läuft nicht die aktuelle Version des Showmators. Bitte updaten!";
+		echo msg('wrong_version');
 		exit;
 	}
 }

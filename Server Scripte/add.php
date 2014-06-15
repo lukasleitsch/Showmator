@@ -46,7 +46,7 @@
 		echo date("H:i:s", $time-$startTime)."\n". html_entity_decode($title);
 
 	}else{
-		echo "Link wurde leider NICHT eingetragen!";
+		echo msg('link_failed');
 	}
 
 

@@ -1,7 +1,6 @@
 <?php 
     include("function.php");
     include("config.php");
-    echo $locale;
     header_ausgeben("Live Shownotes");
     echo msg("test");
     if (isset($_GET['slug'])) {
@@ -43,7 +42,7 @@
     $("#result").empty();
 
        if(data == "{}"){
-       $('#result').prepend('<div class="alert">Bitte noch etwas Geduld. Im Moment sind noch keine Shownotes eingetragen.</div>');
+       $('#result').prepend('<div class="alert"><?php echo msg('no_notes'); ?></div>');
     }
 
     // Übermittelte Daten werden weiterverabeitet. Text in Text und Links in Links gewandelt.
@@ -83,8 +82,8 @@
         <div class="span12">
             <h2>Live-Shownotes</h2>
             <div id="settings">
-               <!-- <input type="checkbox" name="tab" id="tab" style="float: left;"> <label for="tab" style="margin-left: 15px;">Neue Links automatisch öffnen</label> -->
-               <p>Aktuelle Betrachter: <span id="counter"></span> | Die Seite aktualisiert sich automatisch.</p>
+               <!-- <input type="checkbox" name="tab" id="tab" style="float: left;"> <label for="tab" style="margin-left: 15px;"><?php echo msg('auto_open'); ?></label> -->
+               <p><?php echo msg('cur_viewer'); ?>: <span id="counter"></span> | <?php echo msg('auto_refresh'); ?></p>
 
             </div>
             <div id="result"></div>

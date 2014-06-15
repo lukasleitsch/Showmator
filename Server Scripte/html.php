@@ -39,16 +39,16 @@
   // Einstellungsmöglichkeiten für die Shownotes
 
 	echo '<div>
-        <span id="hideTime" class="label">Zeit ausblenden</span>
-        <span id="showTime" style="display: none;" class="label label-inverse">Zeit anzeigen</span> 
-        <span id="hideTarget" class="label">target="_blank" ausblenden</span>
-        <span id="showTarget" style="display: none;" class="label label-inverse">target="_blank" einblenden</span>
-        <span id="list" class="label">Als HTML-Liste</span><span id="plain" style="display: none;" class="label label-inverse">Als Plain-Text</span> 
+        <span id="hideTime" class="label">'.msg('hide_time').'</span>
+        <span id="showTime" style="display: none;" class="label label-inverse">'.msg('show_time').'</span> 
+        <span id="hideTarget" class="label">'.msg('hide_blank').'</span>
+        <span id="showTarget" style="display: none;" class="label label-inverse">'.msg('show_blank').'</span>
+        <span id="list" class="label">'.msg('as_html').'</span><span id="plain" style="display: none;" class="label label-inverse">'.msg('as_plain').'</span> 
         <form action="'.$_SERVER['PHP_SELF'].'" method="get" accept-charset="utf-8" class="form-inline" style="display: inline;">
           <input type="hidden" name="slug" value="'.$slug.'">
-          Zeit des ersten Eintrags: 
+          '.msg('time_f_entry').': 
           <input type="text" name="offset" value="'.date("H:i:s", $offsetmeta).'">
-          <input type="submit" value="Ändern" class="btn">  
+          <input type="submit" value="'.msg('change').'" class="btn">  
     
         </form>
         <br>
@@ -71,14 +71,14 @@
   echo '</div>';
 
   echo '<div id="chapter">';
-  echo '<br><h1>Shownotes als Podlove Simple Chapter</h1>';
+  echo '<br><h1>'.msg('pl_chapter').'</h1>';
   foreach ($content as $value) {
     echo date("H:i:s", $value["time"]-$startTime+$offsetmeta).' '.($value["url"] == 'null' ? $value["title"].'<br>' : $value["title"].' &lt;'.$value["url"].'&gt;<br />'); 
   }
 
   echo '</div>';
 
-  echo '&lt;p&gt;&lt;a href="https://leitsch.org/projects/showmator&quot; target=&quot;_blank&quot;&gt;Shownotes were created with Showmator&lt;/a&gt;&lt;/p&gt;';
+  echo '&lt;p&gt;&lt;a href="https://leitsch.org/projects/showmator&quot; target=&quot;_blank&quot;&gt;'.msg('show_created').'&lt;/a&gt;&lt;/p&gt;';
 
 ?>
 

@@ -24,7 +24,7 @@
 
 	file_put_contents("data/".$slug.".json", json_encode($content));
 
-	echo "Erfolgreich gelöscht";
+	echo msg('delete_succ');
 
 	//Push auslösen
 
