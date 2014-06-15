@@ -53,7 +53,7 @@
 	// Push an NodeJS
 	$ch = curl_init();
 	
-	curl_setopt($ch, CURLOPT_URL, "http://" . $config['host_address'] . ":" . $config['port'] . "/push");
+	curl_setopt($ch, CURLOPT_URL, "http://{$config['host_address']}:{$config['port']}/push");
 	// curl_setopt($ch, CURLOPT_URL, "http://localhost:63123/push");
 	curl_setopt($ch,CURLOPT_POST,true); 
 	// curl_setopt($ch,CURLOPT_MUTE,true); 

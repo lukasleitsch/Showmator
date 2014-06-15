@@ -10,12 +10,12 @@
     }
 ?>
 
-<script src="<? echo("http://".$config['host_address'].":".$config['port']); ?>/socket.io/socket.io.js"></script>
-<!-- <script src="<? echo "http://" . $config['host_address'] . ":" . $config['port'] ?>/socket.io/socket.io.js"></script>  -->  <!-- DEV -->
+<script src="<? echo "http://{$config['host_address']}:{$config['port']}" ?>/socket.io/socket.io.js"></script>
+<!-- <script src="<? echo "http://{$config['host_address']}:{$config['port']}" ?>/socket.io/socket.io.js"></script>  -->  <!-- DEV -->
 <script>
 	var slug = '<?php echo (isset($slug) ? $slug: "") ?>';
 
-  var socket = io.connect('<? echo "http://" . $config['host_address'] . ":" . $config['port'] ?>');
+  var socket = io.connect('<? echo "http://{$config['host_address']}:{$config['port']}" ?>');
   // var socket = io.connect('http://localhost:63123');    //DEV
 
 
