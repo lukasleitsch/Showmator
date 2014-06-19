@@ -71,19 +71,19 @@ $(function() {
 
       // read current shortcut and insert it as text
       displayShortcut = function() {
-        var hasShortcut = false;
-        
         chrome.commands.getAll(function(commands) {
+          var hasShortcut = false;
+
           $.each(commands, function(key, val) {
             if (val.name == '_execute_browser_action' && val.shortcut !== '') {
               hasShortcut = true;
               $shortcut.text(val.shortcut);
             }
           });
+
+          if (!hasShortcut)
+            $shortcut.html('<em>' + $shortcut.data('no-shortcut') + '</em>');
         });
-        
-        if (!hasShortcut)
-          $shortcut.html('<em>' + $shortcut.data('no-shortcut') + '</em>');
       },
 
 
