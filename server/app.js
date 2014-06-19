@@ -33,13 +33,21 @@ var render404 = function(res) {
 // -----------------------------------------------------------------------------
 
 io.sockets.on('connection', function(client){
-  console.log('Client connected ...');
-
-  var db = new sqlite3.Database(file),
+  var log = function() {
+        var args = [new Date().getTime(), client.id];
+        for (var key in arguments)
+          args.push(arguments[key]);
+        console.log.apply(undefined, args);
+      },
+      
+      db = new sqlite3.Database(file),
+      
       emitError = function(err) {
-        console.log("caught exception:", err);
+        log("caught exception", err);
         client.emit("genericError");
       };
+
+  log('connected');
 
   // Create tables if not present
   // TODO why on connection and not on start of server?
@@ -55,11 +63,11 @@ io.sockets.on('connection', function(client){
     client.publicSlug = publicSlug;
     client.join(publicSlug);
     io.sockets.in(publicSlug).emit("counter", counter(publicSlug));
-    console.log("connectedLiveShownotes: " + publicSlug);
+    log('connectedLiveShownotes', publicSlug);
   });
   client.on('connectedHtmlExport', function(slug) {
     client.join(slug);
-    console.log("html: " + slug);
+    log('connectedHtmlExport', slug);
   });
 
 
@@ -78,21 +86,18 @@ io.sockets.on('connection', function(client){
         }
         client.emit('statusResponse', data);
         
-        console.log("STATUS", row ? client.publicSlug : 'no rows (=no slug yet)');
-        if (row)
-          console.log(row);
+        log('statusResponse', row ? client.publicSlug : 'no rows (=no slug yet)', row);
       });
     });
   });
 
   // Create new shownotes
   client.on('new', function(data) {
-    console.log("---- Create new Shownotes ----");
-    console.log(data);
-    console.log("------------------------------");
+    log('create new shownotes', data);
     db.serialize(function() {
       db.run('INSERT INTO meta (slug, publicSlug) VALUES (? , ?)', [data.slug, data.publicSlug], function(/*err, result*/) {
         client.publicSlug = data.publicSlug;
+        log('created new shownotes');
       });
     });
   });
@@ -109,11 +114,7 @@ io.sockets.on('connection', function(client){
 
       }, function(err, row) {
         if (row === 0) {
-          console.log("---- Add entry ----");
-          console.log("Slug: " + data.slug);
-          console.log("Title: " + data.title);
-          console.log("Url: " + data.url);
-          console.log("Time: " + time);
+          log('add entry', data);
 
           db.serialize(function() {
             db.each('SELECT startTime, offset, publicSlug from meta WHERE slug == ?', data.slug, function(err, row) {
@@ -124,7 +125,7 @@ io.sockets.on('connection', function(client){
                 if (err) {
                   emitError(err);
                 } else {
-                  console.log('successfully added link');
+                  log('successfully added link');
                   client.broadcast.to(row.publicSlug).emit('push', {title: data.title, url: data.url, isText: data.isText, time: time});
                 }
                 db.close();
@@ -150,7 +151,7 @@ io.sockets.on('connection', function(client){
   // check for duplicates when popup opens
   client.on('popupOpened', function(data) {
     client.isPopup = true;
-    console.log("set is popup");
+    log('popupOpended');
     db.serialize(function() {
       var title, isText;
       // TODO why each and not something like fetchOne?
@@ -159,7 +160,7 @@ io.sockets.on('connection', function(client){
         isText = row.isText;
       }, function(err, row) {
         if (row) {
-          console.log('found duplicate');
+          log('found duplicate');
           client.emit('duplicate', {title: title, isText: isText});
         }
       });
@@ -171,11 +172,10 @@ io.sockets.on('connection', function(client){
   client.on('titleUpdated', function(data) {
     db.run('UPDATE meta SET title = ? WHERE slug = ?', [data.title, data.slug], function() {
       // publicSlug for live shownotes, private slug for html shownotes
-      console.log('title slugs', client.publicSlug, data.slug);
+      log('titleUpdated', 'publicSlug: ' + client.publicSlug, 'slug: ' + data.slug, 'title: ' + data.title);
       [client.publicSlug, data.slug].forEach(function(val) {
         client.broadcast.to(val).emit('titleUpdatedSuccess', {title: data.title});
       });
-      console.log("Set title", data.title);
     });
   });
 
@@ -183,16 +183,15 @@ io.sockets.on('connection', function(client){
   // set time offset
   client.on('offsetUpdated', function(data) {
     db.run('UPDATE meta SET offset = ? WHERE slug = ?', [data.offset, data.slug], function() {
-      console.log("Set offset", data.offset);
+      log('offsetUpdated', data.offset);
     });
   });
 
 
   // Client disconnected
   client.on('disconnect', function() {
-    console.log('Client disconnected ...', client.isPopup ? 'no slug (popup)' : client.publicSlug);
+    log('disconnect', client.isPopup ? 'no slug (popup)' : client.publicSlug);
     io.sockets.in(client.publicSlug).emit('counter', counter(client.publicSlug) - 1);
-    console.log(new Date().getTime());
     if (!client.isPopup)
       db.close();
   });
@@ -202,8 +201,8 @@ io.sockets.on('connection', function(client){
   client.on('delete', function(data) {
     db.run('DELETE FROM data WHERE id IN (SELECT id FROM (SELECT id FROM data WHERE slug = ? group by slug)x)', data.slug, function(/*err, row*/) {
       client.broadcast.to(data.slug).emit('reload');
+      log('delete', data);
     });
-    console.log("---- Delete -----");
   });
 
 

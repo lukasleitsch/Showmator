@@ -48,13 +48,13 @@ $(function() {
             publicSlug = randomSlug();
 
             $titleAlert.text(noTitleText);
-
             $title.val(''); // clear title fild after create new shownotes
           }
 
           // enter slug into fields
           $slug.val(slug);
           $slugStatic.text(slug);
+          lastTitle = $title.val();
 
           // check blacklist
           if (typeof(localStorage.blacklist) != "undefined")
@@ -140,8 +140,13 @@ $(function() {
   // save title changes (only when nothing has changed after 1000ms)
   var timer,
       saveDelay = 1000,
+      lastTitle = '',
       saveTitleOnServer = function() {
-        socket.emit('titleUpdated', {slug: localStorage.slug, title: $title.val()});
+        var title = $title.val();
+        if (title != lastTitle) {
+          socket.emit('titleUpdated', {slug: localStorage.slug, title: title});
+          lastTitle = title;
+        }
       };
   $title.keyup(function() {
     $titleAlert.text($(this).val());
