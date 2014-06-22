@@ -80,7 +80,7 @@ $(function() {
 
     socket.on('linkDeleted', function(data) {
       $('#entry-' + data.id).remove();
-      $body.toggleClass('on-empty', $result.find('li').length > 0);
+      $body.toggleClass('on-empty', $result.find('li').length < 1);
     });
 
 
