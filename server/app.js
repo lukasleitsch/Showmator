@@ -211,16 +211,15 @@ io.sockets.on('connection', function(client){
         }
       });
     });
+  });
 
 
-    // client disconnected
-    client.on('disconnect', function() {
-      log('disconnect', client.isPopup ? 'no slug (popup)' : client.publicSlug);
-      io.sockets.in(client.publicSlug).emit('counter', counter(client.publicSlug) - 1);
-      if (!client.isPopup)
-        db.close();
-    });
-    
+  // client disconnected
+  client.on('disconnect', function() {
+    log('disconnect', client.isPopup ? 'no slug (popup)' : client.publicSlug);
+    io.sockets.in(client.publicSlug).emit('counter', counter(client.publicSlug) - 1);
+    if (!client.isPopup)
+      db.close();
   });
 
 
