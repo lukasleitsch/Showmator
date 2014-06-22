@@ -6,14 +6,18 @@
   <link rel="stylesheet" href="/css/live.css">
   <title>HTML exportieren</title>
 </head>
-<body>
+<body<% if (items.length < 1) { %> class="on-empty"<% } %>>
 
   <header class="jumbo-header">
     <h1>
       <img src="/img/icon48_white.png" alt=""> <span id="title"><%= title || '' %></span> HTML-Shownotes
-      <!-- <img src="/img/icon48_white.png" alt=""> <span id="title"></span> HTML Shownotes -->
     </h1>
   </header>
+
+
+  <div class="alert alert-info show-on-empty">
+    Bitte noch etwas Geduld. Im Moment sind noch keine Shownotes eingetragen.
+  </div>
 
 
   <div class="form-horizontal">

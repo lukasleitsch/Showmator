@@ -29,19 +29,20 @@ var padZero = function(num) {
 
 $(function() {
 
+  var $body = $('body');
+
   /* LIVE SHOWNOTES
    * -----------------------------------------------------------------------------
    */
 
-  if ($('body').hasClass('page-live')) {
+  if ($body.hasClass('page-live')) {
 
     // vars
     // -----------------------------------------------------------------------------
 
     var tzOffset  = new Date().getTimezoneOffset() * 60000, // Different between UTC and local time
         $autoOpen = $('#auto-open'),
-        $result   = $('#result'),
-        $alert    = $('.alert-info');
+        $result   = $('#result');
 
 
     // socket bindings
@@ -50,6 +51,7 @@ $(function() {
     socket.on('connect', function () {
       socket.emit('connectedLiveShownotes', $('body').data('publicSlug'));
     });
+
 
     socket.on('push', function(data) {
       if ($autoOpen.is(':checked') && !data.isText)
@@ -62,26 +64,23 @@ $(function() {
         markup += '<a href="' + data.url + '" target="_blank">' + data.title + '</a>';
 
       $result.prepend('<li id="entry-' + data.id + '">' + markup + '</li>');
-      $alert.hide();
+      $body.removeClass('on-empty');
     });
+
 
     socket.on('counter', function(data) {
       $('#counter').html(data);
     });
 
-    // TODO what for?
-    // socket.on('reload', function() {
-    //   location.reload();
-    // });
 
     socket.on('titleUpdatedSuccess', function(data) {
       $('#title').text(data.title);
     });
 
+
     socket.on('linkDeleted', function(data) {
       $('#entry-' + data.id).remove();
-      if ($result.find('li').length < 1)
-        $alert.show();
+      $body.toggleClass('on-empty', $result.find('li').length > 0);
     });
 
 
@@ -93,6 +92,7 @@ $(function() {
       var $this = $(this);
       $this.text(formatTime(parseInt($this.data('time')) - tzOffset));
     });
+
 
     if (!!localStorage) {
       $autoOpen
@@ -121,7 +121,7 @@ $(function() {
 
         // format time from timestamp
         fillTimes = function() {
-          $markup.find('li').removeClass('hide').find('.time').each(function() {
+          $markup.find('li')/*.removeClass('hide')*/.find('.time').each(function() {
             var $this = $(this),
                 time  = parseInt($this.data('time')) - start + offset;
 
@@ -142,7 +142,7 @@ $(function() {
               $newMarkup   = $markup.clone();
 
           // remove entries which were added too early
-          $newMarkup.find('.hide').remove();
+          // $newMarkup.find('.hide').remove();
           
           var html = $newMarkup.html()
                .replace(/ data-time="\d+"/g, '') // strip data-attributes
@@ -181,7 +181,7 @@ $(function() {
         };
 
 
-    // event and socket bindings
+    // event bindings
     // -----------------------------------------------------------------------------
 
     // bind change events for updating sourcecode
@@ -213,6 +213,14 @@ $(function() {
       });
     });
 
+
+    // socket bindings
+    // -----------------------------------------------------------------------------
+
+    // TODO
+    // socket.on('push', function(data) {
+    // });
+
     // update title if changed
     socket.on('connect', function () {
       socket.emit('connectedHtmlExport', slug);
@@ -220,6 +228,12 @@ $(function() {
     socket.on('titleUpdatedSuccess', function(data) {
       $('#title').text(data.title);
     });
+
+    // TODO
+    // socket.on('linkDeleted', function(data) {
+    //   $('#entry-' + data.id).remove();
+    //   $body.toggleClass('on-empty', markup.find('li').length > 0);
+    // });
 
 
     // init

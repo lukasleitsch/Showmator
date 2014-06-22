@@ -20,6 +20,9 @@ $labelWidth:    100px;
   h3 {margin-top:0;}
   .alert-link {color:white; font-weight:bold;}
 }
+.show-on-empty {display:none; text-align:center;
+  .on-empty & {display:block;}
+}
 
 .form-horizontal {max-width:$formMaxWidth; margin:0 auto;
   .form-group {margin:0 0 40px;}

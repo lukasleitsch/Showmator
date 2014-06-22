@@ -1,4 +1,5 @@
 .form-horizontal {
+  .on-empty & {display:none;}
   .control-label {width:$labelWidth;}
   .form-group-close-section {margin-bottom:60px;}
 }

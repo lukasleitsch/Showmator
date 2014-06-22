@@ -5,10 +5,6 @@ $smallerFontSize:90%;
 .page-live .jumbo-header {margin-bottom:15px;}
 .post-jumbo-info {margin-bottom:35px; font-size:$smallerFontSize; text-align:center;}
 
-.alert-info {display:none; text-align:center;
-  .on-empty & {display:block;}
-}
-
 #result {max-width:$maxWidth; margin:0 auto; padding-left:0; list-style:none;
   li {position:relative; padding-left:68px; margin-bottom:10px;}
 }
