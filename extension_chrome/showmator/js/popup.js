@@ -43,6 +43,12 @@ $(function() {
   });
 
 
+  // close popup when clicking on cancel button
+  $('#cancel').click(function() {
+    window.close();
+  });
+
+
   // react on enter/escape + hide alert when title is changed
   $title.keyup(function(e) {
 
@@ -53,7 +59,6 @@ $(function() {
 
     // on escape: close popup
     } else if (e.keyCode == 27) {
-      // TODO trigger cancel button click
       window.close();
       return;
     }

@@ -25,5 +25,10 @@ $states:("empty-slug", "duplicate", "blacklist", "success", "loading");
 .glyphicon-refresh {animation:spin 1s linear infinite;}
 
 .form-inline input {margin-right:4px;}
-.form-control {margin:0 0 20px;}
-#save-changes {margin-bottom:8px;}
+.form-control {margin:0 0 24px;}
+.btn {position:relative; margin-bottom:12px;
+  &:after {content:"(Enter)"; position:absolute; width:100%; text-align:center; bottom:-20px; left:0; color:#aaa; font-size:80%;}
+}
+.btn-default {margin-left:5px;
+  &:after {content:"(Esc)";}
+}
