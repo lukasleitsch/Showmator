@@ -39,7 +39,9 @@ $(function() {
     // -----------------------------------------------------------------------------
 
     var tzOffset  = new Date().getTimezoneOffset() * 60000, // Different between UTC and local time
-        $autoOpen = $('#auto-open');
+        $autoOpen = $('#auto-open'),
+        $result   = $('#result'),
+        $alert    = $('.alert-info');
 
 
     // socket bindings
@@ -59,8 +61,8 @@ $(function() {
       else
         markup += '<a href="' + data.url + '" target="_blank">' + data.title + '</a>';
 
-      $('#result').prepend('<li>' + markup + '</li>');
-      $('.alert-info').hide();
+      $result.prepend('<li id="entry-' + data.id + '">' + markup + '</li>');
+      $alert.hide();
     });
 
     socket.on('counter', function(data) {
@@ -78,6 +80,8 @@ $(function() {
 
     socket.on('linkDeleted', function(data) {
       $('#entry-' + data.id).remove();
+      if ($result.find('li').length < 1)
+        $alert.show();
     });
 
 
