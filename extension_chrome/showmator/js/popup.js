@@ -10,10 +10,10 @@ $(function() {
       
       socket = io.connect('http://localhost:63685'),
 
-      $title       = $('#title'),
-      $saveChanges = $('#save-changes'),
-      // $alertInfo   = $('.alert-info'),
-      $body        = $('body'),
+      $body   = $('body'),
+      $title  = $('#title'),
+      $save   = $('#save'),
+      $delete = $('#delete'),
 
       htmlEntities = function(str) {
         // TODO why `String()`?
@@ -22,6 +22,13 @@ $(function() {
           .replace(/</g, '&lt;')
           .replace(/>/g, '&gt;')
           .replace(/"/g, '&quot;');
+      },
+
+      completeAndClose = function(statusClass) {
+        $body.removeClass('on-loading').addClass(statusClass);
+        setTimeout(function() {
+          window.close();
+        }, 2000);
       };
 
 
@@ -30,7 +37,7 @@ $(function() {
   // -----------------------------------------------------------------------------
 
   // add link and show loading state when submit button is clicked
-  $saveChanges.click(function() {
+  $save.click(function() {
     if (!$body.hasClass('on-duplicate') && !$body.hasClass('on-blacklist')) {
       $body.addClass('on-loading');
       socket.emit('linkAdded', {
@@ -43,8 +50,18 @@ $(function() {
   });
 
 
+  $delete.click(function() {
+    $body.removeClass('on-duplicate').addClass('on-loading');
+    socket.emit('deleteLink', {
+      slug:       localStorage.slug,
+      publicSlug: localStorage.publicSlug,
+      url:        url
+    });
+  });
+
+
   // close popup when clicking on cancel button
-  $('#cancel').click(function() {
+  $('.btn-close').click(function() {
     window.close();
   });
 
@@ -54,7 +71,10 @@ $(function() {
 
     // on enter: save changes
     if (e.keyCode == 13) {
-      $saveChanges.click();
+      if ($body.hasClass('on-duplicate'))
+        $delete.click();
+      else
+        $save.click();
       return;
 
     // on escape: close popup
@@ -80,10 +100,10 @@ $(function() {
 
   // show success message and close window
   socket.on('linkAddedSuccess', function() {
-    $body.removeClass('on-loading').addClass('on-success');
-    setTimeout(function() {
-      window.close();
-    }, 2000);
+    completeAndClose('on-success');
+  });
+  socket.on('linkDeleted', function() {
+    completeAndClose('on-delete');
   });
 
 

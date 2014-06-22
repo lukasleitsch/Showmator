@@ -15,6 +15,14 @@
     <p class="show-on-duplicate">
       <span class="glyphicon glyphicon-info-sign"></span>
       Link wurde bereits hinzugefügt!
+      <button class="btn btn-primary" id="delete">
+        <span class="glyphicon glyphicon-trash"></span>
+        Link löschen
+      </button>
+      <button class="btn btn-default btn-sm btn-close">
+        <span class="glyphicon glyphicon-remove"></span>
+        Abbrechen
+      </button>
     </p>
     <p class="show-on-empty-slug">
       <span class="glyphicon glyphicon-exclamation-sign"></span>
@@ -30,7 +38,11 @@
     </p>
     <p class="show-on-success">
       <span class="glyphicon glyphicon-ok"></span>
-      Der Link wurde erfolgreich gespeichert
+      Der Link wurde erfolgreich gespeichert!
+    </p>
+    <p class="show-on-delete">
+      <span class="glyphicon glyphicon-ok"></span>
+      Der Link wurde erfolgreich gelöscht!
     </p>
   </div>
 
@@ -48,12 +60,12 @@
   <label for="title">Titel für Shownotes:</label>
   <input type="text" name="title" id="title" class="form-control" tabindex="1" />
 
-  <button class="btn btn-primary" id="save-changes">
+  <button class="btn btn-primary" id="save">
     <span class="glyphicon glyphicon-pencil"></span>
     Link speichern
   </button>
 
-  <button class="btn btn-sm btn-default" id="cancel">
+  <button class="btn btn-default btn-sm btn-close">
     <span class="glyphicon glyphicon-remove"></span>
     Abbrechen
   </button>

@@ -76,6 +76,10 @@ $(function() {
       $('#title').text(data.title);
     });
 
+    socket.on('linkDeleted', function(data) {
+      $('#entry-' + data.id).remove();
+    });
+
 
     // init
     // -----------------------------------------------------------------------------

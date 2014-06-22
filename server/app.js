@@ -159,9 +159,10 @@ io.sockets.on('connection', function(client){
       db.each('SELECT * from data WHERE url == ? AND slug == ?', [data.url, data.slug], function(err, row) {
         title  = row.title;
         isText = row.isText;
+        console.log(row);
       }, function(err, row) {
         if (row) {
-          log('found duplicate');
+          log('found duplicate', row);
           client.emit('duplicate', {title: title, isText: isText});
         }
       });
@@ -173,7 +174,8 @@ io.sockets.on('connection', function(client){
   client.on('titleUpdated', function(data) {
     db.run('UPDATE meta SET title = ? WHERE slug = ?', [data.title, data.slug], function() {
       // publicSlug for live shownotes, private slug for html shownotes
-      log('titleUpdated', 'publicSlug: ' + client.publicSlug, 'slug: ' + data.slug, 'title: ' + data.title);
+      data.publicSlug = client.publicSlug;
+      log('titleUpdated', data);
       [client.publicSlug, data.slug].forEach(function(val) {
         client.broadcast.to(val).emit('titleUpdatedSuccess', {title: data.title});
       });
@@ -189,21 +191,36 @@ io.sockets.on('connection', function(client){
   });
 
 
-  // Client disconnected
-  client.on('disconnect', function() {
-    log('disconnect', client.isPopup ? 'no slug (popup)' : client.publicSlug);
-    io.sockets.in(client.publicSlug).emit('counter', counter(client.publicSlug) - 1);
-    if (!client.isPopup)
-      db.close();
-  });
-
-
-  // delete last item
-  client.on('delete', function(data) {
-    db.run('DELETE FROM data WHERE id IN (SELECT id FROM (SELECT id FROM data WHERE slug = ? group by slug)x)', data.slug, function(/*err, row*/) {
-      client.broadcast.to(data.slug).emit('reload');
-      log('delete', data);
+  // delete entry
+  client.on('deleteLink', function(data) {
+    db.serialize(function() {
+      var id;
+      // TODO why each and not something like fetchOne?
+      db.each('SELECT id FROM data WHERE slug == ? AND url == ?', [data.slug, data.url], function(err, row) {
+        id = row.id;
+      }, function(/*err, row*/) {
+        if (id) {
+          db.run('DELETE FROM data WHERE id = ?', id, function(/*err, row*/) {
+            client.broadcast.to(data.publicSlug).emit('linkDeleted', {id: id});
+            client.emit('linkDeleted');
+            data.id = id;
+            log('deleteLink', data);
+          });
+        } else {
+          log('deleteLink failed', data);
+        }
+      });
     });
+
+
+    // client disconnected
+    client.on('disconnect', function() {
+      log('disconnect', client.isPopup ? 'no slug (popup)' : client.publicSlug);
+      io.sockets.in(client.publicSlug).emit('counter', counter(client.publicSlug) - 1);
+      if (!client.isPopup)
+        db.close();
+    });
+    
   });
 
 
