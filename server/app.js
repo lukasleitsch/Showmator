@@ -74,7 +74,7 @@ io.sockets.on('connection', function(client){
   // Check status of shownotes
   client.on('statusRequest', function(data) {
     db.serialize(function() {
-      db.get('SELECT * FROM meta WHERE slug == ?', data.slug, function(err, row) {
+      db.get('SELECT * FROM meta WHERE slug = ?', data.slug, function(err, row) {
         var data = {};
         if (row) {
           data = {
@@ -109,7 +109,7 @@ io.sockets.on('connection', function(client){
 
     db.serialize(function() {
       // TODO why each and not something like fetchOne?
-      db.each('SELECT * from data WHERE url == ? AND slug == ?', [data.url, data.slug], function(/*err, row*/) {
+      db.each('SELECT * from data WHERE url = ? AND slug = ?', [data.url, data.slug], function(/*err, row*/) {
         // we have duplicates, do nothing
 
       }, function(err, row) {
@@ -117,7 +117,7 @@ io.sockets.on('connection', function(client){
           log('add entry', data);
 
           db.serialize(function() {
-            db.each('SELECT startTime, offset, publicSlug from meta WHERE slug == ?', data.slug, function(err, row) {
+            db.each('SELECT startTime, offset, publicSlug from meta WHERE slug = ?', data.slug, function(err, row) {
               if (row.startTime === null)
                 db.run('UPDATE meta SET startTime = ? WHERE slug = ?', [time, data.slug]);
 
@@ -156,7 +156,7 @@ io.sockets.on('connection', function(client){
     db.serialize(function() {
       var title, isText;
       // TODO why each and not something like fetchOne?
-      db.each('SELECT * from data WHERE url == ? AND slug == ?', [data.url, data.slug], function(err, row) {
+      db.each('SELECT * from data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
         title  = row.title;
         isText = row.isText;
         console.log(row);
@@ -196,7 +196,7 @@ io.sockets.on('connection', function(client){
     db.serialize(function() {
       var id;
       // TODO why each and not something like fetchOne?
-      db.each('SELECT id FROM data WHERE slug == ? AND url == ?', [data.slug, data.url], function(err, row) {
+      db.each('SELECT id FROM data WHERE slug = ? AND url = ?', [data.slug, data.url], function(err, row) {
         id = row.id;
       }, function(/*err, row*/) {
         if (id) {
@@ -247,9 +247,9 @@ app.get('/live/:publicSlug', function(req, res) {
       items      = [];
 
   db.serialize(function() {
-    db.get('SELECT * FROM meta WHERE publicSlug == ?', publicSlug, function(err, row1) {
+    db.get('SELECT * FROM meta WHERE publicSlug = ?', publicSlug, function(err, row1) {
       if (row1) {
-        db.each('SELECT * FROM data WHERE slug == ? ORDER BY time DESC', row1.slug, function(err, row2) {
+        db.each('SELECT * FROM data WHERE slug = ? ORDER BY time DESC', row1.slug, function(err, row2) {
           items.push(row2);
         }, function() {
           res.render('live.ejs', {items: items, publicSlug: publicSlug, title: row1.title});
@@ -270,9 +270,9 @@ app.get('/html/:slug', function(req, res) {
       items   = [];
 
   db.serialize(function() {
-    db.get('SELECT startTime, offset, title FROM meta WHERE slug == ?', slug, function(err1, row1) {
+    db.get('SELECT startTime, offset, title FROM meta WHERE slug = ?', slug, function(err1, row1) {
       if (row1) {
-        db.each('SELECT * FROM data WHERE slug == ? ORDER BY time', slug, function(err2, row2) {
+        db.each('SELECT * FROM data WHERE slug = ? ORDER BY time', slug, function(err2, row2) {
           items.push(row2);
         }, function() {
           res.render('html.ejs', {
