@@ -12,7 +12,7 @@ $(function() {
 
       $title       = $('#title'),
       $saveChanges = $('#save-changes'),
-      $alertInfo   = $('.alert-info'),
+      // $alertInfo   = $('.alert-info'),
       $body        = $('body'),
 
       htmlEntities = function(str) {
@@ -29,26 +29,19 @@ $(function() {
   // bind events
   // -----------------------------------------------------------------------------
 
-  // update title
+  // add link and show loading state when submit button is clicked
   $saveChanges.click(function() {
-    if ($(this).hasClass('disabled'))
-      return;
-
-    // socket.emit('linkUpdated', {
-    //   slug:   localStorage.slug,
-    //   title:  htmlEntities($title.val()),
-    //   url:    url,
-    //   isText: $('#kind-text-only').is(':checked') ? 1 : 0
-    // });
-    window.close();
+    if (!$body.hasClass('on-duplicate') && !$body.hasClass('on-blacklist')) {
+      $body.addClass('on-loading');
+      socket.emit('linkAdded', {
+        slug:   localStorage.slug,
+        title:  htmlEntities($title.val()),
+        url:    url,
+        isText: $('#kind-text-only').is(':checked') ? 1 : 0
+      });
+    }
   });
 
-
-  // function tp hide alert and enable update button
-  var enableUpdate = function() {
-    $alertInfo.slideUp();
-    $saveChanges.removeClass('disabled');
-  };
 
   // react on enter/escape + hide alert when title is changed
   $title.keyup(function(e) {
@@ -60,18 +53,11 @@ $(function() {
 
     // on escape: close popup
     } else if (e.keyCode == 27) {
+      // TODO trigger cancel button click
       window.close();
       return;
     }
-
-    // if title has changed: enable update
-    if ($alertInfo.is(':visible') && htmlEntities($title.val()) != title)
-      enableUpdate();
   });
-
-
-  // enable update if mode for link/text-only changes
-  $('#kind-text-only, #kind-link').one('change', enableUpdate);
 
 
 
@@ -87,17 +73,13 @@ $(function() {
       $('#kind-text-only').prop('checked', true);
   });
 
-  // add link when popup closes
-  addEventListener('unload', function() {
-    if (!$body.hasClass('on-duplicate') && !$body.hasClass('on-blacklist')) {
-      socket.emit('linkAdded', {
-        slug:   localStorage.slug,
-        title:  htmlEntities($title.val()),
-        url:    url,
-        isText: $('#kind-text-only').is(':checked') ? 1 : 0
-      });
-    }
-  }, true);
+  // show success message and close window
+  socket.on('linkAddedSuccess', function() {
+    $body.removeClass('on-loading').addClass('on-success');
+    setTimeout(function() {
+      window.close();
+    }, 2000);
+  });
 
 
 
@@ -121,8 +103,8 @@ $(function() {
       // TODO works on windows?
       if (!!localStorage.blacklist) {
         localStorage.blacklist.split('\n').forEach(function(entry) {
-            if (entry == url || entry + '/' == url || entry == url + '/')
-              $body.addClass('on-blacklist');
+          if (entry == url || entry + '/' == url || entry == url + '/')
+            $body.addClass('on-blacklist');
         });
       }
 

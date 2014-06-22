@@ -127,6 +127,7 @@ io.sockets.on('connection', function(client){
                 } else {
                   log('successfully added link');
                   client.broadcast.to(row.publicSlug).emit('push', {title: data.title, url: data.url, isText: data.isText, time: time});
+                  client.emit('linkAddedSuccess');
                 }
                 db.close();
               });

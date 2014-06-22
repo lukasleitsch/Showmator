@@ -24,18 +24,17 @@
       <span class="glyphicon glyphicon-ban-circle"></span>
       Dieser Link befindet sich in der Blacklist!
     </p>
-  </div>
-
-  
-  <div class="alert alert-info alert-successful">
-    <p>
+    <p class="show-on-loading">
+      <span class="glyphicon glyphicon-refresh"></span>
+      Lädt...
+    </p>
+    <p class="show-on-success">
       <span class="glyphicon glyphicon-ok"></span>
       Der Link wurde erfolgreich gespeichert
     </p>
   </div>
 
-
-  <div class="form-inline">
+  <!-- <div class="form-inline">
     <label for="kind-link">
       <input type="radio" name="kind" value="link" id="kind-link" checked />
       Link
@@ -44,13 +43,14 @@
       <input type="radio" name="kind" value="text-only" id="kind-text-only" />
       Texteintrag
     </label>
-  </div>
+  </div> -->
 
+  <label for="title">Titel für Shownotes:</label>
   <input type="text" name="title" id="title" class="form-control" tabindex="1" />
 
-  <button class="btn btn-primary disabled" id="save-changes">
+  <button class="btn btn-primary" id="save-changes">
     <span class="glyphicon glyphicon-pencil"></span>
-    Änderung speichern
+    Link speichern
   </button>
 
 </body>
