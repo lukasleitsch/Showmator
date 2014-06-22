@@ -110,7 +110,7 @@ $(function() {
     // -----------------------------------------------------------------------------
 
     var $markup = $('#markup-container'),
-        start   = $markup.data('start'),
+        start   = $markup.find('.time').data('time'),
         offset  = $markup.data('offset'),
         slug    = $markup.data('slug'),
 
@@ -119,12 +119,12 @@ $(function() {
         fillTimes = function() {
           $markup.find('li').removeClass('hide').find('.time').each(function() {
             var $this = $(this),
-                time  = parseInt($this.data('time')) - start - offset;
+                time  = parseInt($this.data('time')) - start + offset;
 
             // mark entries which were added too early
-            if (time < 0)
-              $this.closest('li').addClass('hide');
-            else
+            // if (time < 0)
+            //   $this.closest('li').addClass('hide');
+            // else
               $this.text(formatTime(time));
           });
         },
