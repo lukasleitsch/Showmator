@@ -6,7 +6,7 @@ $(function() {
   // vars and functions
   // -----------------------------------------------------------------------------
 
-  var title, url,
+  var title, url, isText,
       
       socket = io.connect('http://localhost:63685'),
 
@@ -44,7 +44,7 @@ $(function() {
         slug:   localStorage.slug,
         title:  htmlEntities($title.val()),
         url:    url,
-        isText: $('#kind-text-only').is(':checked') ? 1 : 0
+        isText: isText ? 1 : 0
       });
     }
   });
@@ -91,16 +91,17 @@ $(function() {
   
   // prevent duplication
   socket.on('duplicate', function(data) {
-    $body.addClass('on-duplicate');
-    if(data.title)
-      $title.val(data.title);
-    if (data.isText == 1)
-      $('#kind-text-only').prop('checked', true);
+    if (data.isText == 0) {
+      $body.addClass('on-duplicate');
+    };
   });
 
   // show success message and close window
   socket.on('linkAddedSuccess', function() {
-    completeAndClose('on-success');
+    if (!isText)
+      completeAndClose('on-success-link');
+    else
+      completeAndClose('on-success-text');
   });
   socket.on('linkDeleted', function() {
     completeAndClose('on-delete');
@@ -135,6 +136,17 @@ $(function() {
 
       // checks for duplicate
       socket.emit('popupOpened', {slug: localStorage.slug, url: url});
+
+      // on live-shownotes show popup for text entry
+
+      isText = false;
+
+      if (url.split("/")[4] === localStorage.publicSlug) {
+        $('#title-label').html("Text-Eintrag:");
+        $save.html('<span class="glyphicon glyphicon-pencil"></span> Text speichern');
+        $title.val('');
+        isText = true;
+      };
     });
   }
 });

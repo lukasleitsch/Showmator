@@ -113,7 +113,7 @@ io.sockets.on('connection', function(client){
         // we have duplicates, do nothing
 
       }, function(err, row) {
-        if (row === 0) {
+        // if (row === 0) {
           log('add entry', data);
 
           db.serialize(function() {
@@ -139,9 +139,9 @@ io.sockets.on('connection', function(client){
               });
             });
           });
-        } else {
-          db.close();
-        }
+        // } else {
+        //   db.close();
+        // }
       });
     });
   });

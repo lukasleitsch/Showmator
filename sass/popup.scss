@@ -12,7 +12,7 @@ body {width:300px; padding:20px; text-align:center;}
 %hide-on-start {display:none;}
 %as-table {display:table;}
 %as-table-cell {display:table-cell; vertical-align:middle;}
-$states:("empty-slug", "duplicate", "blacklist", "loading", "success", "delete");
+$states:("empty-slug", "duplicate", "blacklist", "loading", "success-link", "success-text", "delete");
 @each $state in $states {
   .show-on-#{$state} {@extend %hide-on-start;}
   .on-#{$state} {

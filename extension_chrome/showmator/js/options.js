@@ -41,11 +41,13 @@ $(function() {
 
             slug       = localStorage.slug;
             publicSlug = data.publicSlug;
+            localStorage.publicSlug = publicSlug;
 
           // if new: generate slugs
           } else {
             slug       = randomSlug();
             publicSlug = randomSlug();
+            localStorage.publicSlug = publicSlug;
 
             $titleAlert.text(noTitleText);
             $title.val(''); // clear title fild after create new shownotes
