@@ -6,7 +6,7 @@
   "version": "2.0.0",
 
   "permissions": [
-    "tabs", "http://*/*", "https://*/*", "background", "notifications"
+    "tabs", "http://*/*", "https://*/*", "background", "notifications", "activeTab"
   ],
 
   "web_accessible_resources": [
@@ -35,7 +35,7 @@
   }],
 
   "background": {
-    "scripts": ["js/background.js"]
+    "scripts": ["js/jquery.min.js", "js/background.js"]
   },
 
   "options_page": "options.html",
