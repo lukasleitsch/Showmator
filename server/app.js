@@ -62,11 +62,11 @@ io.sockets.on('connection', function(client){
   client.on('connectedLiveShownotes', function(publicSlug) {
     client.publicSlug = publicSlug;
     client.join(publicSlug);
-    io.sockets.in(publicSlug).emit("counter", counter(publicSlug));
+    io.sockets.in(publicSlug).emit('counter', counter(publicSlug));
     log('connectedLiveShownotes', publicSlug);
   });
   client.on('connectedHtmlExport', function(slug) {
-    client.join(slug);
+    client.join(slug); // TODO what for?
     log('connectedHtmlExport', slug);
   });
 
@@ -107,41 +107,49 @@ io.sockets.on('connection', function(client){
   client.on('linkAdded', function(data) {
     var time = new Date().getTime();
 
+    log('add entry', data);
+
     db.serialize(function() {
+      var isDuplicate = false,
+          title, isText;
+
       // TODO why each and not something like fetchOne?
-      db.each('SELECT * from data WHERE url = ? AND slug = ?', [data.url, data.slug], function(/*err, row*/) {
-        // we have duplicates, do nothing
+      db.each('SELECT * from data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
+        isDuplicate = true;
+        title  = row.title;
+        isText = row.isText;
 
       }, function(err, row) {
-        // if (row === 0) {
-          log('add entry', data);
+        if (isDuplicate) {
+          log('found duplicate', row);
+          client.emit('duplicate', {title: title, isText: isText});
+          db.close();
+          return;
+        }
 
-          db.serialize(function() {
-            db.each('SELECT startTime, offset, publicSlug from meta WHERE slug = ?', data.slug, function(err, row) {
-              if (row.startTime === null)
-                db.run('UPDATE meta SET startTime = ? WHERE slug = ?', [time, data.slug]);
+        db.serialize(function() {
+          db.each('SELECT startTime, offset, publicSlug from meta WHERE slug = ?', data.slug, function(err, row) {
+            if (row.startTime === null)
+              db.run('UPDATE meta SET startTime = ? WHERE slug = ?', [time, data.slug]);
 
-              db.run('INSERT INTO data (slug, title, url, time, isText) VALUES (?, ?, ?, ?, ?)', [data.slug, data.title, data.url, time, data.isText], function(err/*, result*/) {
-                if (err) {
-                  emitError(err);
-                } else {
-                  log('successfully added link');
-                  client.broadcast.to(row.publicSlug).emit('push', {
-                    id:     this.lastID,
-                    title:  data.title,
-                    url:    data.url,
-                    isText: data.isText,
-                    time:   time
-                  });
-                  client.emit('linkAddedSuccess');
-                }
-                db.close();
-              });
+            db.run('INSERT INTO data (slug, title, url, time, isText) VALUES (?, ?, ?, ?, ?)', [data.slug, data.title, data.url, time, data.isText], function(err/*, result*/) {
+              if (err) {
+                emitError(err);
+              } else {
+                log('successfully added link');
+                client.broadcast.to(row.publicSlug).emit('push', {
+                  id:     this.lastID,
+                  title:  data.title,
+                  url:    data.url,
+                  isText: data.isText,
+                  time:   time
+                });
+                client.emit('linkAddedSuccess');
+              }
+              db.close();
             });
           });
-        // } else {
-        //   db.close();
-        // }
+        });
       });
     });
   });
