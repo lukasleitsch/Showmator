@@ -28,10 +28,15 @@
     "default_popup": "popup.html"
   },
 
+  // TODO first item necessary?
   "content_scripts": [{
     "matches": [ "http://*/*", "https://*/*"],
     "js":      ["js/jquery.min.js", "js/socket.io.js"],
     "css":     ["css/styles.css"]
+  }, {
+    "matches": ["http://localhost:63685/live/*"],
+    "js":      ["js/admin_btns.js"],
+    "run_at":  "document_start"
   }],
 
   "background": {

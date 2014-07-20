@@ -91,9 +91,8 @@ $(function() {
   
   // prevent duplication
   socket.on('duplicate', function(data) {
-    if (data.isText == 0) {
+    if (data.isText === 0)
       $body.addClass('on-duplicate');
-    };
   });
 
   // show success message and close window
@@ -141,12 +140,12 @@ $(function() {
 
       isText = false;
 
-      if (url.split("/")[4] === localStorage.publicSlug) {
-        $('#title-label').html("Text-Eintrag:");
+      if (url.split('/')[4] === localStorage.publicSlug) {
+        $('#title-label').html('Text-Eintrag:');
         $save.html('<span class="glyphicon glyphicon-pencil"></span> Text speichern');
         $title.val('');
         isText = true;
-      };
+      }
     });
   }
 });

@@ -6,9 +6,19 @@ $smallerFontSize:90%;
 .post-jumbo-info {margin-bottom:35px; font-size:$smallerFontSize; text-align:center;}
 
 #result {max-width:$maxWidth; margin:0 auto; padding-left:0; list-style:none;
-  li {position:relative; padding-left:68px; margin-bottom:10px;}
+  li {position:relative; margin-bottom:10px; padding-left:68px; /* padding-right:100px; */ line-height:24px;}
+  a[contenteditable=true] {color:#333; outline:none; background-color:#FFF78A; text-decoration:none;
+    // &:after {content:"'Enter' drücken um zu speichern"; position:relative; left:10px; color:#ccc; font-size:80%;}
+  }
 }
 .time {position:absolute; left:0; display:inline-block;}
+.admin-btn-wrapper {display:none;
+  // li:hover & {position:absolute; top:-5px; left:100%; display:block; width:100px;}
+  li:hover &, &.editing {position:relative; display:inline-block; margin-left:10px;}
+}
+.btn-delete {margin-left:5px;
+  .editing & {display:none;}
+}
 
 span.edit {display:none;}
 

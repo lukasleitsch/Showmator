@@ -201,6 +201,17 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
+	"\/extension_chrome\/showmator\/js\/admin_btns.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 1,
+		"inputAbbreviatedPath": "\/extension_chrome\/showmator\/js\/admin_btns.js",
+		"outputAbbreviatedPath": "\/extension_chrome\/showmator\/js\/min\/admin_btns-min.js",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
+		},
 	"\/extension_chrome\/showmator\/js\/background.js": {
 		"fileType": 64,
 		"ignore": 1,
@@ -218,6 +229,17 @@
 		"ignoreWasSetByUser": 1,
 		"inputAbbreviatedPath": "\/extension_chrome\/showmator\/js\/jquery.min.js",
 		"outputAbbreviatedPath": "\/extension_chrome\/showmator\/js\/min\/jquery.min-ck.js",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
+		},
+	"\/extension_chrome\/showmator\/js\/live-admin.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 1,
+		"inputAbbreviatedPath": "\/extension_chrome\/showmator\/js\/live-admin.js",
+		"outputAbbreviatedPath": "\/extension_chrome\/showmator\/js\/min\/live-admin-min.js",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1,

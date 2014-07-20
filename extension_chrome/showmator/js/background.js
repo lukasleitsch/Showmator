@@ -1,9 +1,7 @@
-// TODO why not via manifest?
-// chrome.browserAction.setPopup({popup:'popup.html'});
+/*global chrome */
 
-chrome.tabs.onUpdated.addListener(function(id, changeInfo, tab){
-	if(changeInfo.status == "complete" && (tab.url.split('/')[4] == localStorage.publicSlug)){
-		console.log(tab.url)
-		chrome.tabs.executeScript(null, {file: "js/live-admin.js"});
-	}
+// delivers slug from extension to content script
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.type == 'showmatorRequestSlugFromScript' && request.publicSlug == localStorage.publicSlug)
+    sendResponse({slug: localStorage.slug, publicSlug: localStorage.publicSlug});
 });

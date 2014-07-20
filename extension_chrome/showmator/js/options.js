@@ -47,7 +47,6 @@ $(function() {
           } else {
             slug       = randomSlug();
             publicSlug = randomSlug();
-            localStorage.publicSlug = publicSlug;
 
             $titleAlert.text(noTitleText);
             $title.val(''); // clear title fild after create new shownotes
@@ -127,6 +126,7 @@ $(function() {
       socket.emit('new', {slug: slug, publicSlug: publicSlug});
       localStorage.slug = slug;
       $slugStatic.text(slug);
+      localStorage.publicSlug = publicSlug;
       $body.addClass(extendedFormClass);
     }
   });
@@ -177,7 +177,6 @@ $(function() {
   // 'create new' button triggers new shownotes' init
   $('#create-new, #alert-link-create-new').click(function(e) {
     e.preventDefault();
-    // localStorage.clear();
     localStorage.removeItem('slug');
     localStorage.removeItem('publicSlug');
     $body.removeClass(extendedFormClass);

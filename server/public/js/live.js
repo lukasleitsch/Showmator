@@ -29,7 +29,9 @@ var padZero = function(num) {
 
 $(function() {
 
-  var $body = $('body');
+  var $body = $('body'),
+      slug;
+
 
   /* LIVE SHOWNOTES
    * -----------------------------------------------------------------------------
@@ -93,13 +95,76 @@ $(function() {
       $this.text(formatTime(parseInt($this.data('time')) - tzOffset));
     });
 
-
+    // apply saved settings for auto opening links
     if (!!localStorage) {
       $autoOpen
         .prop('checked', localStorage.autoOpen == 'true')
         .on('change', function() {
           localStorage.autoOpen = $(this).prop('checked');
         });
+    }
+
+    // request slug for edit/remove icons next to the links
+    if (typeof window.postMessage == 'function') {
+      
+      window.postMessage({
+        type:       'showmatorRequestSlugFromPage',
+        publicSlug: window.location.href.split('/')[4]
+      }, '*');
+      
+      window.addEventListener('message', function(event) {
+        if (event.source == window && event.data &&
+              event.data.type == 'showmatorResponseSlugFromScript' &&
+              event.data.slug) {
+          
+          slug = event.data.slug;
+
+          $result.on('click', '.btn-edit, .btn-delete', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+
+            // edit/save
+            if ($this.hasClass('btn-edit')) {
+              var $icon = $this.find('.glyphicon'),
+                  $link = $this.parent().prev(),
+                  saveOnEnter = function(e) {
+                    if (e.keyCode == 13) {
+                      e.preventDefault();
+                      $this.click();
+                    }
+                  };
+
+              // save
+              if ($icon.hasClass('glyphicon-ok')) {
+                var text = $link.prop('contenteditable', false).off('keydown.saveOnEnter').blur().text();
+                console.log("I'm saving");
+                // TODO update Title via Socket
+
+              // edit
+              } else {
+                $link.prop('contenteditable', true).focus().on('keydown.saveOnEnter', saveOnEnter);
+              }
+
+              // switch icons (pencil/ok), btn class (default/primary) and
+              // show/hide delete btn
+              $this.parent().toggleClass('editing');
+              $icon.toggleClass('glyphicon-pencil glyphicon-ok');
+              $this.toggleClass('btn-default btn-primary');
+
+            // delete
+            } else {
+              // TODO text via data-attribute?
+              if (confirm('Wirklich löschen?')) {
+                console.log("I'm deleting");
+                // TODO löschen event
+                // TODO Item löschen
+              }
+            }
+            // TODO if btn-edit: Modal mit update initieren
+            // TODO if btn-delete: socket-delete
+          }).find('a').after(event.data.html);
+        }
+      }, false);
     }
 
 
@@ -116,7 +181,6 @@ $(function() {
     var $markup = $('#markup-container'),
         start   = $markup.find('.time').data('time'),
         offset  = $markup.data('offset'),
-        slug    = $markup.data('slug'),
 
 
         // format time from timestamp
@@ -238,6 +302,8 @@ $(function() {
 
     // init
     // -----------------------------------------------------------------------------
+
+    slug = $markup.data('slug');
 
     // load checkbox states from localStorage
     $('#as-ul').prop('checked', parseInt(localStorage.showList) === 1);
