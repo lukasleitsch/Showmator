@@ -10,10 +10,10 @@ window.addEventListener('message', function(event) {
     chrome.runtime.sendMessage({
       type:       'showmatorRequestSlugFromScript',
       publicSlug: event.data.publicSlug
-    }, function(response) {
+    }, function(slug) {
       window.postMessage({
         type: 'showmatorResponseSlugFromScript',
-        slug: response.slug,
+        slug: slug,
         html: '<div class="admin-btn-wrapper">' +
                 '<button class="btn btn-default btn-xs btn-edit"><span class="glyphicon glyphicon-pencil"></span></button>' +
                 '<button class="btn btn-default btn-xs btn-delete"><span class="glyphicon glyphicon-trash"></span></button>' +
