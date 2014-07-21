@@ -114,7 +114,7 @@ io.sockets.on('connection', function(client){
           title, isText;
 
       // TODO why each and not something like fetchOne?
-      db.each('SELECT * from data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
+      db.each('SELECT * FROM data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
         isDuplicate = true;
         title  = row.title;
         isText = row.isText;
@@ -128,7 +128,7 @@ io.sockets.on('connection', function(client){
         }
 
         db.serialize(function() {
-          db.each('SELECT startTime, offset, publicSlug from meta WHERE slug = ?', data.slug, function(err, row) {
+          db.each('SELECT startTime, offset, publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
             if (row.startTime === null)
               db.run('UPDATE meta SET startTime = ? WHERE slug = ?', [time, data.slug]);
 
@@ -155,12 +155,19 @@ io.sockets.on('connection', function(client){
   });
 
 
-  // update the entry (title, link/text)
-  // client.on('linkUpdated', function(data) {
-  //   db.run('UPDATE data SET title = ?, isText = ? WHERE url = ? AND slug = ?', [data.title, data.isText, data.url, data.slug]);
-  //   // TODO implement in live shownotes
-  //   client.broadcast.to(data.slug).emit('linkUpdated', {title: data.title, url: data.url});
-  // });
+  // update the entry title
+  client.on('linkUpdated', function(data) {
+    log('update link title');
+    
+    db.serialize(function() {
+      db.run('UPDATE data SET title = ? WHERE id = ? AND slug = ?', [data.title, data.id, data.slug], function(err, row) {
+        log('updated link title, about to find public slug', row);
+        db.each('SELECT publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
+          client.broadcast.to(row.publicSlug).emit('linkUpdatedSuccess', {title: data.title, id: data.id});
+        });
+      });
+    });
+  });
 
   
   // check for duplicates when popup opens
@@ -170,7 +177,7 @@ io.sockets.on('connection', function(client){
     db.serialize(function() {
       var title, isText;
       // TODO why each and not something like fetchOne?
-      db.each('SELECT * from data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
+      db.each('SELECT * FROM data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
         title  = row.title;
         isText = row.isText;
         console.log(row);
@@ -206,7 +213,7 @@ io.sockets.on('connection', function(client){
 
 
   // delete entry
-  client.on('deleteLink', function(data) {
+  client.on('linkDeleted', function(data) {
     db.serialize(function() {
       var id;
       // TODO why each and not something like fetchOne?
@@ -215,13 +222,22 @@ io.sockets.on('connection', function(client){
       }, function(/*err, row*/) {
         if (id) {
           db.run('DELETE FROM data WHERE id = ?', id, function(/*err, row*/) {
-            client.broadcast.to(data.publicSlug).emit('linkDeleted', {id: id});
-            client.emit('linkDeleted');
-            data.id = id;
-            log('deleteLink', data);
+            var emitEvent = function() {
+              io.sockets.in(data.publicSlug).emit('linkDeletedSuccess', {id: id});
+              data.id = id;
+              log('linkDeleted', data);
+            };
+            if (data.publicSlug) {
+              emitEvent();
+            } else {
+              db.each('SELECT publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
+                data.publicSlug = row.publicSlug;
+                emitEvent();
+              });
+            }
           });
         } else {
-          log('deleteLink failed', data);
+          log('linkDeleted failed', data);
         }
       });
     });

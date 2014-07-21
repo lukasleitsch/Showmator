@@ -80,7 +80,12 @@ $(function() {
     });
 
 
-    socket.on('linkDeleted', function(data) {
+    socket.on('linkUpdatedSuccess', function(data) {
+      $('#entry-' + data.id).find('a').first().text(data.title);
+    });
+
+
+    socket.on('linkDeletedSuccess', function(data) {
       $('#entry-' + data.id).remove();
       $body.toggleClass('on-empty', $result.find('li').length < 1);
     });
@@ -121,12 +126,13 @@ $(function() {
 
           $result.on('click', '.btn-edit, .btn-delete', function(e) {
             e.preventDefault();
-            var $this = $(this);
+            var $this = $(this),
+                $link = $this.parent().prev(),
+                id    = $link.closest('.entry').prop('id').split('-')[1];
 
             // edit/save
             if ($this.hasClass('btn-edit')) {
               var $icon = $this.find('.glyphicon'),
-                  $link = $this.parent().prev(),
                   saveOnEnter = function(e) {
                     if (e.keyCode == 13) {
                       e.preventDefault();
@@ -136,9 +142,8 @@ $(function() {
 
               // save
               if ($icon.hasClass('glyphicon-ok')) {
-                var text = $link.prop('contenteditable', false).off('keydown.saveOnEnter').blur().text();
-                console.log("I'm saving");
-                // TODO update Title via Socket
+                var title = $link.prop('contenteditable', false).off('keydown.saveOnEnter').blur().text();
+                socket.emit('linkUpdated', {id: id, title: title, slug: slug});
 
               // edit
               } else {
@@ -154,10 +159,13 @@ $(function() {
             // delete
             } else {
               // TODO text via data-attribute?
-              if (confirm('Wirklich löschen?')) {
-                console.log("I'm deleting");
-                // TODO löschen event
-                // TODO Item löschen
+              if (window.confirm('Wirklich löschen?')) {
+                // TODO make with id
+                socket.emit('linkDeleted', {
+                  slug: slug,
+                  url:  $link.prop('href')
+                });
+                $this.remove();
               }
             }
             // TODO if btn-edit: Modal mit update initieren
@@ -294,7 +302,7 @@ $(function() {
     });
 
     // TODO
-    // socket.on('linkDeleted', function(data) {
+    // socket.on('linkDeletedSuccess', function(data) {
     //   $('#entry-' + data.id).remove();
     //   $body.toggleClass('on-empty', markup.find('li').length > 0);
     // });

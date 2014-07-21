@@ -52,7 +52,7 @@ $(function() {
 
   $delete.click(function() {
     $body.removeClass('on-duplicate').addClass('on-loading');
-    socket.emit('deleteLink', {
+    socket.emit('linkDeleted', {
       slug:       localStorage.slug,
       publicSlug: localStorage.publicSlug,
       url:        url
@@ -102,7 +102,7 @@ $(function() {
     else
       completeAndClose('on-success-text');
   });
-  socket.on('linkDeleted', function() {
+  socket.on('linkDeletedSuccess', function() {
     completeAndClose('on-delete');
   });
 
