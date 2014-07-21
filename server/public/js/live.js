@@ -44,7 +44,8 @@ $(function() {
 
     var tzOffset  = new Date().getTimezoneOffset() * 60000, // Different between UTC and local time
         $autoOpen = $('#auto-open'),
-        $result   = $('#result');
+        $result   = $('#result'),
+        adminHtml;
 
 
     // socket bindings
@@ -65,7 +66,10 @@ $(function() {
       else
         markup += '<a href="' + data.url + '" target="_blank">' + data.title + '</a>';
 
-      $result.prepend('<li id="entry-' + data.id + '">' + markup + '</li>');
+      $result.prepend('<li class="entry" id="entry-' + data.id + '">' + markup + '</li>');
+      if (!!adminHtml)
+        $('#entry-' + data.id).find('a').after(adminHtml);
+
       $body.removeClass('on-empty');
     });
 
@@ -122,7 +126,8 @@ $(function() {
               event.data.type == 'showmatorResponseSlugFromScript' &&
               event.data.slug) {
           
-          slug = event.data.slug;
+          adminHtml = event.data.html;
+          slug      = event.data.slug;
 
           $result.on('click', '.btn-edit, .btn-delete', function(e) {
             e.preventDefault();
@@ -170,7 +175,7 @@ $(function() {
             }
             // TODO if btn-edit: Modal mit update initieren
             // TODO if btn-delete: socket-delete
-          }).find('a').after(event.data.html);
+          }).find('a').after(adminHtml);
         }
       }, false);
     }
