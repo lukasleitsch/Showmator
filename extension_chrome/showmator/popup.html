@@ -61,12 +61,16 @@
     </label>
   </div> -->
 
-  <label id="title-label" for="title">Titel für Shownotes:</label>
+  <label id="title-label" for="title">
+    <span class="hide-on-text-only">Titel für Shownotes:</span>
+    <span class="show-on-text-only">Text-Eintrag:</span>
+  </label>
   <input type="text" name="title" id="title" class="form-control" tabindex="1" autofocus/>
 
   <button class="btn btn-primary" id="save">
     <span class="glyphicon glyphicon-pencil"></span>
-    Link speichern
+    <span class="hide-on-text-only">Link speichern</span>
+    <span class="show-on-text-only">Text speichern</span>
   </button>
 
   <button class="btn btn-default btn-sm btn-close">

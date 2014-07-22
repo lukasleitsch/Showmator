@@ -6,8 +6,9 @@ $(function() {
   // vars and functions
   // -----------------------------------------------------------------------------
 
-  var title, url, isText,
-      
+  var isText = false,
+      title, url,
+
       socket = io.connect('http://localhost:63685'),
 
       $body   = $('body'),
@@ -117,30 +118,26 @@ $(function() {
     $body.addClass('on-empty-slug');
     $('#link-options').prop('href', chrome.extension.getURL("options.html"));
 
-  // // get tab data und send add-event
+  // get tab data und send add-event
   } else {
     chrome.tabs.getSelected(null, function(tab) {
-      title = htmlEntities(tab.title);
-      url   = tab.url;
+      title  = htmlEntities(tab.title);
+      url    = tab.url;
+      isText = url.split('/')[4] === localStorage.publicSlug;
 
-      $title.val(title);
-
-      // prevent if on blacklist
-      // TODO works on windows?
-      if (!!localStorage.blacklist) {
-        localStorage.blacklist.split('\n').forEach(function(entry) {
-          if (entry == url || entry + '/' == url || entry == url + '/')
-            $body.addClass('on-blacklist');
-        });
-      }
-
-      // on live-shownotes show popup for text entry
-      isText = false;
-      if (url.split('/')[4] === localStorage.publicSlug) {
-        $('#title-label').html('Text-Eintrag:');
-        $save.html('<span class="glyphicon glyphicon-pencil"></span> Text speichern');
-        $title.val('');
-        isText = true;
+      // on live-shownotes make changes for text-only entry
+      if (isText) {
+        $body.addClass('on-text-only');
+      
+      // fill input with title and prevent saving if on blacklist
+      } else {
+        $title.val(title);
+        if (!!localStorage.blacklist) {
+          localStorage.blacklist.split('\n').forEach(function(entry) {
+            if (entry == url || entry + '/' == url || entry == url + '/')
+              $body.addClass('on-blacklist');
+          });
+        }
       }
 
       // checks for duplicate

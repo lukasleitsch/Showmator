@@ -21,6 +21,12 @@ $states:("empty-slug", "duplicate", "blacklist", "loading", "success-link", "suc
   }
 }
 
+.show-on-text-only {@extend %hide-on-start;}
+.on-text-only {
+  .show-on-text-only {display:inline;}
+  .hide-on-text-only {@extend %hide-on-start;}
+}
+
 @keyframes spin {
   100% {transform:rotate(360deg);}
 }
