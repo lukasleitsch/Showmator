@@ -32,9 +32,9 @@
         <span class="edit">Edit</span>
         <span class="time" data-time="<%= item.time %>"></span>
         <% if (!item.isText) { %>
-          <a href="<%= item.url %>" target="_blank"><%= item.title %></a>
+          <a class="entry-text" href="<%= item.url %>" target="_blank"><%= item.title %></a>
         <% } else { %>
-          <%= item.title %>
+          <span class="entry-text"><%= item.title %></span>
         <% } %>
       </li>
     <% }); %>

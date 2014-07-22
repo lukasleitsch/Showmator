@@ -62,13 +62,13 @@ $(function() {
       
       var markup = '<span class="time">' + formatTime(data.time - tzOffset) + '</span>';
       if (data.isText)
-        markup += data.title;
+        markup += '<span class="entry-text">' + data.title + '</span>';
       else
-        markup += '<a href="' + data.url + '" target="_blank">' + data.title + '</a>';
+        markup += '<a class="entry-text" href="' + data.url + '" target="_blank">' + data.title + '</a>';
 
       $result.prepend('<li class="entry" id="entry-' + data.id + '">' + markup + '</li>');
       if (!!adminHtml)
-        $('#entry-' + data.id).find('a').after(adminHtml);
+        $('#entry-' + data.id).find('.entry-text').after(adminHtml);
 
       $body.removeClass('on-empty');
     });
@@ -84,8 +84,8 @@ $(function() {
     });
 
 
-    socket.on('linkUpdatedSuccess', function(data) {
-      $('#entry-' + data.id).find('a').first().text(data.title);
+    socket.on('entryUpdatedSuccess', function(data) {
+      $('#entry-' + data.id).find('.entry-text').text(data.title);
     });
 
 
@@ -148,7 +148,7 @@ $(function() {
               // save
               if ($icon.hasClass('glyphicon-ok')) {
                 var title = $link.prop('contenteditable', false).off('keydown.saveOnEnter').blur().text();
-                socket.emit('linkUpdated', {id: id, title: title, slug: slug});
+                socket.emit('entryUpdated', {id: id, title: title, slug: slug});
 
               // edit
               } else {
@@ -175,7 +175,7 @@ $(function() {
             }
             // TODO if btn-edit: Modal mit update initieren
             // TODO if btn-delete: socket-delete
-          }).find('a').after(adminHtml);
+          }).find('.entry-text').after(adminHtml);
         }
       }, false);
     }

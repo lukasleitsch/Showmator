@@ -117,13 +117,12 @@ io.sockets.on('connection', function(client){
       db.each('SELECT * FROM data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
         isDuplicate = true;
         id     = row.id;
-        title  = row.title;
         isText = row.isText;
 
       }, function(err, row) {
-        if (isDuplicate) {
+        if (isDuplicate && !isText) {
           log('found duplicate', row);
-          client.emit('duplicate', {id: id, isText: isText});
+          client.emit('duplicate', {id: id});
           db.close();
           return;
         }
@@ -157,14 +156,14 @@ io.sockets.on('connection', function(client){
 
 
   // update the entry title
-  client.on('linkUpdated', function(data) {
-    log('update link title');
+  client.on('entryUpdated', function(data) {
+    log('update entry title');
     
     db.serialize(function() {
       db.run('UPDATE data SET title = ? WHERE id = ? AND slug = ?', [data.title, data.id, data.slug], function(err, row) {
-        log('updated link title, about to find public slug', row);
+        log('updated entry title, about to find public slug', row);
         db.each('SELECT publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
-          client.broadcast.to(row.publicSlug).emit('linkUpdatedSuccess', {title: data.title, id: data.id});
+          client.broadcast.to(row.publicSlug).emit('entryUpdatedSuccess', {title: data.title, id: data.id});
         });
       });
     });
@@ -175,21 +174,23 @@ io.sockets.on('connection', function(client){
   client.on('popupOpened', function(data) {
     client.isPopup = true;
     log('popupOpended');
-    db.serialize(function() {
-      var id, isText;
-      // TODO why each and not something like fetchOne?
-      db.each('SELECT * FROM data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
-        id     = row.id;
-        title  = row.title;
-        isText = row.isText;
 
-      }, function(err, row) {
-        if (row) {
-          log('found duplicate', row);
-          client.emit('duplicate', {id: id, isText: isText});
-        }
+    // only check if we don't have a text-only entry
+    if (!data.isText) {
+      db.serialize(function() {
+        var id;
+        // TODO why each and not something like fetchOne?
+        db.each('SELECT * FROM data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
+          id     = row.id;
+
+        }, function(err, row) {
+          if (row && !isText) {
+            log('found duplicate', row);
+            client.emit('duplicate', {id: id});
+          }
+        });
       });
-    });
+    }
   });
 
 

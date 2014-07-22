@@ -7,7 +7,7 @@ $smallerFontSize:90%;
 
 #result {max-width:$maxWidth; margin:0 auto; padding-left:0; list-style:none;
   li {position:relative; margin-bottom:10px; padding-left:68px; /* padding-right:100px; */ line-height:24px;}
-  a[contenteditable=true] {color:#333; outline:none; background-color:#FFF78A; text-decoration:none;
+  .entry-text[contenteditable=true] {color:#333; outline:none; background-color:#FFF78A; text-decoration:none;
     // &:after {content:"'Enter' drücken um zu speichern"; position:relative; left:10px; color:#ccc; font-size:80%;}
   }
 }

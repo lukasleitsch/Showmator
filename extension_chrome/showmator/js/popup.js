@@ -91,10 +91,8 @@ $(function() {
   
   // prevent duplication
   socket.on('duplicate', function(data) {
-    if (data.isText === 0) {
-      $body.addClass('on-duplicate');
-      $delete.data('id', data.id);
-    }
+    $body.removeClass('on-loading').addClass('on-duplicate');
+    $delete.data('id', data.id);
   });
 
   // show success message and close window
@@ -136,19 +134,17 @@ $(function() {
         });
       }
 
-      // checks for duplicate
-      socket.emit('popupOpened', {slug: localStorage.slug, url: url});
-
       // on live-shownotes show popup for text entry
-
       isText = false;
-
       if (url.split('/')[4] === localStorage.publicSlug) {
         $('#title-label').html('Text-Eintrag:');
         $save.html('<span class="glyphicon glyphicon-pencil"></span> Text speichern');
         $title.val('');
         isText = true;
       }
+
+      // checks for duplicate
+      socket.emit('popupOpened', {slug: localStorage.slug, url: url, isText: isText ? 1 : 0});
     });
   }
 });
