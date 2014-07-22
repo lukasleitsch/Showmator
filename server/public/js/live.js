@@ -168,7 +168,7 @@ $(function() {
                 // TODO make with id
                 socket.emit('linkDeleted', {
                   slug: slug,
-                  url:  $link.prop('href')
+                  id:   id
                 });
                 $this.remove();
               }

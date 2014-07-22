@@ -55,7 +55,7 @@ $(function() {
     socket.emit('linkDeleted', {
       slug:       localStorage.slug,
       publicSlug: localStorage.publicSlug,
-      url:        url
+      id:         $delete.data('id')
     });
   });
 
@@ -91,8 +91,10 @@ $(function() {
   
   // prevent duplication
   socket.on('duplicate', function(data) {
-    if (data.isText === 0)
+    if (data.isText === 0) {
       $body.addClass('on-duplicate');
+      $delete.data('id', data.id);
+    }
   });
 
   // show success message and close window
@@ -102,8 +104,9 @@ $(function() {
     else
       completeAndClose('on-success-text');
   });
-  socket.on('linkDeletedSuccess', function() {
-    completeAndClose('on-delete');
+  socket.on('linkDeletedSuccess', function(data) {
+    if (data.id == $delete.data('id'))
+      completeAndClose('on-delete');
   });
 
 

@@ -66,7 +66,7 @@ io.sockets.on('connection', function(client){
     log('connectedLiveShownotes', publicSlug);
   });
   client.on('connectedHtmlExport', function(slug) {
-    client.join(slug); // TODO what for?
+    client.join(slug); // currently only used for titleUpdated
     log('connectedHtmlExport', slug);
   });
 
@@ -111,18 +111,19 @@ io.sockets.on('connection', function(client){
 
     db.serialize(function() {
       var isDuplicate = false,
-          title, isText;
+          id, isText;
 
       // TODO why each and not something like fetchOne?
       db.each('SELECT * FROM data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
         isDuplicate = true;
+        id     = row.id;
         title  = row.title;
         isText = row.isText;
 
       }, function(err, row) {
         if (isDuplicate) {
           log('found duplicate', row);
-          client.emit('duplicate', {title: title, isText: isText});
+          client.emit('duplicate', {id: id, isText: isText});
           db.close();
           return;
         }
@@ -175,16 +176,17 @@ io.sockets.on('connection', function(client){
     client.isPopup = true;
     log('popupOpended');
     db.serialize(function() {
-      var title, isText;
+      var id, isText;
       // TODO why each and not something like fetchOne?
       db.each('SELECT * FROM data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
+        id     = row.id;
         title  = row.title;
         isText = row.isText;
-        console.log(row);
+
       }, function(err, row) {
         if (row) {
           log('found duplicate', row);
-          client.emit('duplicate', {title: title, isText: isText});
+          client.emit('duplicate', {id: id, isText: isText});
         }
       });
     });
@@ -194,9 +196,9 @@ io.sockets.on('connection', function(client){
   // set title of shownotes
   client.on('titleUpdated', function(data) {
     db.run('UPDATE meta SET title = ? WHERE slug = ?', [data.title, data.slug], function() {
-      // publicSlug for live shownotes, private slug for html shownotes
       data.publicSlug = client.publicSlug;
       log('titleUpdated', data);
+      // publicSlug for live shownotes, private slug for html shownotes
       [client.publicSlug, data.slug].forEach(function(val) {
         client.broadcast.to(val).emit('titleUpdatedSuccess', {title: data.title});
       });
@@ -215,29 +217,21 @@ io.sockets.on('connection', function(client){
   // delete entry
   client.on('linkDeleted', function(data) {
     db.serialize(function() {
-      var id;
-      // TODO why each and not something like fetchOne?
-      db.each('SELECT id FROM data WHERE slug = ? AND url = ?', [data.slug, data.url], function(err, row) {
-        id = row.id;
-      }, function(/*err, row*/) {
-        if (id) {
-          db.run('DELETE FROM data WHERE id = ?', id, function(/*err, row*/) {
-            var emitEvent = function() {
-              io.sockets.in(data.publicSlug).emit('linkDeletedSuccess', {id: id});
-              data.id = id;
-              log('linkDeleted', data);
-            };
-            if (data.publicSlug) {
-              emitEvent();
-            } else {
-              db.each('SELECT publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
-                data.publicSlug = row.publicSlug;
-                emitEvent();
-              });
-            }
-          });
+      db.run('DELETE FROM data WHERE id = ? AND slug = ?', [data.id, data.slug], function(err, result) {
+        console.log("result:", result);
+        var emitEvent = function() {
+          io.sockets.in(data.publicSlug).emit('linkDeletedSuccess', {id: data.id});
+          if (client.isPopup)
+            client.emit('linkDeletedSuccess', {id: data.id});
+          log('linkDeleted', data);
+        };
+        if (data.publicSlug) {
+          emitEvent();
         } else {
-          log('linkDeleted failed', data);
+          db.each('SELECT publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
+            data.publicSlug = row.publicSlug;
+            emitEvent();
+          });
         }
       });
     });
