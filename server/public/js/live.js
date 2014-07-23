@@ -30,7 +30,16 @@ var padZero = function(num) {
 
 $(function() {
 
+  /* SHARED LIVE/HTML
+   * -----------------------------------------------------------------------------
+   */
+  
   var $body = $('body');
+
+  socket.on('titleUpdatedSuccess', function(data) {
+    $('#title').text(data.title);
+  });
+
 
 
   /* LIVE SHOWNOTES
@@ -76,11 +85,6 @@ $(function() {
 
     socket.on('counter', function(data) {
       $('#counter').html(data);
-    });
-
-
-    socket.on('titleUpdatedSuccess', function(data) {
-      $('#title').text(data.title);
     });
 
 
@@ -255,9 +259,6 @@ $(function() {
     // update title if changed
     socket.on('connect', function () {
       socket.emit('connectedHtmlExport', slug);
-    });
-    socket.on('titleUpdatedSuccess', function(data) {
-      $('#title').text(data.title);
     });
 
     // TODO
