@@ -73,32 +73,28 @@ io.sockets.on('connection', function(client){
 
   // Check status of shownotes
   client.on('statusRequest', function(data) {
-    db.serialize(function() {
-      db.get('SELECT * FROM meta WHERE slug = ?', data.slug, function(err, row) {
-        var data = {};
-        if (row) {
-          data = {
-            active:     true,
-            publicSlug: row.publicSlug,
-            title:      row.title
-          };
-          client.publicSlug = row.publicSlug;
-        }
-        client.emit('statusResponse', data);
-        
-        log('statusResponse', row ? client.publicSlug : 'no rows (=no slug yet)', row);
-      });
+    db.get('SELECT * FROM meta WHERE slug = ?', data.slug, function(err, row) {
+      var data = {};
+      if (row) {
+        data = {
+          active:     true,
+          publicSlug: row.publicSlug,
+          title:      row.title
+        };
+        client.publicSlug = row.publicSlug;
+      }
+      client.emit('statusResponse', data);
+      
+      log('statusResponse', row ? client.publicSlug : 'no rows (=no slug yet)', row);
     });
   });
 
   // Create new shownotes
   client.on('new', function(data) {
     log('create new shownotes', data);
-    db.serialize(function() {
-      db.run('INSERT INTO meta (slug, publicSlug) VALUES (? , ?)', [data.slug, data.publicSlug], function(/*err, result*/) {
-        client.publicSlug = data.publicSlug;
-        log('created new shownotes');
-      });
+    db.run('INSERT INTO meta (slug, publicSlug) VALUES (? , ?)', [data.slug, data.publicSlug], function(/*err, result*/) {
+      client.publicSlug = data.publicSlug;
+      log('created new shownotes');
     });
   });
 
@@ -109,46 +105,33 @@ io.sockets.on('connection', function(client){
 
     log('add entry', data);
 
-    db.serialize(function() {
-      var isDuplicate = false,
-          id, isText;
+    db.get('SELECT * FROM data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
+      if (row && !row.isText) {
+        log('found duplicate', data, row);
+        client.emit('duplicate', {id: row.id});
+        db.close();
+        return;
+      }
 
-      // TODO why each and not something like fetchOne?
-      db.each('SELECT * FROM data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
-        isDuplicate = true;
-        id     = row.id;
-        isText = row.isText;
+      db.get('SELECT startTime, offset, publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
+        if (row.startTime === null)
+          db.run('UPDATE meta SET startTime = ? WHERE slug = ?', [time, data.slug]);
 
-      }, function(err, row) {
-        if (isDuplicate && !isText) {
-          log('found duplicate', row);
-          client.emit('duplicate', {id: id});
-          db.close();
-          return;
-        }
-
-        db.serialize(function() {
-          db.each('SELECT startTime, offset, publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
-            if (row.startTime === null)
-              db.run('UPDATE meta SET startTime = ? WHERE slug = ?', [time, data.slug]);
-
-            db.run('INSERT INTO data (slug, title, url, time, isText) VALUES (?, ?, ?, ?, ?)', [data.slug, data.title, data.url, time, data.isText], function(err/*, result*/) {
-              if (err) {
-                emitError(err);
-              } else {
-                log('successfully added link');
-                client.broadcast.to(row.publicSlug).emit('push', {
-                  id:     this.lastID,
-                  title:  data.title,
-                  url:    data.url,
-                  isText: data.isText,
-                  time:   time
-                });
-                client.emit('linkAddedSuccess');
-              }
-              db.close();
+        db.run('INSERT INTO data (slug, title, url, time, isText) VALUES (?, ?, ?, ?, ?)', [data.slug, data.title, data.url, time, data.isText], function(err/*, result*/) {
+          if (err) {
+            emitError(err);
+          } else {
+            log('successfully added link');
+            client.broadcast.to(row.publicSlug).emit('push', {
+              id:     this.lastID,
+              title:  data.title,
+              url:    data.url,
+              isText: data.isText,
+              time:   time
             });
-          });
+            client.emit('linkAddedSuccess');
+          }
+          db.close();
         });
       });
     });
@@ -158,13 +141,10 @@ io.sockets.on('connection', function(client){
   // update the entry title
   client.on('entryUpdated', function(data) {
     log('update entry title');
-    
-    db.serialize(function() {
-      db.run('UPDATE data SET title = ? WHERE id = ? AND slug = ?', [data.title, data.id, data.slug], function(err, row) {
-        log('updated entry title, about to find public slug', row);
-        db.each('SELECT publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
-          client.broadcast.to(row.publicSlug).emit('entryUpdatedSuccess', {title: data.title, id: data.id});
-        });
+    db.run('UPDATE data SET title = ? WHERE id = ? AND slug = ?', [data.title, data.id, data.slug], function(err, row) {
+      log('updated entry title, about to find public slug', row);
+      db.get('SELECT publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
+        client.broadcast.to(row.publicSlug).emit('entryUpdatedSuccess', {title: data.title, id: data.id});
       });
     });
   });
@@ -177,18 +157,11 @@ io.sockets.on('connection', function(client){
 
     // only check if we don't have a text-only entry
     if (!data.isText) {
-      db.serialize(function() {
-        var id;
-        // TODO why each and not something like fetchOne?
-        db.each('SELECT * FROM data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
-          id     = row.id;
-
-        }, function(err, row) {
-          if (row && !isText) {
-            log('found duplicate', row);
-            client.emit('duplicate', {id: id});
-          }
-        });
+      db.get('SELECT id FROM data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
+        if (row) {
+          log('found duplicate', data, row.id);
+          client.emit('duplicate', {id: row.id});
+        }
       });
     }
   });
@@ -196,13 +169,15 @@ io.sockets.on('connection', function(client){
 
   // set title of shownotes
   client.on('titleUpdated', function(data) {
-    db.run('UPDATE meta SET title = ? WHERE slug = ?', [data.title, data.slug], function() {
-      data.publicSlug = client.publicSlug;
-      log('titleUpdated', data);
-      // publicSlug for live shownotes, private slug for html shownotes
-      [client.publicSlug, data.slug].forEach(function(val) {
-        client.broadcast.to(val).emit('titleUpdatedSuccess', {title: data.title});
-      });
+    db.run('UPDATE meta SET title = ? WHERE slug = ? AND publicSlug = ?', [data.title, data.slug, client.publicSlug], function() {
+      if (this.changes === 1) {
+        data.publicSlug = client.publicSlug;
+        log('titleUpdated', data);
+        // publicSlug for live shownotes, private slug for html shownotes
+        [client.publicSlug, data.slug].forEach(function(val) {
+          client.broadcast.to(val).emit('titleUpdatedSuccess', {title: data.title});
+        });
+      }
     });
   });
 
@@ -217,24 +192,28 @@ io.sockets.on('connection', function(client){
 
   // delete entry
   client.on('linkDeleted', function(data) {
-    db.serialize(function() {
-      db.run('DELETE FROM data WHERE id = ? AND slug = ?', [data.id, data.slug], function(err, result) {
-        console.log("result:", result);
+    db.run('DELETE FROM data WHERE id = ? AND slug = ?', [data.id, data.slug], function(/*err, result*/) {
+      if (this.changes === 1) {
         var emitEvent = function() {
           io.sockets.in(data.publicSlug).emit('linkDeletedSuccess', {id: data.id});
           if (client.isPopup)
             client.emit('linkDeletedSuccess', {id: data.id});
           log('linkDeleted', data);
         };
+
         if (data.publicSlug) {
           emitEvent();
+
         } else {
-          db.each('SELECT publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
+          db.get('SELECT publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
             data.publicSlug = row.publicSlug;
             emitEvent();
           });
         }
-      });
+
+      } else {
+        log('no entries found for linkDeleted', data);
+      }
     });
   });
 
@@ -267,50 +246,40 @@ app.use(express.static(__dirname + '/public'));
 
 // Live-Shownotes
 app.get('/live/:publicSlug', function(req, res) {
-
-  var publicSlug = req.params.publicSlug,
-      items      = [];
-
-  db.serialize(function() {
-    db.get('SELECT * FROM meta WHERE publicSlug = ?', publicSlug, function(err, row1) {
-      if (row1) {
-        db.each('SELECT * FROM data WHERE slug = ? ORDER BY time DESC', row1.slug, function(err, row2) {
-          items.push(row2);
-        }, function() {
-          res.render('live.ejs', {items: items, publicSlug: publicSlug, title: row1.title});
+  var publicSlug = req.params.publicSlug;
+  db.get('SELECT slug, title FROM meta WHERE publicSlug = ?', publicSlug, function(err, row1) {
+    if (row1) {
+      db.all('SELECT * FROM data WHERE slug = ? ORDER BY time DESC', row1.slug, function(err, rows) {
+        res.render('live.ejs', {
+          items: rows,
+          publicSlug: publicSlug,
+          title: row1.title
         });
+      });
 
-      } else {
-        render404(res);
-      }
-    });
+    } else {
+      render404(res);
+    }
   });
 });
 
 
 // Shownotes in HTML
 app.get('/html/:slug', function(req, res) {
-
-  var slug    = req.params.slug,
-      items   = [];
-
-  db.serialize(function() {
-    db.get('SELECT startTime, offset, title FROM meta WHERE slug = ?', slug, function(err1, row1) {
-      if (row1) {
-        db.each('SELECT * FROM data WHERE slug = ? ORDER BY time', slug, function(err2, row2) {
-          items.push(row2);
-        }, function() {
-          res.render('html.ejs', {
-            items:  items,
-            start:  row1.startTime,
-            slug:   slug,
-            offset: row1.offset,
-            title:  row1.title
-          });
+  var slug = req.params.slug;
+  db.get('SELECT startTime, offset, title FROM meta WHERE slug = ?', slug, function(err1, row1) {
+    if (row1) {
+      db.all('SELECT * FROM data WHERE slug = ? ORDER BY time', slug, function(err2, rows) {
+        res.render('html.ejs', {
+          items:  rows,
+          start:  row1.startTime,
+          slug:   slug,
+          offset: row1.offset,
+          title:  row1.title
         });
-      } else {
-        render404(res);
-      }
-    });
+      });
+    } else {
+      render404(res);
+    }
   });
 });
