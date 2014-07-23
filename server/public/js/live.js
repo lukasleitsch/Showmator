@@ -24,13 +24,13 @@ var padZero = function(num) {
                      parseInt(matches[3]));
     },
 
-    socket = io.connect('http://localhost:63685');
+    socketURL = 'http://localhost:63685',
+    socket    = io.connect(socketURL);
 
 
 $(function() {
 
-  var $body = $('body'),
-      slug;
+  var $body = $('body');
 
 
   /* LIVE SHOWNOTES
@@ -112,70 +112,23 @@ $(function() {
           localStorage.autoOpen = $(this).prop('checked');
         });
     }
-
-    // request slug for edit/remove icons next to the links
+    
+    // render admin buttons, get slug and save markup for admin buttons
     if (typeof window.postMessage == 'function') {
       
+      // request to content script with all the info it needs
       window.postMessage({
-        type:       'showmatorRequestSlugFromPage',
-        publicSlug: window.location.href.split('/')[4]
+        type:            'showmatorAdminRequestFromPage',
+        publicSlug:      window.location.href.split('/')[4],
+        listContainerID: $result.prop('id'),
+        socketURL:       socketURL
       }, '*');
       
+      // response from content script with markup for admin buttons
       window.addEventListener('message', function(event) {
         if (event.source == window && event.data &&
-              event.data.type == 'showmatorResponseSlugFromScript' &&
-              event.data.slug) {
-          
-          adminHtml = event.data.html;
-          slug      = event.data.slug;
-
-          $result.on('click', '.btn-edit, .btn-delete', function(e) {
-            e.preventDefault();
-            var $this = $(this),
-                $link = $this.parent().prev(),
-                id    = $link.closest('.entry').prop('id').split('-')[1];
-
-            // edit/save
-            if ($this.hasClass('btn-edit')) {
-              var $icon = $this.find('.glyphicon'),
-                  saveOnEnter = function(e) {
-                    if (e.keyCode == 13) {
-                      e.preventDefault();
-                      $this.click();
-                    }
-                  };
-
-              // save
-              if ($icon.hasClass('glyphicon-ok')) {
-                var title = $link.prop('contenteditable', false).off('keydown.saveOnEnter').blur().text();
-                socket.emit('entryUpdated', {id: id, title: title, slug: slug});
-
-              // edit
-              } else {
-                $link.prop('contenteditable', true).focus().on('keydown.saveOnEnter', saveOnEnter);
-              }
-
-              // switch icons (pencil/ok), btn class (default/primary) and
-              // show/hide delete btn
-              $this.parent().toggleClass('editing');
-              $icon.toggleClass('glyphicon-pencil glyphicon-ok');
-              $this.toggleClass('btn-default btn-primary');
-
-            // delete
-            } else {
-              // TODO text via data-attribute?
-              if (window.confirm('Wirklich löschen?')) {
-                // TODO make with id
-                socket.emit('linkDeleted', {
-                  slug: slug,
-                  id:   id
-                });
-                $this.remove();
-              }
-            }
-            // TODO if btn-edit: Modal mit update initieren
-            // TODO if btn-delete: socket-delete
-          }).find('.entry-text').after(adminHtml);
+              event.data.type == 'showmatorAdminResponseFromScript') {
+          adminHtml = event.data.adminHtml;
         }
       }, false);
     }
@@ -194,6 +147,7 @@ $(function() {
     var $markup = $('#markup-container'),
         start   = $markup.find('.time').data('time'),
         offset  = $markup.data('offset'),
+        slug    = $markup.data('slug'),
 
 
         // format time from timestamp
@@ -315,8 +269,6 @@ $(function() {
 
     // init
     // -----------------------------------------------------------------------------
-
-    slug = $markup.data('slug');
 
     // load checkbox states from localStorage
     $('#as-ul').prop('checked', parseInt(localStorage.showList) === 1);

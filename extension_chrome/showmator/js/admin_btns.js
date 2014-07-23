@@ -1,23 +1,98 @@
 /*global chrome */
+/*global io */
 
-// requests slug from extension and passes it through to the web page
+
+// Render admin buttons
+// -----------------------------------------------------------------------------
+
+var $result, socket;
+
+
+// listen for request from web page
 window.addEventListener('message', function(event) {
-  // We only accept messages from ourselves
-  if (event.source != window)
-    return;
+  if (event.source == window && event.data.type &&
+        event.data.type == 'showmatorAdminRequestFromPage') {
+    
+    // save vars for later access
+    $result = $('#' + event.data.listContainerID);
+    socket  = io.connect(event.data.socketURL);
 
-  if (event.data.type && event.data.type == 'showmatorRequestSlugFromPage') {
+    // send request to extension to receive slug
     chrome.runtime.sendMessage({
-      type:       'showmatorRequestSlugFromScript',
+      type:       'showmatorAdminRequestFromScript',
       publicSlug: event.data.publicSlug
+    
+    // callback with received slug
     }, function(slug) {
+
+      // markup for admin buttons
+      var adminHtml = '<div class="admin-btn-wrapper">' +
+                        '<button class="btn btn-default btn-xs btn-edit"><span class="glyphicon glyphicon-pencil"></span></button>' +
+                        '<button class="btn btn-default btn-xs btn-delete"><span class="glyphicon glyphicon-trash"></span></button>' +
+                      '</div>';
+
+      // bind edit/delete events to admin buttons
+      $result.on('click', '.btn-edit, .btn-delete', function(e) {
+        e.preventDefault();
+        var $this = $(this),
+            $li   = $this.closest('.entry'),
+            $link = $li.find('.entry-text'),
+            id    = $li.prop('id').split('-')[1];
+
+        // edit/save
+        if ($this.hasClass('btn-edit')) {
+          var $icon = $this.find('.glyphicon'),
+              saveOnEnter = function(e) {
+                if (e.keyCode == 13) {
+                  e.preventDefault();
+                  $this.click();
+                }
+              };
+
+          // save
+          if ($icon.hasClass('glyphicon-ok')) {
+            var title = $link
+                  .prop('contenteditable', false)
+                  .off('keydown.saveOnEnter')
+                  .blur()
+                  .text();
+            socket.emit('entryUpdated', {id: id, title: title, slug: slug});
+
+          // edit
+          } else {
+            $link.prop('contenteditable', true)
+              .focus()
+              .on('keydown.saveOnEnter', saveOnEnter);
+          }
+
+          // switch icons (pencil/ok), btn class (default/primary) and
+          // show/hide delete btn
+          $this.parent().toggleClass('editing');
+          $icon.toggleClass('glyphicon-pencil glyphicon-ok');
+          $this.toggleClass('btn-default btn-primary');
+
+        // delete
+        } else {
+          // TODO text via data-attribute?
+          if (window.confirm('Wirklich löschen?')) {
+            socket.emit('linkDeleted', {
+              slug: slug,
+              id:   id
+            });
+            $this.remove();
+          }
+        }
+
+
+      // render admin buttons
+      }).find('.entry-text')
+      .after(adminHtml);
+
+
+      // deliver admin markup to webpage
       window.postMessage({
         type: 'showmatorResponseSlugFromScript',
-        slug: slug,
-        html: '<div class="admin-btn-wrapper">' +
-                '<button class="btn btn-default btn-xs btn-edit"><span class="glyphicon glyphicon-pencil"></span></button>' +
-                '<button class="btn btn-default btn-xs btn-delete"><span class="glyphicon glyphicon-trash"></span></button>' +
-              '</div>'
+        html: adminHtml
       }, '*');
     });
   }
