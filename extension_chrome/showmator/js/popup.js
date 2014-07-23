@@ -13,6 +13,7 @@ $(function() {
 
       $body   = $('body'),
       $title  = $('#title'),
+      $text  = $('#text'),
       $save   = $('#save'),
       $delete = $('#delete'),
 
@@ -43,7 +44,7 @@ $(function() {
       $body.addClass('on-loading');
       socket.emit('linkAdded', {
         slug:   localStorage.slug,
-        title:  htmlEntities($title.val()),
+        title:  $title.val() ? htmlEntities($title.val()) : htmlEntities($text.val()),
         url:    url,
         isText: isText ? 1 : 0
       });
