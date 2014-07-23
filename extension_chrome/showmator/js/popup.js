@@ -44,7 +44,7 @@ $(function() {
       $body.addClass('on-loading');
       socket.emit('linkAdded', {
         slug:   localStorage.slug,
-        title:  htmlEntities(($body.hasClass('on-text-only') ? $text : $title).val()),
+        title:  htmlEntities(($body.hasClass('on-text-only') ? $text : $title).val())x,
         url:    url,
         isText: isText ? 1 : 0
       });
