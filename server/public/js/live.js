@@ -36,7 +36,7 @@ $(function() {
   
   var $body = $('body');
 
-  socket.on('titleUpdatedSuccess', function(data) {
+  socket.on('updateShownotesTitleSuccess', function(data) {
     $('#title').text(data.title);
   });
 
@@ -51,7 +51,7 @@ $(function() {
     // vars
     // -----------------------------------------------------------------------------
 
-    var tzOffset  = new Date().getTimezoneOffset() * 60000, // Different between UTC and local time
+    var tzOffset  = new Date().getTimezoneOffset() * 60000, // difference between UTC and local time
         $autoOpen = $('#auto-open'),
         $result   = $('#result'),
         adminHtml;
@@ -61,7 +61,7 @@ $(function() {
     // -----------------------------------------------------------------------------
 
     socket.on('connect', function () {
-      socket.emit('connectedLiveShownotes', $('body').data('publicSlug'));
+      socket.emit('connectToLiveShownotes', $('body').data('publicSlug'));
     });
 
 
@@ -88,12 +88,12 @@ $(function() {
     });
 
 
-    socket.on('entryUpdatedSuccess', function(data) {
+    socket.on('updateEntryTitleSuccess', function(data) {
       $('#entry-' + data.id).find('.entry-text').text(data.title);
     });
 
 
-    socket.on('linkDeletedSuccess', function(data) {
+    socket.on('deleteEntrySuccess', function(data) {
       $('#entry-' + data.id).remove();
       $body.toggleClass('on-empty', $result.find('li').length < 1);
     });
@@ -234,7 +234,7 @@ $(function() {
         var newOffset = formattedTimeToMilliseconds(val);
         if (newOffset != offset) {
           offset = newOffset;
-          socket.emit('offsetUpdated', {slug: slug, offset: offset});
+          socket.emit('updateOffset', {slug: slug, offset: offset});
           fillTimes();
           updateHtml();
         }
@@ -258,11 +258,11 @@ $(function() {
 
     // update title if changed
     socket.on('connect', function () {
-      socket.emit('connectedHtmlExport', slug);
+      socket.emit('connectToHtmlExport', slug);
     });
 
     // TODO
-    // socket.on('linkDeletedSuccess', function(data) {
+    // socket.on('deleteEntrySuccess', function(data) {
     //   $('#entry-' + data.id).remove();
     //   $body.toggleClass('on-empty', markup.find('li').length > 0);
     // });

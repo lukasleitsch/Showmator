@@ -28,8 +28,8 @@ $(function() {
 
       // checks active status + inserts data if available + inserts shortcut
       init = function() {
-        socket.emit('statusRequest', {slug: localStorage.slug});
-        socket.on('statusResponse', function(data) {
+        socket.emit('requestStatus', {slug: localStorage.slug});
+        socket.on('respondToStatus', function(data) {
 
           var slug;
 
@@ -123,7 +123,7 @@ $(function() {
 
     // if valid: send event to server, save in localStorage and show active form
     } else {
-      socket.emit('new', {slug: slug, publicSlug: publicSlug});
+      socket.emit('createNewShownotes', {slug: slug, publicSlug: publicSlug});
       localStorage.slug = slug;
       $slugStatic.text(slug);
       localStorage.publicSlug = publicSlug;
@@ -146,7 +146,7 @@ $(function() {
       saveTitleOnServer = function() {
         var title = $title.val();
         if (title != lastTitle) {
-          socket.emit('titleUpdated', {slug: localStorage.slug, title: title});
+          socket.emit('updateShownotesTitle', {slug: localStorage.slug, title: title});
           lastTitle = title;
         }
       };

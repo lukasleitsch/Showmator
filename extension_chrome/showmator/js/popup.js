@@ -42,7 +42,7 @@ $(function() {
   $save.click(function() {
     if (!$body.hasClass('on-duplicate') && !$body.hasClass('on-blacklist')) {
       $body.addClass('on-loading');
-      socket.emit('linkAdded', {
+      socket.emit('addLink', {
         slug:   localStorage.slug,
         title:  htmlEntities((isText ? $text : $title).val()),
         url:    url,
@@ -54,7 +54,7 @@ $(function() {
 
   $delete.click(function() {
     $body.removeClass('on-duplicate').addClass('on-loading');
-    socket.emit('linkDeleted', {
+    socket.emit('deleteEntry', {
       slug:       localStorage.slug,
       publicSlug: localStorage.publicSlug,
       id:         $delete.data('id')
@@ -92,19 +92,19 @@ $(function() {
   // -----------------------------------------------------------------------------
   
   // prevent duplication
-  socket.on('duplicate', function(data) {
+  socket.on('findDuplicate', function(data) {
     $body.removeClass('on-loading').addClass('on-duplicate');
     $delete.data('id', data.id);
   });
 
   // show success message and close window
-  socket.on('linkAddedSuccess', function() {
+  socket.on('addLinkSuccess', function() {
     if (!isText)
       completeAndClose('on-success-link');
     else
       completeAndClose('on-success-text');
   });
-  socket.on('linkDeletedSuccess', function(data) {
+  socket.on('deleteEntrySuccess', function(data) {
     if (data.id == $delete.data('id'))
       completeAndClose('on-delete');
   });
@@ -142,7 +142,7 @@ $(function() {
       }
 
       // checks for duplicate
-      socket.emit('popupOpened', {slug: localStorage.slug, url: url, isText: isText ? 1 : 0});
+      socket.emit('openPopup', {slug: localStorage.slug, url: url, isText: isText ? 1 : 0});
     });
   }
 });

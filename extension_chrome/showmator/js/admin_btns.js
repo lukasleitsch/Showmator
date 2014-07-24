@@ -56,7 +56,7 @@ window.addEventListener('message', function(event) {
                   .off('keydown.saveOnEnter')
                   .blur()
                   .text();
-            socket.emit('entryUpdated', {id: id, title: title, slug: slug});
+            socket.emit('updateEntryTitle', {id: id, title: title, slug: slug});
 
           // edit
           } else {
@@ -75,7 +75,7 @@ window.addEventListener('message', function(event) {
         } else {
           // TODO text via data-attribute?
           if (window.confirm('Wirklich löschen?')) {
-            socket.emit('linkDeleted', {
+            socket.emit('deleteEntry', {
               slug: slug,
               id:   id
             });
