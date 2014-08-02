@@ -16,9 +16,7 @@ $smallerFontSize:90%;
   // li:hover & {position:absolute; top:-5px; left:100%; display:block; width:100px;}
   li:hover &, &.editing {position:relative; display:inline-block; margin-left:10px;}
 }
-.btn-delete {margin-left:5px;
-  .editing & {display:none;}
-}
+.btn-delete {margin-left:5px;}
 
 span.edit {display:none;}
 
