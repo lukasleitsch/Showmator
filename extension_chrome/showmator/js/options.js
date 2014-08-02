@@ -79,7 +79,7 @@ $(function() {
           $.each(commands, function(key, val) {
             if (val.name == '_execute_browser_action' && val.shortcut !== '') {
               hasShortcut = true;
-              $shortcut.text(val.shortcut);
+              $shortcut.text(val.shortcut.replace(/\+/g, ' + '));
             }
           });
 
