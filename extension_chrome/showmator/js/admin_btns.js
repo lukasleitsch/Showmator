@@ -24,7 +24,6 @@ window.addEventListener('message', function(event) {
     
     // callback with received slug
     }, function(slug) {
-
       // markup for admin buttons
       var adminHtml = '<div class="admin-btn-wrapper">' +
                         '<button class="btn btn-default btn-xs btn-edit"><span class="glyphicon glyphicon-pencil"></span></button>' +
@@ -41,35 +40,67 @@ window.addEventListener('message', function(event) {
 
         // edit/save
         if ($this.hasClass('btn-edit')) {
-          var $icon = $this.find('.glyphicon'),
+          var $icon     = $this.find('.glyphicon'),
+              txtBefore = '',
+
+              togglEditClasses = function() {
+                // switch icons (pencil/ok), btn class (default/primary) and
+                // show/hide delete btn
+                $this.parent().toggleClass('editing');
+                $icon.toggleClass('glyphicon-pencil glyphicon-ok');
+                $this.toggleClass('btn-default btn-primary');
+              },
+
+              enterEditMode = function() {
+                txtBefore = $link
+                  .prop('contenteditable', true)
+                  .on('keydown.saveOnEnter', saveOnEnter)
+                  .focus()
+                  .text();
+
+                // does not work with jQuery events
+                document.addEventListener('keydown', cancelOnEscape, true);
+
+                togglEditClasses();
+              },
+
+              quitEditMode = function() {
+                $link.prop('contenteditable', false)
+                  .off('keydown.saveOnEnter')
+                  .blur();
+                
+                document.removeEventListener('keydown', cancelOnEscape, true);
+
+                togglEditClasses();
+              },
+              
               saveOnEnter = function(e) {
                 if (e.keyCode == 13) {
                   e.preventDefault();
                   $this.click();
                 }
+              },
+              
+              cancelOnEscape = function(e) {
+                if (e.which == 27) {
+                  quitEditMode();
+                  $link.text(txtBefore);
+                }
               };
 
           // save
           if ($icon.hasClass('glyphicon-ok')) {
-            var title = $link
-                  .prop('contenteditable', false)
-                  .off('keydown.saveOnEnter')
-                  .blur()
-                  .text();
-            socket.emit('updateEntryTitle', {id: id, title: title, slug: slug});
+            quitEditMode();
+            socket.emit('updateEntryTitle', {
+              id:    id,
+              title: $link.text(),
+              slug:  slug
+            });
 
           // edit
           } else {
-            $link.prop('contenteditable', true)
-              .focus()
-              .on('keydown.saveOnEnter', saveOnEnter);
+            enterEditMode();
           }
-
-          // switch icons (pencil/ok), btn class (default/primary) and
-          // show/hide delete btn
-          $this.parent().toggleClass('editing');
-          $icon.toggleClass('glyphicon-pencil glyphicon-ok');
-          $this.toggleClass('btn-default btn-primary');
 
         // delete
         } else {
