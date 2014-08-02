@@ -20,6 +20,7 @@ $(function() {
       $blacklist  = $('#blacklist'),
       $title      = $('#title-shownotes'),
       $titleAlert = $('#title-shownotes-alert'),
+      $delete     = $('#create-new'),
 
       noTitleText = $titleAlert.data('no-title'),
 
@@ -175,12 +176,20 @@ $(function() {
 
 
   // 'create new' button triggers new shownotes' init
-  $('#create-new, #alert-link-create-new').click(function(e) {
+  $delete.click(function(e) {
     e.preventDefault();
-    localStorage.removeItem('slug');
-    localStorage.removeItem('publicSlug');
-    $body.removeClass(extendedFormClass);
-    init();
+
+    if (window.confirm($delete.data('confirm'))) {
+      localStorage.removeItem('slug');
+      localStorage.removeItem('publicSlug');
+      $body.removeClass(extendedFormClass);
+      init();
+    }
+  });
+
+  $('#alert-link-create-new').click(function(e) {
+    e.preventDefault();
+    $body.animate({scrollTop: $body.outerHeight()});
   });
 
 
