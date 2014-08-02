@@ -11773,10 +11773,21 @@
 		},
 	"\/server\/public\/js\/live.js": {
 		"fileType": 64,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
+		"ignore": 1,
+		"ignoreWasSetByUser": 1,
 		"inputAbbreviatedPath": "\/server\/public\/js\/live.js",
 		"outputAbbreviatedPath": "\/server\/public\/js\/min\/live-min.js",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
+		},
+	"\/server\/public\/js\/min\/live-min.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/server\/public\/js\/min\/live-min.js",
+		"outputAbbreviatedPath": "\/server\/public\/js\/min\/min\/live-min-min.js",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1,

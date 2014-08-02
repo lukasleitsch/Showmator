@@ -91,8 +91,8 @@ window.addEventListener('message', function(event) {
 
       // deliver admin markup to webpage
       window.postMessage({
-        type: 'showmatorResponseSlugFromScript',
-        html: adminHtml
+        type:      'showmatorAdminResponseFromScript',
+        adminHtml: adminHtml
       }, '*');
     });
   }
