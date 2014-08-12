@@ -67,7 +67,6 @@ $(function() {
     window.close();
   });
 
-
   // react on enter/escape + hide alert when title is changed
   $title.keyup(function(e) {
 
@@ -80,6 +79,17 @@ $(function() {
       return;
 
     // on escape: close popup
+    } else if (e.keyCode == 27) {
+      window.close();
+      return;
+    }
+  });
+
+  // react on cmd+enter/escape 
+  $text.keydown(function(e) {
+    if(e.keyCode == 13 && e.metaKey){
+      $save.click();
+      return;
     } else if (e.keyCode == 27) {
       window.close();
       return;
