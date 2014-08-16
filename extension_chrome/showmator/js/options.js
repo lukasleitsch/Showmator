@@ -149,8 +149,19 @@ $(function() {
         if (title != lastTitle) {
           socket.emit('updateShownotesTitle', {slug: localStorage.slug, title: title});
           lastTitle = title;
+
+          // show tooltip after title is saved
+          $title.tooltip({
+            title:     "Gespeichert",
+            placement: 'right',
+            trigger:   'manual',
+            html:      true    
+          }).tooltip('show').on('blur', function(){
+            $title.tooltip('destroy');
+          });
         }
       };
+
   $title.keyup(function() {
     $titleAlert.text($(this).val());
     if (!!timer)
@@ -172,6 +183,14 @@ $(function() {
   // save blacklist changes
   $blacklist.keyup(function() {
     localStorage.blacklist = $(this).val();
+      $(this).tooltip({
+        title:     "Gespeichert",
+        placement: 'right',
+        trigger:   'manual',
+        html:      true    
+      }).tooltip('show').on('blur', function(){
+        $(this).tooltip('destroy');
+      });
   });
 
 
