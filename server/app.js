@@ -81,6 +81,9 @@ io.sockets.on('connection', function(client) {
     log('requestStatus', data);
 
     db.get('SELECT * FROM meta WHERE slug = ?', data.slug, function(err, row) {
+      if (err) 
+        emitError(err);
+
       var data = {};
       
       if (row) {
@@ -117,6 +120,9 @@ io.sockets.on('connection', function(client) {
     var time = new Date().getTime();
 
     db.get('SELECT * FROM data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
+      if(err)
+        emitError(err);
+
       if (row && !row.isText) {
         emitDuplicate(data, row);
         db.close();
@@ -124,6 +130,9 @@ io.sockets.on('connection', function(client) {
       }
 
       db.get('SELECT startTime, offset, publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
+        if(err)
+          emitError(err);
+
         if (row.startTime === null)
           db.run('UPDATE meta SET startTime = ? WHERE slug = ?', [time, data.slug]);
 
