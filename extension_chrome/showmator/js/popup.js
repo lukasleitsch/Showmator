@@ -40,7 +40,7 @@ $(function() {
 
   // add link and show loading state when submit button is clicked
   $save.click(function() {
-    if (!$body.hasClass('on-duplicate') && !$body.hasClass('on-blacklist')) {
+    if (!$body.hasClass('on-duplicate') && !$body.hasClass('on-blacklist') && ($text.val() != '' || $title.val() != '')) {
       $body.addClass('on-loading');
       socket.emit('addLink', {
         slug:   localStorage.slug,
