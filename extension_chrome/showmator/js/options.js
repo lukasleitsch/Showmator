@@ -92,6 +92,51 @@ $(function() {
       // helper for slug generation
       randomSlug = function() {
         return Math.random().toString(36).substring(7);
+      },
+
+
+      // updates title on server
+      saveTitleOnServer = function() {
+        socket.emit('updateShownotesTitle', {
+          slug: localStorage.slug, title: $title.val()
+        });
+      },
+
+
+      // shows saved-tooltip and manages delays + validity checks
+      initSavedTooltip = function($el, callback) {
+        var showDelay = 1000,
+            hideDelay = 3000,
+            ts        = new Date().getTime(),
+            isValid   = function() {
+              return $el.data('created-ts') == ts;
+            };
+
+        // destroy current tooltip + save creation timestamp for validity check
+        $el.tooltip('destroy').data('created-ts', ts);
+
+        // if still valid after 1s delay: callback + show new tooltip
+        window.setTimeout(function() {
+          if (!isValid())
+            return;
+
+          if (typeof callback == 'function')
+            callback();
+
+          $el.tooltip({
+            title:     '✔ Gespeichert',
+            placement: 'right',
+            trigger:   'manual',
+            container: 'body'
+          }).tooltip('show');
+          
+          // if still valid after 2s delay: destroy tooltip
+          window.setTimeout(function() {
+            if (isValid())
+              $el.tooltip('destroy');
+          }, hideDelay);
+
+        }, showDelay);
       };
 
 
@@ -141,32 +186,14 @@ $(function() {
 
 
   // save title changes (only when nothing has changed after 1000ms)
-  var timer,
-      saveDelay = 1000,
-      lastTitle = '',
-      saveTitleOnServer = function() {
-        var title = $title.val();
-        if (title != lastTitle) {
-          socket.emit('updateShownotesTitle', {slug: localStorage.slug, title: title});
-          lastTitle = title;
-
-          // show tooltip after title is saved
-          $title.tooltip({
-            title:     "Gespeichert",
-            placement: 'right',
-            trigger:   'manual',
-            html:      true    
-          }).tooltip('show').on('blur', function(){
-            $title.tooltip('destroy');
-          });
-        }
-      };
-
+  var lastTitle = '';
   $title.keyup(function() {
-    $titleAlert.text($(this).val());
-    if (!!timer)
-      clearTimeout(timer);
-    timer = setTimeout(saveTitleOnServer, saveDelay);
+    var val = $(this).val();
+    if (val == lastTitle)
+      return;
+    lastTitle = val;
+    $titleAlert.text(val);
+    initSavedTooltip($title, saveTitleOnServer);
   });
 
 
@@ -182,15 +209,10 @@ $(function() {
 
   // save blacklist changes
   $blacklist.keyup(function() {
-    localStorage.blacklist = $(this).val();
-      $(this).tooltip({
-        title:     "Gespeichert",
-        placement: 'right',
-        trigger:   'manual',
-        html:      true    
-      }).tooltip('show').on('blur', function(){
-        $(this).tooltip('destroy');
-      });
+    if ($blacklist.val() == localStorage.blacklist)
+      return;
+    localStorage.blacklist = $blacklist.val();
+    initSavedTooltip($blacklist);
   });
 
 
