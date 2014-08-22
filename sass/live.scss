@@ -5,23 +5,20 @@ $smallerFontSize:90%;
 .page-live .jumbo-header {margin-bottom:15px;}
 .post-jumbo-info {margin-bottom:35px; font-size:$smallerFontSize; text-align:center;}
 
+#add-text-hint {max-width:$maxWidth; margin:0 auto 25px; font-size:$smallerFontSize;}
+
 #result {max-width:$maxWidth; margin:0 auto; padding-left:0; list-style:none;
-  li {position:relative; margin-bottom:10px; padding-left:68px; /* padding-right:100px; */ line-height:24px;}
-  .entry-text[contenteditable=true] {color:#333; outline:none; background-color:#FFF78A; text-decoration:none;
-    // &:after {content:"'Enter' drücken um zu speichern"; position:relative; left:10px; color:#ccc; font-size:80%;}
-  }
+  li {position:relative; margin-bottom:10px; padding-left:68px; line-height:24px;}
+  .entry-text[contenteditable=true] {color:#333; outline:none; background-color:#FFF78A; text-decoration:none;}
 }
 .time {position:absolute; left:0; display:inline-block;}
+
 .admin-btn-wrapper {display:none;
-  // li:hover & {position:absolute; top:-5px; left:100%; display:block; width:100px;}
   li:hover &, &.editing {position:relative; display:inline-block; margin-left:10px;}
 }
 .btn-delete {margin-left:5px;}
 
-span.edit {display:none;}
-
-li.edit > span.edit {position: absolute; left: -30px; display: inline-block}
-
+// auto-open checkbox
 .form-inline {margin:50px 0 60px; text-align:center; font-weight:normal;
   label {margin-left:4px; font-weight:normal;}
 }

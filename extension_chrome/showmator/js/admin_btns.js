@@ -22,15 +22,45 @@ window.addEventListener('message', function(event) {
       type:       'showmatorAdminRequestFromScript',
       publicSlug: event.data.publicSlug
     
-    // callback with received slug
-    }, function(slug) {
+    // callback with received slug and extension shortcut
+    }, function(resp) {
+      
 
-      // markup for admin buttons
-      var adminHtml = '<div class="admin-btn-wrapper">' +
+      // render hint for adding text-entry
+      if (!localStorage.hideTextHint) {
+        var shortcutHtml = resp.shortcut ? (' (<em>' + resp.shortcut + '</em>)') : '',
+            html = '<div id="add-text-hint" class="alert alert-warning alert-dismissible">' +
+                     '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Schließen</span></button>' +
+                     '<p><strong>Tipp:</strong> Um einen Texteintrag (ohne Link) hinzuzufügen, kannst du das Icon der Showmator-Erweiterung neben der Adressleiste klicken oder einen Tastatur-Shortcut' + shortcutHtml + ' verwenden. Den Shortcut kannst du <a href="chrome://extensions/configureCommands">hier</a> ändern.</p>' +
+                   '</div>';
+
+        $result.before(html);
+
+        var $hint = $('#add-text-hint');
+
+        // when closing hint: hide, destroy and never show again
+        $hint.find('button').click(function() {
+          $hint.slideUp(200, function() {
+            localStorage.hideTextHint = true;
+            $hint.remove();
+          });
+        });
+
+        // link to shortcut options ('chrome://' is non-http and therefore
+        // doesn't work with a-tags)
+        $hint.find('a').click(function(e) {
+          e.preventDefault();
+          chrome.runtime.sendMessage({type: "showmatorConfigureShortcut"});
+        });
+      }
+
+
+      // vars and outer functions for admin buttons
+      var slug     = resp.slug,
+          adminHtml = '<div class="admin-btn-wrapper">' +
                         '<button class="btn btn-default btn-xs btn-edit"><span class="glyphicon glyphicon-pencil"></span></button>' +
                         '<button class="btn btn-default btn-xs btn-delete"><span class="glyphicon glyphicon-trash"></span></button>' +
                       '</div>',
-
           isEditing = false,
           editedID  = 0,
 
@@ -139,7 +169,8 @@ window.addEventListener('message', function(event) {
       .after(adminHtml);
 
 
-      // deliver admin markup to webpage
+      // deliver admin markup to webpage (so the page can add the buttons to
+      // incoming links)
       window.postMessage({
         type:      'showmatorAdminResponseFromScript',
         adminHtml: adminHtml
