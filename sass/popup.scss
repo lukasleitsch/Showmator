@@ -48,3 +48,10 @@ $states:("empty-slug", "duplicate", "blacklist", "loading", "success-link", "suc
 textarea {max-width:100%;
   .on-success-text &.show-on-text-only {display:none;}
 }
+
+@keyframes shake {
+  0%, 100% {transform: translateX(0);}
+  12.5%, 37.5%, 62.5%, 87.5% {transform: translateX(-8px);}
+  25%, 50%, 75% {transform: translateX(8px);}
+}
+.shake {animation-duration:0.5s; animation-fill-mode:both; animation-name:shake;}

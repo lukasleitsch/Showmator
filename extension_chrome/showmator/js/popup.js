@@ -38,13 +38,24 @@ $(function() {
   // bind events
   // -----------------------------------------------------------------------------
 
-  // add link and show loading state when submit button is clicked
+  // add link/text and show loading state when submit button is clicked
   $save.click(function() {
-    if (!$body.hasClass('on-duplicate') && !$body.hasClass('on-blacklist') && ($text.val() != '' || $title.val() != '')) {
+    if (!$body.hasClass('on-duplicate') && !$body.hasClass('on-blacklist')) {
+      var $input = isText ? $text : $title,
+          val    = $.trim($input.val());
+      
+      // if empty value: shake input
+      if (val === '') {
+        $input.on('webkitAnimationEnd animationEnd animationend', function() {
+          $input.removeClass('shake');
+        }).addClass('shake');
+        return;
+      }
+
       $body.addClass('on-loading');
       socket.emit('addLink', {
         slug:   localStorage.slug,
-        title:  htmlEntities((isText ? $text : $title).val()),
+        title:  htmlEntities(val),
         url:    url,
         isText: isText ? 1 : 0
       });
