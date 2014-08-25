@@ -34,3 +34,11 @@
 }
 #html {font-weight:bold;}
 #blacklist {width:100%; min-height:150px;}
+
+.tooltip-inner {background-color:#ef6560;}
+.tooltip-arrow {
+  .tooltip.top & {border-top-color:#ef6560;}
+  .tooltip.right & {border-right-color:#ef6560;}
+  .tooltip.bottom & {border-bottom-color:#ef6560;}
+  .tooltip.left & {border-top-color:#ef6560;}
+}
