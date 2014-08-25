@@ -1,7 +1,5 @@
 @import "shared";
 
-$smallerFontSize:90%;
-
 .page-live .jumbo-header {margin-bottom:15px;}
 .post-jumbo-info {margin-bottom:35px; font-size:$smallerFontSize; text-align:center;}
 
@@ -22,8 +20,5 @@ $smallerFontSize:90%;
 .form-inline {margin:50px 0 60px; text-align:center; font-weight:normal;
   label {margin-left:4px; font-weight:normal;}
 }
-
-hr {max-width:$maxWidth;}
-footer {font-size:$smallerFontSize; text-align:center;}
 
 @import "html";
