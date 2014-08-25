@@ -21,19 +21,25 @@ $states:("empty-slug", "duplicate", "blacklist", "loading", "success-link", "suc
   }
 }
 
-.show-on-text-only {@extend %hide-on-start;}
+.show-on-text-only, .show-on-text-only-allowed {@extend %hide-on-start;}
 .on-text-only {
   .show-on-text-only {display:inline;}
   .hide-on-text-only {@extend %hide-on-start;}
 }
+.on-text-only-allowed .show-on-text-only-allowed {display:block;}
 
 @keyframes spin {
   100% {transform:rotate(360deg);}
 }
 .glyphicon-refresh {animation:spin 1s linear infinite;}
 
-.form-inline input {margin-right:4px;}
-.form-control {margin:0 0 24px;}
+.form-control {margin:0 0 24px;
+  .on-text-only-allowed & {margin-bottom:16px;}
+}
+.show-on-text-only-allowed {margin-bottom:24px;
+  label {font-weight:normal;}
+  input {margin-right:4px;}
+}
 .btn {position:relative; margin-bottom:12px;
   &:after {position:absolute; width:100%; text-align:center; bottom:-20px; left:0; color:#ccc; font-size:80%;}
 }

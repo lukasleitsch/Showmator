@@ -17,6 +17,7 @@ $(function() {
       $submit     = $('#submit-slug'),
       $slugStatic = $('#slug-static'),
       $shortcut   = $('#shortcut'),
+      $textOnly   = $('#text-only'),
       $blacklist  = $('#blacklist'),
       $title      = $('#title-shownotes'),
       $titleAlert = $('#title-shownotes-alert'),
@@ -58,16 +59,16 @@ $(function() {
           $slugStatic.text(slug);
           lastTitle = $title.val();
 
-          // check blacklist
-          if (typeof(localStorage.blacklist) != "undefined")
-            $blacklist.val(localStorage.blacklist);
-
           // update href attributes for external links
           $('#html').prop('href', baseUrl + '/html/' + slug);
           $('#live').prop('href', baseUrl + '/live/' + publicSlug);
         });
 
+        // insert shortcut, text-only-state and blacklist
         displayShortcut();
+        $textOnly.prop('checked', !!localStorage.showTextonly);
+        if (typeof(localStorage.blacklist) != "undefined")
+          $blacklist.val(localStorage.blacklist);
       },
 
 
@@ -104,9 +105,10 @@ $(function() {
 
 
       // shows saved-tooltip and manages delays + validity checks
-      initSavedTooltip = function($el, callback) {
-        var showDelay = 1000,
-            hideDelay = 3000,
+      initSavedTooltip = function($el, callback, showDelay, placement) {
+        showDelay = showDelay || 1000;
+
+        var hideDelay = 3000,
             ts        = new Date().getTime(),
             isValid   = function() {
               return $el.data('created-ts') == ts;
@@ -125,7 +127,7 @@ $(function() {
 
           $el.tooltip({
             title:     '✔ Gespeichert',
-            placement: 'right',
+            placement: placement || 'right',
             trigger:   'manual',
             container: 'body'
           }).tooltip('show');
@@ -205,6 +207,13 @@ $(function() {
 
   // check for changed shortcut when window is activated
   $(window).focus(displayShortcut);
+
+
+  // save text-only changes
+  $textOnly.change(function() {
+    localStorage.showTextonly = $(this).is('checked');
+    initSavedTooltip($textOnly, false, 200, 'top');
+  });
 
 
   // save blacklist changes

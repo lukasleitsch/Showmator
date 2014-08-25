@@ -50,23 +50,18 @@
     </p>
   </div>
 
-  <!-- <div class="form-inline">
-    <label for="kind-link">
-      <input type="radio" name="kind" value="link" id="kind-link" checked />
-      Link
-    </label>
-    <label for="kind-text-only">
-      <input type="radio" name="kind" value="text-only" id="kind-text-only" />
-      Texteintrag
-    </label>
-  </div> -->
-
   <label id="title-label" for="title">
     <span class="hide-on-text-only">Titel für Shownotes:</span>
-    <span class="show-on-text-only">Text-Eintrag:</span>
+    <span class="show-on-text-only">Textintrag:</span>
   </label>
   <input type="text" name="title" id="title" class="form-control hide-on-text-only" tabindex="1" autofocus placeholder="Titel eingeben"/>
   <textarea id="text" class="form-control show-on-text-only" autofocus placeholder="Text eingeben"></textarea>
+
+  <div class="show-on-text-only-allowed">
+    <label for="text-only">
+      <input type="checkbox" id="text-only" /> nur Text
+    </label>
+  </div>
 
   <button class="btn btn-primary" id="save">
     <span class="glyphicon glyphicon-pencil"></span>

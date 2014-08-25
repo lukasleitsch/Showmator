@@ -33,7 +33,10 @@ $labelWidth:    100px;
     & + .help-block {margin-top:10px;}
   }
 }
-.form-control-wrap {float:left; width:$formMaxWidth - $labelWidth; font-size:16px;}
+.form-control-wrap {float:left; width:$formMaxWidth - $labelWidth; font-size:16px;
+  input[type="checkbox"] {margin-right:5px;}
+  label {font-weight:normal;}
+}
 .help-block {margin-bottom:0; font-size:12px;}
 
 .footer-author {max-width:600px; margin:80px auto 0; padding:12px 0; border-top:1px solid #eee; text-align:center;}

@@ -56,13 +56,13 @@ $(function() {
       socket.emit('addLink', {
         slug:   localStorage.slug,
         title:  htmlEntities(val),
-        url:    url,
+        url:    isText ? false : url,
         isText: isText ? 1 : 0
       });
     }
   });
 
-
+  // delete entry when button is clicked
   $delete.click(function() {
     $body.removeClass('on-duplicate').addClass('on-loading');
     socket.emit('deleteEntry', {
@@ -78,33 +78,37 @@ $(function() {
     window.close();
   });
 
-  // react on enter/escape + hide alert when title is changed
-  $title.keyup(function(e) {
-
-    // on enter: save changes
-    if (e.keyCode == 13) {
+  // react on enter, cmd+enter and escape 
+  $(window).keydown(function(e) {
+    
+    // on enter in link-mode: save changes
+    if (!isText && e.keyCode == 13) {
       if ($body.hasClass('on-duplicate'))
         $delete.click();
       else
         $save.click();
       return;
+    
+    // on cmd+enter in text-mode
+    } else if (isText && e.keyCode == 13 && e.metaKey){
+      $save.click();
+      return;
 
-    // on escape: close popup
+    // close on escape (in both cases)
     } else if (e.keyCode == 27) {
       window.close();
       return;
     }
   });
 
-  // react on cmd+enter/escape 
-  $text.keydown(function(e) {
-    if(e.keyCode == 13 && e.metaKey){
-      $save.click();
-      return;
-    } else if (e.keyCode == 27) {
-      window.close();
-      return;
-    }
+  // on text-only change: switch body class and transfer value to new field
+  $('#text-only').change(function() {
+    isText = $(this).is(':checked');
+    $body.toggleClass('on-text-only', isText);
+
+    var $old = isText ? $title : $text,
+        $new = isText ? $text : $title;
+    $new.val($old.val());
   });
 
 
@@ -154,11 +158,18 @@ $(function() {
       // fill input with title and prevent saving if on blacklist
       } else {
         $title.val(title);
+        
+        // don't save links from blacklist
         if (!!localStorage.blacklist) {
           localStorage.blacklist.split('\n').forEach(function(entry) {
             if (entry == url || entry + '/' == url || entry == url + '/')
               $body.addClass('on-blacklist');
           });
+        }
+
+        // show text-only checkbox
+        if (!isText && localStorage.showTextonly) {
+          $body.addClass('on-text-only-allowed');
         }
       }
 
