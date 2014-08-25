@@ -42,6 +42,7 @@ $states:("empty-slug", "duplicate", "blacklist", "loading", "success-link", "suc
   &:after {content:"(Esc)";}
 }
 #save:after, #delete:after {content:"(Enter)";}
+.on-text-only #save:after {content:"(Strg/Cmd+Enter)";}
 
 // prevent changing textarea's width to exceed popup frame and prevent resize
 // marker from showing on overlay (weird bug)
