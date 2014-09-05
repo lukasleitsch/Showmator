@@ -34,7 +34,7 @@
     "js":      ["js/jquery.min.js", "js/socket.io.js"],
     "css":     ["css/styles.css"]
   }, {
-    "matches": ["http://localhost:63685/live/*"],
+    "matches": ["http://beta.showmator.com:63685/live/*"],
     "js":      ["js/jquery.min.js", "js/socket.io.js", "js/admin_btns.js"],
     "run_at":  "document_start"
   }],
