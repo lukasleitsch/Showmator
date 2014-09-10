@@ -66,7 +66,7 @@ $(function() {
 
         // insert shortcut, text-only-state and blacklist
         displayShortcut();
-        $textOnly.prop('checked', !!localStorage.showTextonly);
+        $textOnly.prop('checked', !!localStorage.showTextOnly);
         if (typeof(localStorage.blacklist) != "undefined")
           $blacklist.val(localStorage.blacklist);
       },
@@ -211,7 +211,11 @@ $(function() {
 
   // save text-only changes
   $textOnly.change(function() {
-    localStorage.showTextonly = $(this).is('checked');
+    var isChecked = $(this).is(':checked');
+    if (isChecked)
+      localStorage.showTextOnly = true;
+    else
+      localStorage.removeItem('showTextOnly');
     initSavedTooltip($textOnly, false, 200, 'top');
   });
 
@@ -245,4 +249,7 @@ $(function() {
 
   // do it
   init();
+
+  // clean old localStorage-items
+  localStorage.removeItem('showTextonly'); // old: small letter 'o'
 });
