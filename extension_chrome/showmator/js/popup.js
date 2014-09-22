@@ -168,7 +168,7 @@ $(function() {
         }
 
         // show text-only checkbox
-        if (!isText && localStorage.showTextonly) {
+        if (!isText && localStorage.showTextOnly) {
           $body.addClass('on-text-only-allowed');
         }
       }
