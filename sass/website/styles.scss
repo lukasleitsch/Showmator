@@ -1,0 +1,39 @@
+@import "../shared/varibales";
+@import "bootstrap-compass";
+@import "../shared/bootstrap/bootstrap-variables";
+@import "../shared/bootstrap/bootstrap-custom";
+@import "../shared/shared";
+
+body{
+	//background-image: url(../img/icon128.png);
+	background-attachment:fixed;
+}
+
+p {
+	font-size: 24px;
+}
+
+
+.jumbo-header {
+  	small{
+  		color: white;
+  		font-size: 16px;
+  }
+}
+
+.intro {
+	font-size: 28px;
+	text-align: center;
+	font-weight: bold;
+	padding-bottom: 5em;
+}
+
+.full_image {
+	display: block;
+	text-align: center;
+	margin: 0 auto;
+}
+
+.row {
+	padding-bottom: 6em;
+}
