@@ -31,8 +31,7 @@
   // TODO first item necessary?
   "content_scripts": [{
     "matches": [ "http://*/*", "https://*/*"],
-    "js":      ["js/jquery.min.js", "js/socket.io.js"],
-    "css":     ["css/styles.css"]
+    "js":      ["js/jquery.min.js", "js/socket.io.js"]
   }, {
     "matches": ["http://localhost:63685/live/*"],
     "js":      ["js/jquery.min.js", "js/socket.io.js", "js/admin_btns.js"],
