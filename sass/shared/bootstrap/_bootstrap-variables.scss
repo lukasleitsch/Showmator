@@ -332,7 +332,7 @@ $btn-primary-bg:                 $colorPrimary;
 //##
 
 // Basics of a navbar
-// $navbar-height:                    50px
+$navbar-height:                    60px;
 // $navbar-margin-bottom:             $line-height-computed
 // $navbar-border-radius:             $border-radius-base
 // $navbar-padding-horizontal:        floor(($grid-gutter-width / 2))
@@ -340,7 +340,7 @@ $btn-primary-bg:                 $colorPrimary;
 // $navbar-collapse-max-height:       340px
 
 // $navbar-default-color:             #777
-// $navbar-default-bg:                #f8f8f8
+$navbar-default-bg:                rgba(#ffedcd, 0.8);
 // $navbar-default-border:            darken($navbar-default-bg, 6.5%)
 
 // Navbar links

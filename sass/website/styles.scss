@@ -1,39 +1,107 @@
+
 @import "../shared/variables";
 @import "bootstrap-compass";
 @import "../shared/bootstrap/bootstrap-variables";
 @import "../shared/bootstrap/bootstrap-custom";
 @import "../shared/shared";
 
-body{
-	//background-image: url(../img/icon128.png);
-	background-attachment:fixed;
-}
-
 p {
-	font-size: 24px;
+	font-size: 20px;
 }
 
 
-.jumbo-header {
-  	small{
-  		color: white;
-  		font-size: 16px;
-  }
+header{
+	background-image: url('../img/mic.png');
+	background-size: cover;
+
+	.head {
+		background-color: rgba(#ffedcd, 0.6);
+		padding: 1em 0 1em 0;
+		vertical-align: middle;
+		z-index: 9999;
+
+		h3{
+			margin: 0;
+		}
+	}
+
+	h1.title {
+		margin: 2em 0 2em  0;
+		text-align: center;
+	}
+
+	a {
+		color: #333;
+	&:hover{
+		text-decoration: none;
+	}
+	}
 }
 
-.intro {
-	font-size: 28px;
+.download {
 	text-align: center;
-	font-weight: bold;
-	padding-bottom: 5em;
+	padding: 3em 0 4em 0;
 }
 
-.full_image {
-	display: block;
+.feature {
+	padding-top: 3em;
 	text-align: center;
-	margin: 0 auto;
+	i {
+		font-size: 40px;
+		color: $colorPrimary;
+	}
+	.row {
+		padding: 2em 0 2em 0;
+	}
 }
 
-.row {
-	padding-bottom: 6em;
+.roadmap {
+	h2{
+		text-align: center;
+		padding: 1em 0 1em 0;
+	}
+}
+
+footer {
+	text-align: center;
+	padding: 2em 0 2em 0;
+}
+
+
+/* Navigation */
+
+.show-page-main{
+	.page-main{
+		display: block;
+	}
+	.page-guide{
+		display: none;
+	}
+	.page-support{
+		display: none;
+	}
+}
+
+.show-page-guide{
+	.page-guide{
+		display: block;
+	}
+	.page-main{
+		display: none;
+	}
+	.page-support{
+		display: none;
+	}
+}
+
+.show-page-support{
+	.page-support{
+		display: block;
+	}
+	.page-main{
+		display: none;
+	}
+	.page-guide{
+		display: none;
+	}
 }
