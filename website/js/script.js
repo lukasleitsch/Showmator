@@ -10,6 +10,7 @@ $(function(){
 	  var direction = data.state.direction;
 	  if (direction == 'back') {
 	    nav();
+	    console.log('Zurück');
 	  }
 	  if (direction == 'forward') {
 	   	nav();
