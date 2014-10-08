@@ -37,7 +37,7 @@
 //* Global textual link color.
 $link-color:            $colorPrimary;
 //* Link hover color set via `darken()` function.
-// $link-hover-color:      darken($link-color, 15%)
+$link-hover-color:      darken($link-color, 15%);
 
 //== Typography
 //
@@ -187,7 +187,7 @@ $btn-primary-bg:                 $colorPrimary;
 //* `<input>` border radius
 // $input-border-radius:            $border-radius-base
 //* Border color for inputs on focus
-// $input-border-focus:             #66afe9
+$input-border-focus:             lighten($colorPrimary, 10%);
 
 //* Placeholder text color
 // $input-color-placeholder:        $gray-light

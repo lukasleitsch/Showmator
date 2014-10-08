@@ -9,6 +9,12 @@ p {
 	font-size: 20px;
 }
 
+a{
+	&:hover{
+		@include transition(0.2s);
+	}
+}
+
 
 header{
 	background-image: url('../img/mic.png');
@@ -30,6 +36,10 @@ header{
 			img{
 				vertical-align: top;
 			}
+		}
+
+		a {
+			display: inline-block;
 		}
 	}
 
@@ -62,6 +72,13 @@ header{
 .page {
 	padding-top: 90px;
 }
+
+@media screen and (max-width: 990px) {
+    .page {
+    	padding-top: 150px;
+    }
+}
+
 
 .download {
 	text-align: center;

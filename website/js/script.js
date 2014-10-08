@@ -6,15 +6,8 @@ $(function(){
 		nav(this.hash);
 	});
 
-	$(window).on("navigate", function (event, data) {
-	  var direction = data.state.direction;
-	  if (direction == 'back') {
-	    nav();
-	    console.log('Zurück');
-	  }
-	  if (direction == 'forward') {
-	   	nav();
-	  }
+	$(window).on('popstate', function(event) {
+		 nav();
 	});
 
 	function nav(hash){
@@ -23,24 +16,17 @@ $(function(){
 		switch(hash) {
 			case '#main':
 				$('body').removeClass().addClass('show-page-main');
-				// scrollTo('body');
+				$('html, body').animate({ scrollTop: 0 }, 0);
 				break;
 		    case '#guide':
 		    	$('body').removeClass().addClass('show-page-guide');
-		    	scrollTo('.page-guide');
+		    	$('html, body').animate({ scrollTop: 0 }, 0);
 		        break;
 		    case '#support':
 		       $('body').removeClass().addClass('show-page-support');
-		       scrollTo('.page-support');
+		       $('html, body').animate({ scrollTop: 0 }, 0);
 		       break;
 		    default:
-
 		}
-	}
-
-	function scrollTo(hash){
-		$('html, body').animate({
-		    scrollTop: $(hash).offset().top
-		}, 1000);
 	}
 });

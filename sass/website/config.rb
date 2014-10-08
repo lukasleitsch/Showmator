@@ -12,7 +12,7 @@ javascripts_dir = "../../website/js"
 fonts_dir = "fonts"
 
 # You can select your preferred output style here (can be overridden via the command line):
-# output_style = :compressed
+output_style = :nested
 # output_style = :expanded or :nested or :compact or :compressed
 
 # To enable relative paths to assets via compass helper functions. Uncomment:
@@ -27,3 +27,9 @@ fonts_dir = "fonts"
 # preferred_syntax = :sass
 # and then run:
 # sass-convert -R --from scss --to sass sass scss && rm -rf sass && mv scss sass
+
+if environment == :production
+	http_path = "/"
+    line_comments = false
+    output_style = :compressed
+end
