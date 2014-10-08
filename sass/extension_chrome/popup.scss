@@ -3,6 +3,7 @@
 @import "../shared/bootstrap/bootstrap-variables";
 @import "../shared/bootstrap/bootstrap-custom";
 @import "../shared/shared";
+@import "compass";
 
 
 body {width:300px; padding:20px; text-align:center;}
@@ -61,9 +62,9 @@ textarea {max-width:100%;
   .on-success-text &.show-on-text-only {display:none;}
 }
 
-@keyframes shake {
+@include keyframes(shake) {
   0%, 100% {transform: translateX(0);}
   12.5%, 37.5%, 62.5%, 87.5% {transform: translateX(-8px);}
   25%, 50%, 75% {transform: translateX(8px);}
 }
-.shake {animation-duration:0.5s; animation-fill-mode:both; animation-name:shake;}
+.shake {@include animation(shake 0.5s both);}
