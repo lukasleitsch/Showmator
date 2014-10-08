@@ -40,6 +40,8 @@ $(function() {
 
   // add link/text and show loading state when submit button is clicked
   $save.click(function() {
+    console.log(!$body.hasClass('on-duplicate'));
+    console.log(!$body.hasClass('on-blacklist'));
     if (!$body.hasClass('on-duplicate') && !$body.hasClass('on-blacklist')) {
       var $input = isText ? $text : $title,
           val    = $.trim($input.val());
@@ -148,8 +150,18 @@ $(function() {
   } else {
     chrome.tabs.getSelected(null, function(tab) {
       title  = htmlEntities(tab.title);
+      var blacklist = false;
       url    = tab.url;
-      isText = url.split('/')[4] === localStorage.publicSlug;
+
+      // don't save links from blacklist
+      if (!!localStorage.blacklist) {
+        localStorage.blacklist.split('\n').forEach(function(entry) {
+          if (entry == url || entry + '/' == url || entry == url + '/')
+            blacklist = true;
+        });
+      }
+      
+      isText = (url.split('/')[4] === localStorage.publicSlug) || (blacklist && localStorage.showTextOnly);
 
       // on live-shownotes make changes for text-only entry
       if (isText) {
@@ -158,14 +170,10 @@ $(function() {
       // fill input with title and prevent saving if on blacklist
       } else {
         $title.val(title);
-        
-        // don't save links from blacklist
-        if (!!localStorage.blacklist) {
-          localStorage.blacklist.split('\n').forEach(function(entry) {
-            if (entry == url || entry + '/' == url || entry == url + '/')
-              $body.addClass('on-blacklist');
-          });
-        }
+
+        //show blacklist overlay
+        if(blacklist && !localStorage.showTextOnly)
+          $body.addClass('on-blacklist');    
 
         // show text-only checkbox
         if (!isText && localStorage.showTextOnly) {
