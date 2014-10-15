@@ -136,6 +136,22 @@ footer {
 	padding: 2em 0 2em 0;
 }
 
+/* Guide */
+
+.page-guide {
+	figure{
+		margin: 2em 0 2em;
+		img {
+			max-width: 100%;
+			border: 1px solid #ccc;
+		}
+		figcaption {
+			font-style: italic;
+			padding-top: 0.5em;
+		}
+	}
+}
+
 
 /* Navigation */
 

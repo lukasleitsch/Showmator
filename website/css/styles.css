@@ -2563,10 +2563,10 @@ output {
   transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; }
   /* line 53, ../../../../../../Library/Ruby/Gems/2.0.0/gems/bootstrap-sass-3.2.0.2/assets/stylesheets/bootstrap/mixins/_forms.scss */
   .form-control:focus {
-    border-color: #66afe9;
+    border-color: #f4928e;
     outline: 0;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(244, 146, 142, 0.6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(244, 146, 142, 0.6); }
   /* line 102, ../../../../../../Library/Ruby/Gems/2.0.0/gems/bootstrap-sass-3.2.0.2/assets/stylesheets/bootstrap/mixins/_vendor-prefixes.scss */
   .form-control::-moz-placeholder {
     color: #777777;
@@ -4025,33 +4025,46 @@ footer {
   text-align: center;
   padding: 2em 0 2em 0; }
 
+/* Guide */
+/* line 142, ../../sass/website/styles.scss */
+.page-guide figure {
+  margin: 2em 0 2em; }
+  /* line 144, ../../sass/website/styles.scss */
+  .page-guide figure img {
+    max-width: 100%;
+    border: 1px solid #ccc; }
+  /* line 148, ../../sass/website/styles.scss */
+  .page-guide figure figcaption {
+    font-style: italic;
+    padding-top: 0.5em; }
+
 /* Navigation */
-/* line 143, ../../sass/website/styles.scss */
+/* line 159, ../../sass/website/styles.scss */
 .show-page-main .page-main {
   display: block; }
-/* line 146, ../../sass/website/styles.scss */
+/* line 162, ../../sass/website/styles.scss */
 .show-page-main .page-guide {
   display: none; }
-/* line 149, ../../sass/website/styles.scss */
+/* line 165, ../../sass/website/styles.scss */
 .show-page-main .page-support {
   display: none; }
 
-/* line 155, ../../sass/website/styles.scss */
+/* line 171, ../../sass/website/styles.scss */
 .show-page-guide .page-guide {
   display: block; }
-/* line 158, ../../sass/website/styles.scss */
+/* line 174, ../../sass/website/styles.scss */
 .show-page-guide .page-main {
   display: none; }
-/* line 161, ../../sass/website/styles.scss */
+/* line 177, ../../sass/website/styles.scss */
 .show-page-guide .page-support {
   display: none; }
 
-/* line 167, ../../sass/website/styles.scss */
+/* line 183, ../../sass/website/styles.scss */
 .show-page-support .page-support {
   display: block; }
-/* line 170, ../../sass/website/styles.scss */
+/* line 186, ../../sass/website/styles.scss */
 .show-page-support .page-main {
   display: none; }
-/* line 173, ../../sass/website/styles.scss */
+/* line 189, ../../sass/website/styles.scss */
 .show-page-support .page-guide {
   display: none; }
