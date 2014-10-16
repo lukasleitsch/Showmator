@@ -1,5 +1,12 @@
+# Install the following gems before compiling
+
+#compass
+#bootstrap-sass
+#autoprefixer-rails
+
 require 'bootstrap-sass'
 require 'compass/import-once/activate'
+require 'autoprefixer-rails'
 # Require any additional compass plugins here.
 
 
@@ -32,4 +39,13 @@ if environment == :production
 	http_path = "/"
     line_comments = false
     output_style = :compressed
+end
+
+#autoprefixer
+
+on_stylesheet_saved do |file|
+  css = File.read(file)
+  File.open(file, 'w') do |io|
+    io << AutoprefixerRails.process(css)
+  end
 end

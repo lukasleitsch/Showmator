@@ -17,17 +17,23 @@ a{
 
 
 header{
-	background-image: url('../img/mic.png');
-	background-size: cover;
+	@media (min-width: 768px) {
+		background-image: url('../img/mic.png');
+		background-size: cover;
+	}
+
+	
 
 	.head {
+		@media (min-width: 320px) and (max-width: 767px) {
+			background: url('../img/mic.png');
+			background-size: cover;
+		}
+
 		background-color: rgba(white, 0.7);
 		padding: 1.5em 0 1.5em 0;
 		vertical-align: middle;
-		z-index: 9999;
-		width: 100%;
-		position: fixed;
-
+		
 		h3{
 			margin: 0;
 			padding: 0;
@@ -40,6 +46,21 @@ header{
 
 		a {
 			display: inline-block;
+		}
+
+		.links {
+			text-align: right;
+		}
+
+		@media (min-width: 320px) and (max-width: 767px) {
+			.links{
+				text-align: center;
+				margin-top: 10px;
+			}
+
+			.title {
+				text-align: center;
+			}
 		}
 	}
 
@@ -61,24 +82,13 @@ header{
 	}
 
 	.link-guide {
-		margin: 0 10px 0 10px;
+		margin: 0 5px 0 5px;
 	}
 
 	.link-download {
 		margin: 7px;
 	}
 }
-
-.page {
-	padding-top: 90px;
-}
-
-@media screen and (max-width: 990px) {
-    .page {
-    	padding-top: 150px;
-    }
-}
-
 
 .download {
 	text-align: center;
@@ -126,7 +136,7 @@ header{
 		position:absolute; 
 		left: 20px;
 		top: 50%;
-		@include translateY(-50%);
+		transform: translateY(-50%);
 		font-size: 36px;
 	}
 }
@@ -134,6 +144,10 @@ header{
 footer {
 	text-align: center;
 	padding: 2em 0 2em 0;
+}
+
+.page h1 {
+	margin-top: 1.5em;
 }
 
 /* Guide */
@@ -149,6 +163,10 @@ footer {
 			font-style: italic;
 			padding-top: 0.5em;
 		}
+	}
+	h3{
+		margin-top: 3em;
+		margin-bottom: 1em;
 	}
 }
 

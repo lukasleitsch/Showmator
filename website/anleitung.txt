@@ -1,6 +1,6 @@
-##Anleitung
+#Anleitung
 
-###Inhaltsverzeichnis
+##Inhaltsverzeichnis
 
 * [Installation](#installation)
 * [Neue Shownotes erstellen](#neue-shownotes-erstellen)
@@ -11,14 +11,11 @@
 * [Gemeinsam Shownotes erstellen](#gemeinsam-shownotes-erstellen)
 * [Shownotes in HTML exportieren](#shownotes-in-html-exportieren)
 * [Weitere Optionen](#weitere-optionen)
-* [Roadmap](#roadmap)
 * [Kontakt](#kontakt)
 
 ###Installation {#installtion}
 
-Die Chrome-Erweiterung kann über den Chrome-Webstore heruntergeladen werden. 
-
-[Showmator über den Chrome-Webstore installieren](https://chrome.google.com/webstore/detail/showmator/pabpbanbfoacolccnihhcbjlhlcahgpm)
+Die Chrome-Erweiterung kann über den [Chrome-Webstore](https://chrome.google.com/webstore/detail/showmator/pabpbanbfoacolccnihhcbjlhlcahgpm) heruntergeladen werden. 
 
 Nach der Installation ist das Showmator-Icon oben rechts in Chrome zu finden.
 
