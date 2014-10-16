@@ -33,7 +33,7 @@ header{
 			padding: 0;
 			font-size: 42px;
 
-			img{
+			img {
 				vertical-align: top;
 			}
 		}
@@ -47,6 +47,10 @@ header{
 		margin: 1.5em 0 2em  0;
 		text-align: center;
 		font-size: 42px;
+
+		@media screen and (max-width: 767px) {
+			margin-bottom:1.5em;
+		}
 	}
 
 	p {
@@ -66,6 +70,12 @@ header{
 
 	.link-download {
 		margin: 7px;
+	}
+}
+
+@media screen and (max-width: 767px) {
+	.screenshot-popup {
+		margin:0 auto 20px;
 	}
 }
 
@@ -94,6 +104,10 @@ header{
 	}
 	.row {
 		padding: 2em 0 2em 0;
+	}
+
+	@media screen and (max-width: 990px) {
+		.col-md-4 {margin-bottom:50px;}
 	}
 }
 
