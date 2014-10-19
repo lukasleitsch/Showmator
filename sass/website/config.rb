@@ -1,9 +1,3 @@
-# Install the following gems before compiling
-
-#compass
-#bootstrap-sass
-#autoprefixer-rails
-
 require 'bootstrap-sass'
 require 'compass/import-once/activate'
 require 'autoprefixer-rails'

@@ -108,7 +108,6 @@ figure {
 
 /* line 209, ../../../../../../Library/Ruby/Gems/2.0.0/gems/bootstrap-sass-3.2.0.2/assets/stylesheets/bootstrap/_normalize.scss */
 hr {
-  -moz-box-sizing: content-box;
   box-sizing: content-box;
   height: 0; }
 
@@ -169,8 +168,7 @@ input {
 /* line 332, ../../../../../../Library/Ruby/Gems/2.0.0/gems/bootstrap-sass-3.2.0.2/assets/stylesheets/bootstrap/_normalize.scss */
 input[type="checkbox"],
 input[type="radio"] {
-  -moz-box-sizing: border-box;
-       box-sizing: border-box;
+  box-sizing: border-box;
   padding: 0; }
 
 /* line 344, ../../../../../../Library/Ruby/Gems/2.0.0/gems/bootstrap-sass-3.2.0.2/assets/stylesheets/bootstrap/_normalize.scss */
@@ -181,7 +179,6 @@ input[type="number"]::-webkit-outer-spin-button {
 /* line 355, ../../../../../../Library/Ruby/Gems/2.0.0/gems/bootstrap-sass-3.2.0.2/assets/stylesheets/bootstrap/_normalize.scss */
 input[type="search"] {
   -webkit-appearance: textfield;
-  -moz-box-sizing: content-box;
   box-sizing: content-box; }
 
 /* line 368, ../../../../../../Library/Ruby/Gems/2.0.0/gems/bootstrap-sass-3.2.0.2/assets/stylesheets/bootstrap/_normalize.scss */
@@ -1036,13 +1033,11 @@ th {
 
 /* line 11, ../../../../../../Library/Ruby/Gems/2.0.0/gems/bootstrap-sass-3.2.0.2/assets/stylesheets/bootstrap/_scaffolding.scss */
 * {
-  -moz-box-sizing: border-box;
   box-sizing: border-box; }
 
 /* line 14, ../../../../../../Library/Ruby/Gems/2.0.0/gems/bootstrap-sass-3.2.0.2/assets/stylesheets/bootstrap/_scaffolding.scss */
 *:before,
 *:after {
-  -moz-box-sizing: border-box;
   box-sizing: border-box; }
 
 /* line 22, ../../../../../../Library/Ruby/Gems/2.0.0/gems/bootstrap-sass-3.2.0.2/assets/stylesheets/bootstrap/_scaffolding.scss */
@@ -2499,7 +2494,6 @@ label {
 
 /* line 47, ../../../../../../Library/Ruby/Gems/2.0.0/gems/bootstrap-sass-3.2.0.2/assets/stylesheets/bootstrap/_forms.scss */
 input[type="search"] {
-  -moz-box-sizing: border-box;
   box-sizing: border-box; }
 
 /* line 52, ../../../../../../Library/Ruby/Gems/2.0.0/gems/bootstrap-sass-3.2.0.2/assets/stylesheets/bootstrap/_forms.scss */
@@ -3958,67 +3952,68 @@ header a {
   header a:hover {
     text-decoration: none; }
 /* line 88, ../../sass/website/styles.scss */
-header .link-guide {
-  margin: 0 5px 0 5px; }
-/* line 92, ../../sass/website/styles.scss */
-header .link-download {
-  margin: 7px; }
+header ul.links {
+  list-style-type: none;
+  display: inline-block;
+  margin: 10px; }
+  /* line 92, ../../sass/website/styles.scss */
+  header ul.links li {
+    display: inline-block; }
+    /* line 95, ../../sass/website/styles.scss */
+    header ul.links li:nth-child(n+2) {
+      margin-left: 15px; }
 
 @media screen and (max-width: 767px) {
-  /* line 98, ../../sass/website/styles.scss */
+  /* line 103, ../../sass/website/styles.scss */
   .screenshot-popup {
     margin: 0 auto 20px; } }
-/* line 103, ../../sass/website/styles.scss */
+/* line 108, ../../sass/website/styles.scss */
 .page {
   padding-top: 90px; }
 
-@media screen and (max-width: 990px) {
-  /* line 108, ../../sass/website/styles.scss */
-  .page {
-    padding-top: 150px; } }
-/* line 114, ../../sass/website/styles.scss */
+/* line 112, ../../sass/website/styles.scss */
 .download {
   text-align: center;
   padding: 3em 0 4em 0; }
 
-/* line 119, ../../sass/website/styles.scss */
+/* line 117, ../../sass/website/styles.scss */
 .feature {
   padding-top: 3em;
   text-align: center; }
-  /* line 122, ../../sass/website/styles.scss */
+  /* line 120, ../../sass/website/styles.scss */
   .feature i {
     font-size: 40px;
     color: #ef6560; }
-  /* line 126, ../../sass/website/styles.scss */
+  /* line 124, ../../sass/website/styles.scss */
   .feature .row {
     padding: 2em 0 2em 0; }
   @media screen and (max-width: 990px) {
-    /* line 131, ../../sass/website/styles.scss */
+    /* line 129, ../../sass/website/styles.scss */
     .feature .col-md-4 {
       margin-bottom: 50px; } }
 
-/* line 136, ../../sass/website/styles.scss */
+/* line 134, ../../sass/website/styles.scss */
 .roadmap h2 {
   text-align: center;
   font-size: 36px;
   padding: 1em 0 1em 0; }
-  /* line 141, ../../sass/website/styles.scss */
+  /* line 139, ../../sass/website/styles.scss */
   .roadmap h2 i {
     vertical-align: bottom;
     margin-right: 10px; }
-/* line 147, ../../sass/website/styles.scss */
+/* line 145, ../../sass/website/styles.scss */
 .roadmap p {
   margin-bottom: 16px; }
 
-/* line 152, ../../sass/website/styles.scss */
+/* line 150, ../../sass/website/styles.scss */
 .btn {
   font-weight: bold; }
 
-/* line 156, ../../sass/website/styles.scss */
+/* line 154, ../../sass/website/styles.scss */
 .btn-lg {
   position: relative;
   padding-left: 70px; }
-  /* line 160, ../../sass/website/styles.scss */
+  /* line 158, ../../sass/website/styles.scss */
   .btn-lg i {
     position: absolute;
     left: 20px;
@@ -4028,59 +4023,59 @@ header .link-download {
             transform: translateY(-50%);
     font-size: 36px; }
 
-/* line 169, ../../sass/website/styles.scss */
+/* line 167, ../../sass/website/styles.scss */
 footer {
   text-align: center;
   padding: 2em 0 2em 0; }
 
-/* line 174, ../../sass/website/styles.scss */
+/* line 172, ../../sass/website/styles.scss */
 .page h1 {
   margin-top: 1.5em; }
 
 /* Guide */
-/* line 181, ../../sass/website/styles.scss */
+/* line 179, ../../sass/website/styles.scss */
 .page-guide figure {
   margin: 2em 0 2em; }
-  /* line 183, ../../sass/website/styles.scss */
+  /* line 181, ../../sass/website/styles.scss */
   .page-guide figure img {
     max-width: 100%;
     border: 1px solid #ccc; }
-  /* line 187, ../../sass/website/styles.scss */
+  /* line 185, ../../sass/website/styles.scss */
   .page-guide figure figcaption {
     font-style: italic;
     padding-top: 0.5em; }
-/* line 192, ../../sass/website/styles.scss */
+/* line 190, ../../sass/website/styles.scss */
 .page-guide h3 {
   margin-top: 3em;
   margin-bottom: 1em; }
 
 /* Navigation */
-/* line 202, ../../sass/website/styles.scss */
+/* line 200, ../../sass/website/styles.scss */
 .show-page-main .page-main {
   display: block; }
-/* line 205, ../../sass/website/styles.scss */
+/* line 203, ../../sass/website/styles.scss */
 .show-page-main .page-guide {
   display: none; }
-/* line 208, ../../sass/website/styles.scss */
+/* line 206, ../../sass/website/styles.scss */
 .show-page-main .page-support {
   display: none; }
 
-/* line 214, ../../sass/website/styles.scss */
+/* line 212, ../../sass/website/styles.scss */
 .show-page-guide .page-guide {
   display: block; }
-/* line 217, ../../sass/website/styles.scss */
+/* line 215, ../../sass/website/styles.scss */
 .show-page-guide .page-main {
   display: none; }
-/* line 220, ../../sass/website/styles.scss */
+/* line 218, ../../sass/website/styles.scss */
 .show-page-guide .page-support {
   display: none; }
 
-/* line 226, ../../sass/website/styles.scss */
+/* line 224, ../../sass/website/styles.scss */
 .show-page-support .page-support {
   display: block; }
-/* line 229, ../../sass/website/styles.scss */
+/* line 227, ../../sass/website/styles.scss */
 .show-page-support .page-main {
   display: none; }
-/* line 232, ../../sass/website/styles.scss */
+/* line 230, ../../sass/website/styles.scss */
 .show-page-support .page-guide {
   display: none; }

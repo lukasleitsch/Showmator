@@ -85,12 +85,17 @@ header{
 	}
 	}
 
-	.link-guide {
-		margin: 0 5px 0 5px;
-	}
+	ul.links{
+		list-style-type: none;
+		display: inline-block;
+		margin: 10px;
+		li {
+			display: inline-block;
 
-	.link-download {
-		margin: 7px;
+			&:nth-child(n+2){
+				margin-left: 15px;
+			}
+		}
 	}
 }
 
@@ -103,13 +108,6 @@ header{
 .page {
 	padding-top: 90px;
 }
-
-@media screen and (max-width: 990px) {
-    .page {
-    	padding-top: 150px;
-    }
-}
-
 
 .download {
 	text-align: center;
