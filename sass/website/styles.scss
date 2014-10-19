@@ -9,14 +9,14 @@ p {
 	font-size: 20px;
 }
 
-a{
-	&:hover{
+a {
+	&:hover {
 		@include transition(0.2s);
 	}
 }
 
 
-header{
+header {
 	@media (min-width: 768px) {
 		background-image: url('../img/mic.png');
 		background-size: cover;
@@ -34,7 +34,7 @@ header{
 		padding: 1.5em 0 1.5em 0;
 		vertical-align: middle;
 		
-		h3{
+		h3 {
 			margin: 0;
 			padding: 0;
 			font-size: 42px;
@@ -80,12 +80,12 @@ header{
 
 	a {
 		color: #333;
-	&:hover{
-		text-decoration: none;
-	}
+		&:hover{
+			text-decoration: none;
+		}
 	}
 
-	ul.links{
+	ul.links {
 		list-style-type: none;
 		display: inline-block;
 		margin: 10px;
@@ -187,7 +187,7 @@ footer {
 			padding-top: 0.5em;
 		}
 	}
-	h3{
+	h3 {
 		margin-top: 3em;
 		margin-bottom: 1em;
 	}

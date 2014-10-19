@@ -2,7 +2,7 @@
   "manifest_version": 3,
 
   "name": "Showmator",
-  "description": "An awesome Shownotes-Tool for Podcaster",
+  "description": "Klick dir deine Shownotes während der Aufnahme",
   "version": "2.0.0",
 
   "permissions": [
