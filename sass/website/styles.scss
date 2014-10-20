@@ -168,7 +168,9 @@ footer {
 	margin-top: 1.5em;
 }
 
-/* Guide */
+
+// Guide
+// -----------------------------------------------------------------------------
 
 .page-guide {
 	h1 {
@@ -192,13 +194,24 @@ footer {
 		margin-bottom: 1em;
 	}
 }
+
 .have-fun {
 	margin:60px 0 30px;
 	text-align:center;
 }
 
 
-/* Navigation */
+// Support
+// -----------------------------------------------------------------------------
+
+.page-support {
+	.row {padding-bottom:40px;}
+	h1, h3 {text-align:center;}
+}
+
+
+// Navigation
+// -----------------------------------------------------------------------------
 
 .page-main, .page-guide, .page-support {display:none;}
 .show-page-main .page-main,
