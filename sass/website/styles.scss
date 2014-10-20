@@ -22,8 +22,6 @@ header {
 		background-size: cover;
 	}
 
-	
-
 	.head {
 		@media (min-width: 320px) and (max-width: 767px) {
 			background: url('../img/mic.png');
@@ -49,11 +47,12 @@ header {
 		}
 
 		.links {
+			padding-left:0;
 			text-align: right;
 		}
 
 		@media (min-width: 320px) and (max-width: 767px) {
-			.links{
+			.links {
 				text-align: center;
 				margin-top: 10px;
 			}
@@ -80,7 +79,8 @@ header {
 
 	a {
 		color: #333;
-		&:hover{
+		
+		&:hover {
 			text-decoration: none;
 		}
 	}
@@ -89,12 +89,10 @@ header {
 		list-style-type: none;
 		display: inline-block;
 		margin: 10px;
+
 		li {
 			display: inline-block;
-
-			&:nth-child(n+2){
-				margin-left: 15px;
-			}
+			margin:0 8px 8px;
 		}
 	}
 }
@@ -105,10 +103,6 @@ header {
 	}
 }
 
-.page {
-	padding-top: 90px;
-}
-
 .download {
 	text-align: center;
 	padding: 3em 0 4em 0;
@@ -117,6 +111,7 @@ header {
 .feature {
 	padding-top: 3em;
 	text-align: center;
+
 	i {
 		font-size: 40px;
 		color: $colorPrimary;
@@ -131,7 +126,7 @@ header {
 }
 
 .roadmap {
-	h2{
+	h2 {
 		text-align: center;
 		font-size: 36px;
 		padding: 1em 0 1em 0;
@@ -176,8 +171,12 @@ footer {
 /* Guide */
 
 .page-guide {
-	figure{
+	h1 {
+		margin-bottom:50px;
+	}
+	figure {
 		margin: 2em 0 2em;
+		
 		img {
 			max-width: 100%;
 			border: 1px solid #ccc;
@@ -196,38 +195,7 @@ footer {
 
 /* Navigation */
 
-.show-page-main{
-	.page-main{
-		display: block;
-	}
-	.page-guide{
-		display: none;
-	}
-	.page-support{
-		display: none;
-	}
-}
-
-.show-page-guide{
-	.page-guide{
-		display: block;
-	}
-	.page-main{
-		display: none;
-	}
-	.page-support{
-		display: none;
-	}
-}
-
-.show-page-support{
-	.page-support{
-		display: block;
-	}
-	.page-main{
-		display: none;
-	}
-	.page-guide{
-		display: none;
-	}
-}
+.page-main, .page-guide, .page-support {display:none;}
+.show-page-main .page-main,
+.show-page-guide .page-guide,
+.show-page-support .page-support {display: block;}
