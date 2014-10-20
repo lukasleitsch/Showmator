@@ -4039,31 +4039,32 @@ footer {
   margin-bottom: 50px; }
 /* line 177, ../../sass/website/styles.scss */
 .page-guide figure {
-  margin: 2em 0 2em; }
-  /* line 180, ../../sass/website/styles.scss */
+  margin: 2em 0 2em;
+  text-align: center; }
+  /* line 181, ../../sass/website/styles.scss */
   .page-guide figure img {
     max-width: 100%;
     border: 1px solid #ccc; }
-  /* line 184, ../../sass/website/styles.scss */
+  /* line 185, ../../sass/website/styles.scss */
   .page-guide figure figcaption {
     font-style: italic;
     padding-top: 0.5em; }
-/* line 189, ../../sass/website/styles.scss */
+/* line 190, ../../sass/website/styles.scss */
 .page-guide h3 {
   margin-top: 3em;
   margin-bottom: 1em; }
 
-/* line 194, ../../sass/website/styles.scss */
+/* line 195, ../../sass/website/styles.scss */
 .have-fun {
   margin: 60px 0 30px;
   text-align: center; }
 
 /* Navigation */
-/* line 202, ../../sass/website/styles.scss */
+/* line 203, ../../sass/website/styles.scss */
 .page-main, .page-guide, .page-support {
   display: none; }
 
-/* line 203, ../../sass/website/styles.scss */
+/* line 204, ../../sass/website/styles.scss */
 .show-page-main .page-main,
 .show-page-guide .page-guide,
 .show-page-support .page-support {
