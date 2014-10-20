@@ -4053,12 +4053,17 @@ footer {
   margin-top: 3em;
   margin-bottom: 1em; }
 
+/* line 194, ../../sass/website/styles.scss */
+.have-fun {
+  margin: 60px 0 30px;
+  text-align: center; }
+
 /* Navigation */
-/* line 198, ../../sass/website/styles.scss */
+/* line 202, ../../sass/website/styles.scss */
 .page-main, .page-guide, .page-support {
   display: none; }
 
-/* line 199, ../../sass/website/styles.scss */
+/* line 203, ../../sass/website/styles.scss */
 .show-page-main .page-main,
 .show-page-guide .page-guide,
 .show-page-support .page-support {
