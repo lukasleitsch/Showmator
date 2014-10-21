@@ -24,7 +24,7 @@ var padZero = function(num) {
                      parseInt(matches[3]));
     },
 
-    socketURL = 'http://localhost:63685',
+    socketURL = 'http://showmator.com:63123',
     socket    = io.connect(socketURL);
 
 
