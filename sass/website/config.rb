@@ -20,7 +20,7 @@ output_style = :nested
 # relative_assets = true
 
 # To disable debugging comments that display the original location of your selectors. Uncomment:
-# line_comments = false
+line_comments = false
 
 
 # If you prefer the indented syntax, you might want to regenerate this
@@ -28,6 +28,8 @@ output_style = :nested
 # preferred_syntax = :sass
 # and then run:
 # sass-convert -R --from scss --to sass sass scss && rm -rf sass && mv scss sass
+
+sourcemap = true
 
 if environment == :production
 	http_path = "/"
