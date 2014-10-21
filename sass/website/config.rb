@@ -5,12 +5,13 @@ require 'autoprefixer-rails'
 
 
 # Set this to the root of your project when deployed:
-http_path = "/Users/lukas/Entwicklung/Showmator/website"
+http_path = "/"
 css_dir = "../../website/css"
 sass_dir = "/"
 images_dir = "../../website/img"
 javascripts_dir = "../../website/js"
-fonts_dir = "fonts"
+http_fonts_path = "../fonts"
+fonts_dir = "../fonts/"
 
 # You can select your preferred output style here (can be overridden via the command line):
 output_style = :nested
@@ -32,7 +33,6 @@ line_comments = false
 sourcemap = true
 
 if environment == :production
-	http_path = "/"
     line_comments = false
     output_style = :compressed
 end
