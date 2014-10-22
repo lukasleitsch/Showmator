@@ -16,7 +16,7 @@ if (!fs.existsSync(file)) {
   console.log("Creating DB file.");
   fs.openSync(file, "w");
 }
-server.listen(63685);
+server.listen(63123);
 
 var db = new sqlite3.Database(file);
 
