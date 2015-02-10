@@ -199,7 +199,7 @@ $(function() {
 
           // hide span-tags
           if (!showTimes)
-            html = html.replace(/ *<span[^\/]+<\/span>\n/g, '');
+            html = html.replace(/ *<span class="time"[^\/]+<\/span>\n/g, '');
 
           // hide target-attributes
           if (!openInNewTab)

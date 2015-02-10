@@ -69,7 +69,7 @@
         <li>
           <span class="time" data-time="<%= item.time %>"></span>
           <% if (item.isText) { %>
-            <%= item.title %>
+            <span class="text"><%= item.title %></span>
           <% } else { %>
             <a href="<%= item.url %>" target="_blank"><%= item.title %></a>
           <% } %>
