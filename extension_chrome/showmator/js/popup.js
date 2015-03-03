@@ -9,7 +9,7 @@ $(function() {
   var isText = false,
       title, url,
 
-      socket = io.connect('http://localhost:63123'),
+      socket = io.connect('http://showmator.com:63123'),
 
       $body   = $('body'),
       $title  = $('#title'),
