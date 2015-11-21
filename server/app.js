@@ -252,7 +252,7 @@ io.sockets.on('connection', function(client) {
 
   // Current connections of clients
   function counter(publicSlug) {
-    return io.sockets.clients(publicSlug).length;
+    //return io.sockets.clients(publicSlug).length; function ist deprecated in the current node-version
   }
 
 });
@@ -262,9 +262,8 @@ io.sockets.on('connection', function(client) {
 // Routes
 // -----------------------------------------------------------------------------
 
-// Search for route first, then static file
-app.use(app.router);
-app.use(express.static(__dirname + '/public'));
+// Static files
+app.use(express.static('public'));
 
 
 // Live shownotes site

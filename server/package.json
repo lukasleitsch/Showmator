@@ -1,13 +1,13 @@
 {
   "name": "Showmator",
-  "version": "2.0.0",
+  "version": "2.0.3",
   "description": "Klick dir deine Shownotes",
   "main": "app.js",
   "dependencies": {
-    "ejs": "~0.8.5",
-    "express": "~3.4.8",
-    "socket.io": "~0.9.16",
-    "sqlite3": "~2.2.0"
+    "ejs": "~2.3",
+    "express": "~4.13",
+    "socket.io": "~1.3",
+    "sqlite3": "~3.1"
   },
   "devDependencies": {},
   "scripts": {

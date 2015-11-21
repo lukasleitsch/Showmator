@@ -3,7 +3,7 @@
 
   "name": "Showmator",
   "description": "Klick dir deine Shownotes während der Aufnahme",
-  "version": "2.0.2",
+  "version": "2.0.3",
 
   "permissions": [
     "tabs", "http://*/*", "https://*/*", "background", "notifications", "activeTab"
@@ -32,7 +32,7 @@
     "matches": [ "http://*/*", "https://*/*"],
     "js":      ["js/jquery.min.js", "js/socket.io.js"]
   }, {
-    "matches": ["http://localhost:63123/live/*"],
+    "matches": ["http://showmator.com:63123/live/*"],
     "js":      ["js/jquery.min.js", "js/socket.io.js", "js/admin_btns.js"],
     "run_at":  "document_start"
   }],
