@@ -18,8 +18,10 @@ $(function(){
 	    	break;
 		}
 
-		$('body').removeClass().addClass(targetClass);
-		document.body.scrollTop = 0;
+		if (!!targetClass) {
+			$('body').removeClass().addClass(targetClass);
+			document.body.scrollTop = 0;
+		}
 	}
 
 	$('.js-nav').click(function(e) {
