@@ -22,10 +22,10 @@ var db = new sqlite3.Database(file);
 
 
 var render404 = function(res) {
-      res.writeHead(404);
-      res.write("Diese Shownotes existieren nicht.");
-      res.end();
-    };
+  res.writeHead(404);
+  res.write("Diese Shownotes existieren nicht.");
+  res.end();
+};
 
 // Create tables if not present
 db.serialize(function() {
