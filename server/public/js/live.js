@@ -83,11 +83,6 @@ $(function() {
     });
 
 
-    socket.on('counter', function(data) {
-      $('#counter').html(data);
-    });
-
-
     socket.on('updateEntryTitleSuccess', function(data) {
       $('#entry-' + data.id).find('.entry-text').text(data.title);
     });

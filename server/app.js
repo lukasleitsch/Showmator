@@ -67,7 +67,6 @@ io.sockets.on('connection', function(client) {
     log('connectToLiveShownotes', publicSlug);
     client.publicSlug = publicSlug;
     client.join(publicSlug);
-    io.sockets.in(publicSlug).emit('counter', counter(publicSlug));
   });
 
   client.on('connectToHtmlExport', function(slug) {
@@ -244,16 +243,9 @@ io.sockets.on('connection', function(client) {
   // Client disconnected
   client.on('disconnect', function() {
     log('disconnect', client.isPopup ? 'no slug (popup)' : client.publicSlug);
-    io.sockets.in(client.publicSlug).emit('counter', counter(client.publicSlug) - 1);
     if (!client.isPopup)
       db.close();
   });
-
-
-  // Current connections of clients
-  function counter(publicSlug) {
-    //return io.sockets.clients(publicSlug).length; function ist deprecated in the current node-version
-  }
 
 });
 
