@@ -28,6 +28,11 @@ $states:("empty-slug", "duplicate", "blacklist", "loading", "success-link", "suc
 }
 .on-text-only-allowed .show-on-text-only-allowed {display:block;}
 
+.settings {position:absolute; top:5px; right:5px;}
+.on-duplicate, .on-blacklist {
+  .settings {z-index:1;}
+}
+
 @keyframes spin {
   100% {transform:rotate(360deg);}
 }
