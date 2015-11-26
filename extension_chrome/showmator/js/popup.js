@@ -114,8 +114,7 @@ $(function() {
   });
 
   // Link to Settings
-
-    $('.link-settings').prop('href', chrome.extension.getURL("options.html"));
+  $('.link-settings').prop('href', chrome.extension.getURL("options.html"));
 
 
   // socket events
