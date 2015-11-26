@@ -25,7 +25,28 @@ var padZero = function(num) {
     },
 
     socketURL = 'http://localhost:63123',
-    socket    = io.connect(socketURL);
+    socket    = io.connect(socketURL),
+
+    originalTitle = document.title,
+    linkCounter = 0,
+    visibility = (function(){
+        var stateKey, eventKey, keys = {
+            hidden: "visibilitychange",
+            webkitHidden: "webkitvisibilitychange",
+            mozHidden: "mozvisibilitychange",
+            msHidden: "msvisibilitychange"
+        };
+        for (stateKey in keys) {
+            if (stateKey in document) {
+                eventKey = keys[stateKey];
+                break;
+            }
+        }
+        return function(c) {
+            if (c) document.addEventListener(eventKey, c);
+            return !document[stateKey];
+        }
+    })();
 
 
 $(function() {
@@ -39,7 +60,6 @@ $(function() {
   socket.on('updateShownotesTitleSuccess', function(data) {
     $('#title').text(data.title);
   });
-
 
 
   /* LIVE SHOWNOTES
@@ -80,6 +100,11 @@ $(function() {
         $('#entry-' + data.id).find('.entry-text').after(adminHtml);
 
       $body.removeClass('on-empty');
+
+      // show counter in title if tab inactive
+      if (!visibility()) {
+        document.title = "(" + ++linkCounter + ") " + originalTitle;
+      };
     });
 
 
@@ -91,6 +116,14 @@ $(function() {
     socket.on('deleteEntrySuccess', function(data) {
       $('#entry-' + data.id).remove();
       $body.toggleClass('on-empty', $result.find('li').length < 1);
+    });
+
+    // reset link-counter in title if tab is active
+    // -----------------------------------------------------------------------------
+
+    visibility(function(){
+      document.title = originalTitle;
+      linkCounter = 0;
     });
 
 
