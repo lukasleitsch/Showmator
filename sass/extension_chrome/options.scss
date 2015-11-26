@@ -1,12 +1,30 @@
 @import "../shared/base";
 
+// loading
+// -----------------------------------------------------------------------------
+.loading {margin-top:80px; font-size: 2em; text-align: center;}
+
+.has-no-active-shownotes, .has-active-shownotes {
+  .loading{display: none;}
+}
+
+@keyframes spin {
+  100% {transform:rotate(360deg);}
+}
+.glyphicon-refresh {animation:spin 1s linear infinite;}
+
 // active shownotes toggle
 // -----------------------------------------------------------------------------
 
-.show-on-active-shownotes {display:none;}
+.show-on-active-shownotes, .hide-on-active-shownotes {display:none;}
 .has-active-shownotes {
   .hide-on-active-shownotes {display:none;}
   .show-on-active-shownotes {display:block;}
+}
+
+.has-no-active-shownotes {
+  .hide-on-active-shownotes {display:block;}
+  .show-on-active-shownotes {display:none;}
 }
 
 

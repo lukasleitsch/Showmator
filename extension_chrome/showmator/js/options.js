@@ -10,7 +10,8 @@ $(function() {
   var baseUrl = 'http://localhost:63123',
       socket  = io.connect(baseUrl),
 
-      extendedFormClass = 'has-active-shownotes',
+      extendedFormClassActive = 'has-active-shownotes',
+      extendedFormClassNoActive = 'has-no-active-shownotes',
 
       $body       = $('body'),
       $slug       = $('#slug'),
@@ -37,7 +38,7 @@ $(function() {
 
           // if active: show extended form and replace title
           if (data.active) {
-            $body.addClass(extendedFormClass);
+            $body.removeClass().addClass(extendedFormClassActive);
             $title.val(data.title);
             $titleAlert.text(data.title || noTitleText);
 
@@ -47,6 +48,8 @@ $(function() {
 
           // if new: generate slugs
           } else {
+            $body.removeClass().addClass(extendedFormClassNoActive);
+
             slug       = randomSlug();
             publicSlug = randomSlug();
 
@@ -175,7 +178,7 @@ $(function() {
       localStorage.slug = slug;
       $slugStatic.text(slug);
       localStorage.publicSlug = publicSlug;
-      $body.addClass(extendedFormClass);
+      $body.removeClass().addClass(extendedFormClassActive);
 
       init();
     }
@@ -238,7 +241,7 @@ $(function() {
     if (window.confirm($delete.data('confirm'))) {
       localStorage.removeItem('slug');
       localStorage.removeItem('publicSlug');
-      $body.removeClass(extendedFormClass);
+      $body.removeClass(extendedFormClassActive).addClass(extendedFormClassNoActive);
       init();
     }
   });
