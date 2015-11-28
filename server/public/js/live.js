@@ -25,28 +25,7 @@ var padZero = function(num) {
     },
 
     socketURL = 'http://localhost:63123',
-    socket    = io.connect(socketURL),
-
-    originalTitle = document.title,
-    linkCounter = 0,
-    visibility = (function(){
-        var stateKey, eventKey, keys = {
-            hidden: "visibilitychange",
-            webkitHidden: "webkitvisibilitychange",
-            mozHidden: "mozvisibilitychange",
-            msHidden: "msvisibilitychange"
-        };
-        for (stateKey in keys) {
-            if (stateKey in document) {
-                eventKey = keys[stateKey];
-                break;
-            }
-        }
-        return function(c) {
-            if (c) document.addEventListener(eventKey, c);
-            return !document[stateKey];
-        }
-    })();
+    socket    = io.connect(socketURL);
 
 
 $(function() {
@@ -74,7 +53,37 @@ $(function() {
     var tzOffset  = new Date().getTimezoneOffset() * 60000, // difference between UTC and local time
         $autoOpen = $('#auto-open'),
         $result   = $('#result'),
-        adminHtml;
+        adminHtml,
+
+        originalTitle = document.title,
+        linkCounter   = 0,
+
+        stateKey,
+        eventKey = (function() {
+          var keys = {
+                hidden:       "visibilitychange",
+                webkitHidden: "webkitvisibilitychange",
+                mozHidden:    "mozvisibilitychange",
+                msHidden:     "msvisibilitychange"
+              };
+
+          for (stateKey in keys) {
+            if (stateKey in document) {
+              return keys[stateKey];
+            }
+          }
+        })(),
+
+        isHidden = function() {
+          return document[stateKey];
+        },
+        onVisible = function(callback) {
+          document.addEventListener(eventKey, function() {
+            if (!isHidden()) {
+              callback();
+            }
+          });
+        };
 
 
     // socket bindings
@@ -102,9 +111,9 @@ $(function() {
       $body.removeClass('on-empty');
 
       // show counter in title if tab inactive
-      if (!visibility()) {
-        document.title = "(" + ++linkCounter + ") " + originalTitle;
-      };
+      if (isHidden()) {
+        document.title = "(" + (++linkCounter) + ") " + originalTitle;
+      }
     });
 
 
@@ -116,14 +125,6 @@ $(function() {
     socket.on('deleteEntrySuccess', function(data) {
       $('#entry-' + data.id).remove();
       $body.toggleClass('on-empty', $result.find('li').length < 1);
-    });
-
-    // reset link-counter in title if tab is active
-    // -----------------------------------------------------------------------------
-
-    visibility(function(){
-      document.title = originalTitle;
-      linkCounter = 0;
     });
 
 
@@ -164,6 +165,12 @@ $(function() {
         }
       }, false);
     }
+
+    // reset link-counter in title if tab is active
+    onVisible(function(){
+      document.title = originalTitle;
+      linkCounter    = 0;
+    });
 
 
 
