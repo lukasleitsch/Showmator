@@ -83,6 +83,11 @@ $(function() {
               callback();
             }
           });
+        },
+
+        updateTitle = function() {
+          var counterText = (linkCounter > 0) ? "(" + linkCounter + ") " : '';
+          document.title = counterText + originalTitle;
         };
 
 
@@ -112,7 +117,8 @@ $(function() {
 
       // show counter in title if tab inactive
       if (isHidden()) {
-        document.title = "(" + (++linkCounter) + ") " + originalTitle;
+        linkCounter++;
+        updateTitle();
       }
     });
 
@@ -125,6 +131,12 @@ $(function() {
     socket.on('deleteEntrySuccess', function(data) {
       $('#entry-' + data.id).remove();
       $body.toggleClass('on-empty', $result.find('li').length < 1);
+    });
+
+
+    socket.on('updateShownotesTitleSuccess', function(data) {
+      originalTitle = data.title;
+      updateTitle();
     });
 
 
@@ -168,8 +180,8 @@ $(function() {
 
     // reset link-counter in title if tab is active
     onVisible(function(){
-      document.title = originalTitle;
-      linkCounter    = 0;
+      linkCounter = 0;
+      updateTitle();
     });
 
 

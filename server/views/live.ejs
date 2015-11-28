@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <link rel="stylesheet" href="/css/live.css">
-  <title>Live-Shownotes</title>
+  <title><%= title || "Live Shownotes" %></title>
 </head>
 
 <body class="page-live<% if (items.length < 1) { %> on-empty<% } %>" data-public-slug="<%= publicSlug %>">
