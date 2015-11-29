@@ -2,7 +2,6 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/live.css">
   <title>HTML exportieren</title>
 </head>
@@ -70,7 +69,7 @@
         <li>
           <span class="time" data-time="<%= item.time %>"></span>
           <% if (item.isText) { %>
-            <%= item.title %>
+            <span class="text"><%= item.title %></span>
           <% } else { %>
             <a href="<%= item.url %>" target="_blank"><%= item.title %></a>
           <% } %>
@@ -82,9 +81,9 @@
 
 
   <footer class="footer-author text-muted">
-    <a href="http://showmator.com" title="Showmator">Showmator</a> by <a href="http://leitsch.org" title="Lukas Leitsch">Lukas Leitsch</a>
+    <a href="http://showmator.com" title="Showmator">Showmator</a> by <a href="http://leitsch.org" title="Lukas Leitsch">Lukas Leitsch</a> & <a href="https://twitter.com/EnnoBigBenno">Enno</a>
     &bull;
-    <a href="http://flattr.com/thing/1881367/Showmator" target="_blank"><img src="/img/flattr.png" alt="Flattr this" title="Flattr this" border="0" /></a> 
+    <a href="http://showmator.com#support" target="_blank">Unterstützen</a>
   </footer>
 
   <script src="/js/jquery.min.js"></script>

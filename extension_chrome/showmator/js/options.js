@@ -8,9 +8,11 @@ $(function() {
   // -----------------------------------------------------------------------------
 
   var baseUrl = 'http://beta.showmator.com:63685',
+
       socket  = io.connect(baseUrl),
 
-      extendedFormClass = 'has-active-shownotes',
+      hasShownotesClass = 'has-active-shownotes',
+      noShownotesClass  = 'has-no-active-shownotes',
 
       $body       = $('body'),
       $slug       = $('#slug'),
@@ -30,14 +32,14 @@ $(function() {
 
       // checks active status + inserts data if available + inserts shortcut
       init = function() {
+        // TODO only bind socket.on-Event once
         socket.emit('requestStatus', {slug: localStorage.slug});
         socket.on('respondToStatus', function(data) {
-
           var slug;
 
           // if active: show extended form and replace title
           if (data.active) {
-            $body.addClass(extendedFormClass);
+            toggleForm(true);
             $title.val(data.title);
             $titleAlert.text(data.title || noTitleText);
 
@@ -47,6 +49,8 @@ $(function() {
 
           // if new: generate slugs
           } else {
+            toggleForm(false);
+
             slug       = randomSlug();
             publicSlug = randomSlug();
 
@@ -66,9 +70,17 @@ $(function() {
 
         // insert shortcut, text-only-state and blacklist
         displayShortcut();
-        $textOnly.prop('checked', !!localStorage.showTextonly);
+        $textOnly.prop('checked', !!localStorage.showTextOnly);
         if (typeof(localStorage.blacklist) != "undefined")
           $blacklist.val(localStorage.blacklist);
+      },
+
+
+      // renders create new form or options form
+      toggleForm = function(hasShownotes) {
+        $body
+          .toggleClass(hasShownotesClass, hasShownotes)
+          .toggleClass(noShownotesClass, !hasShownotes);
       },
 
 
@@ -175,7 +187,9 @@ $(function() {
       localStorage.slug = slug;
       $slugStatic.text(slug);
       localStorage.publicSlug = publicSlug;
-      $body.addClass(extendedFormClass);
+      toggleForm(true);
+      // TODO no need for status requesting, just do things for 'active shownotes'
+      init();
     }
   });
   
@@ -211,7 +225,11 @@ $(function() {
 
   // save text-only changes
   $textOnly.change(function() {
-    localStorage.showTextonly = $(this).is('checked');
+    var isChecked = $(this).is(':checked');
+    if (isChecked)
+      localStorage.showTextOnly = true;
+    else
+      localStorage.removeItem('showTextOnly');
     initSavedTooltip($textOnly, false, 200, 'top');
   });
 
@@ -232,7 +250,8 @@ $(function() {
     if (window.confirm($delete.data('confirm'))) {
       localStorage.removeItem('slug');
       localStorage.removeItem('publicSlug');
-      $body.removeClass(extendedFormClass);
+      toggleForm(false);
+      // TODO no need for status requesting, just do things for 'no active shownotes'
       init();
     }
   });
@@ -245,4 +264,7 @@ $(function() {
 
   // do it
   init();
+
+  // clean old localStorage-items
+  localStorage.removeItem('showTextonly'); // old: small letter 'o'
 });

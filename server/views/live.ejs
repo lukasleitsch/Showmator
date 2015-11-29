@@ -2,9 +2,8 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/live.css">
-  <title>Live-Shownotes</title>
+  <title><%= title || "Live Shownotes" %></title>
 </head>
 
 <body class="page-live<% if (items.length < 1) { %> on-empty<% } %>" data-public-slug="<%= publicSlug %>">
@@ -17,7 +16,7 @@
 
 
   <p class="post-jumbo-info text-muted">
-    (Seite aktualisiert automatisch, <strong id="counter">0</strong> aktive Besucher)
+    (Seite aktualisiert automatisch)
   </p>
 
 
@@ -49,7 +48,7 @@
   <footer class="footer-author text-muted">
     Shownotes werden mit <a href="http://showmator.com" target="_blank">Showmator</a> erstellt
     &bull;
-    <a href="http://flattr.com/thing/1881367/Showmator" target="_blank"><img src="/img/flattr.png" alt="Flattr this" title="Flattr this" border="0" /></a>   
+    <a href="http://showmator.com#support" target="_blank">Unterstützen</a>
   </footer>
 
 

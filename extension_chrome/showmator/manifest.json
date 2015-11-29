@@ -1,9 +1,9 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
 
   "name": "Showmator",
-  "description": "An awesome Shownotes-Tool for Podcaster",
-  "version": "2.0.0",
+  "description": "Klick dir deine Shownotes während der Aufnahme",
+  "version": "2.0.3",
 
   "permissions": [
     "tabs", "http://*/*", "https://*/*", "background", "notifications", "activeTab"
@@ -28,11 +28,9 @@
     "default_popup": "popup.html"
   },
 
-  // TODO first item necessary?
   "content_scripts": [{
     "matches": [ "http://*/*", "https://*/*"],
-    "js":      ["js/jquery.min.js", "js/socket.io.js"],
-    "css":     ["css/styles.css"]
+    "js":      ["js/jquery.min.js", "js/socket.io.js"]
   }, {
     "matches": ["http://beta.showmator.com:63685/live/*"],
     "js":      ["js/jquery.min.js", "js/socket.io.js", "js/admin_btns.js"],

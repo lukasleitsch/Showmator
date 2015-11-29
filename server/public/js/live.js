@@ -41,7 +41,6 @@ $(function() {
   });
 
 
-
   /* LIVE SHOWNOTES
    * -----------------------------------------------------------------------------
    */
@@ -54,7 +53,42 @@ $(function() {
     var tzOffset  = new Date().getTimezoneOffset() * 60000, // difference between UTC and local time
         $autoOpen = $('#auto-open'),
         $result   = $('#result'),
-        adminHtml;
+        adminHtml,
+
+        originalTitle = document.title,
+        linkCounter   = 0,
+
+        stateKey,
+        eventKey = (function() {
+          var keys = {
+                hidden:       "visibilitychange",
+                webkitHidden: "webkitvisibilitychange",
+                mozHidden:    "mozvisibilitychange",
+                msHidden:     "msvisibilitychange"
+              };
+
+          for (stateKey in keys) {
+            if (stateKey in document) {
+              return keys[stateKey];
+            }
+          }
+        })(),
+
+        isHidden = function() {
+          return document[stateKey];
+        },
+        onVisible = function(callback) {
+          document.addEventListener(eventKey, function() {
+            if (!isHidden()) {
+              callback();
+            }
+          });
+        },
+
+        updateTitle = function() {
+          var counterText = (linkCounter > 0) ? "(" + linkCounter + ") " : '';
+          document.title = counterText + originalTitle;
+        };
 
 
     // socket bindings
@@ -80,11 +114,12 @@ $(function() {
         $('#entry-' + data.id).find('.entry-text').after(adminHtml);
 
       $body.removeClass('on-empty');
-    });
 
-
-    socket.on('counter', function(data) {
-      $('#counter').html(data);
+      // show counter in title if tab inactive
+      if (isHidden()) {
+        linkCounter++;
+        updateTitle();
+      }
     });
 
 
@@ -96,6 +131,12 @@ $(function() {
     socket.on('deleteEntrySuccess', function(data) {
       $('#entry-' + data.id).remove();
       $body.toggleClass('on-empty', $result.find('li').length < 1);
+    });
+
+
+    socket.on('updateShownotesTitleSuccess', function(data) {
+      originalTitle = data.title;
+      updateTitle();
     });
 
 
@@ -136,6 +177,12 @@ $(function() {
         }
       }, false);
     }
+
+    // reset link-counter in title if tab is active
+    onVisible(function(){
+      linkCounter = 0;
+      updateTitle();
+    });
 
 
 
@@ -199,7 +246,7 @@ $(function() {
 
           // hide span-tags
           if (!showTimes)
-            html = html.replace(/ *<span[^\/]+<\/span>\n/g, '');
+            html = html.replace(/ *<span class="time"[^\/]+<\/span>\n/g, '');
 
           // hide target-attributes
           if (!openInNewTab)

@@ -1,0 +1,64 @@
+@import "../shared/base";
+
+body {width:300px; padding:20px; text-align:center;}
+
+.overlay {display:none; position:absolute; z-index:1; top:0; left:0; bottom:0; width:100%; height:100%; padding:20px; background-color:#fff; text-align:center; font-size:18px; color:$colorPrimary;
+  p > .glyphicon {display:block; margin-bottom:12px; font-size:24px;} // p to don't apply styles to icons in buttons
+  .btn {margin-top:24px;}
+  .alert-link {font-weight:bold; color:$borderPrimary;}
+}
+.show-on-duplicate {font-size:90%;} // more space for overlay buttons
+
+%hide-on-start {display:none;}
+%as-table {display:table;}
+%as-table-cell {display:table-cell; vertical-align:middle;}
+$states:("empty-slug", "duplicate", "blacklist", "loading", "success-link", "success-text", "delete");
+@each $state in $states {
+  .show-on-#{$state} {@extend %hide-on-start;}
+  .on-#{$state} {
+    .overlay {@extend %as-table;}
+    .show-on-#{$state} {@extend %as-table-cell;}
+  }
+}
+
+.show-on-text-only, .show-on-text-only-allowed {@extend %hide-on-start;}
+.on-text-only {
+  .show-on-text-only {display:inline;}
+  .hide-on-text-only {@extend %hide-on-start;}
+}
+.on-text-only-allowed .show-on-text-only-allowed {display:block;}
+
+.link-settings {position:absolute; top:5px; right:5px; z-index:1;}
+
+.form-control {margin:0 0 24px;
+  .on-text-only-allowed & {margin-bottom:16px;}
+}
+.show-on-text-only-allowed {margin-bottom:24px;
+  label {font-weight:normal;}
+  input {margin-right:4px;}
+}
+.btn {position:relative; margin-bottom:12px;
+  &:after {position:absolute; width:100%; text-align:center; bottom:-20px; left:0; color:#ccc; font-size:80%;}
+}
+.btn-sm:after {bottom:-18px;}
+.btn-close {margin-left:5px;
+  &:after {content:"(Esc)";}
+}
+#save:after, #delete:after {content:"(Enter)";}
+.on-text-only #save:after {content:"(Strg/Cmd+Enter)";}
+
+// prevent changing textarea's width to exceed popup frame and prevent resize
+// marker from showing on overlay (weird bug)
+textarea {max-width:100%;
+  .on-success-text &.show-on-text-only {display:none;}
+}
+
+// Todo actually used?
+@keyframes shake {
+  0%, 100% {transform: translateX(0);}
+  12.5%, 37.5%, 62.5%, 87.5% {transform: translateX(-8px);}
+  25%, 50%, 75% {transform: translateX(8px);}
+}
+.shake {
+  animation:shake 0.5s both;
+}
