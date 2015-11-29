@@ -207,7 +207,7 @@ $(function() {
     if (val == lastTitle)
       return;
     lastTitle = val;
-    $titleAlert.text(val);
+    $titleAlert.text(val || noTitleText);
     initSavedTooltip($title, saveTitleOnServer);
   });
 
