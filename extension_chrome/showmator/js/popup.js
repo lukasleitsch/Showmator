@@ -151,9 +151,9 @@ $(function() {
   // get tab data und send add-event
   } else {
     chrome.tabs.getSelected(null, function(tab) {
-      title  = htmlEntities(tab.title);
+      title = htmlEntities(tab.title);
+      url   = tab.url;
       var blacklist = false;
-      url    = tab.url;
 
       // don't save links from blacklist
       if (!!localStorage.blacklist) {

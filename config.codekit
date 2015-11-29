@@ -265,6 +265,17 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
+	"\/images\/sreenshot_store@2x.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 1.75296e+06,
+		"inputAbbreviatedPath": "\/images\/sreenshot_store@2x.png",
+		"outputAbbreviatedPath": "\/images\/sreenshot_store@2x.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
 	"\/README.md": {
 		"criticStyle": 0,
 		"enableFootnotes": 0,
@@ -20600,6 +20611,17 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
+	"\/server\/public\/img\/icon48_white@2x.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 2160,
+		"inputAbbreviatedPath": "\/server\/public\/img\/icon48_white@2x.png",
+		"outputAbbreviatedPath": "\/server\/public\/img\/icon48_white@2x.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
 	"\/server\/public\/js\/bootstrap.min.js": {
 		"fileType": 64,
 		"ignore": 1,
@@ -20664,6 +20686,17 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
+	"\/website\/img\/admin_buttons@2x.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 70709,
+		"inputAbbreviatedPath": "\/website\/img\/admin_buttons@2x.png",
+		"outputAbbreviatedPath": "\/website\/img\/admin_buttons@2x.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
 	"\/website\/img\/einstellungen-kuerzel.png": {
 		"fileType": 32768,
 		"ignore": 0,
@@ -20671,6 +20704,17 @@
 		"initialSize": 13548,
 		"inputAbbreviatedPath": "\/website\/img\/einstellungen-kuerzel.png",
 		"outputAbbreviatedPath": "\/website\/img\/einstellungen-kuerzel.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/website\/img\/einstellungen-kuerzel@2x.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 27475,
+		"inputAbbreviatedPath": "\/website\/img\/einstellungen-kuerzel@2x.png",
+		"outputAbbreviatedPath": "\/website\/img\/einstellungen-kuerzel@2x.png",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"processed": 0
@@ -20697,6 +20741,17 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
+	"\/website\/img\/icon48@2x.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 4126,
+		"inputAbbreviatedPath": "\/website\/img\/icon48@2x.png",
+		"outputAbbreviatedPath": "\/website\/img\/icon48@2x.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
 	"\/website\/img\/links_live-shownotes_html.png": {
 		"fileType": 32768,
 		"ignore": 0,
@@ -20704,6 +20759,17 @@
 		"initialSize": 11054,
 		"inputAbbreviatedPath": "\/website\/img\/links_live-shownotes_html.png",
 		"outputAbbreviatedPath": "\/website\/img\/links_live-shownotes_html.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/website\/img\/links_live-shownotes_html@2x.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 22532,
+		"inputAbbreviatedPath": "\/website\/img\/links_live-shownotes_html@2x.png",
+		"outputAbbreviatedPath": "\/website\/img\/links_live-shownotes_html@2x.png",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"processed": 0
@@ -20719,6 +20785,17 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
+	"\/website\/img\/live_shownotes@2x.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 141198,
+		"inputAbbreviatedPath": "\/website\/img\/live_shownotes@2x.png",
+		"outputAbbreviatedPath": "\/website\/img\/live_shownotes@2x.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
 	"\/website\/img\/mic.png": {
 		"fileType": 32768,
 		"ignore": 0,
@@ -20726,17 +20803,6 @@
 		"initialSize": 770029,
 		"inputAbbreviatedPath": "\/website\/img\/mic.png",
 		"outputAbbreviatedPath": "\/website\/img\/mic.png",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
-		"processed": 0
-		},
-	"\/website\/img\/option.png": {
-		"fileType": 32768,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
-		"initialSize": 125202,
-		"inputAbbreviatedPath": "\/website\/img\/option.png",
-		"outputAbbreviatedPath": "\/website\/img\/option.png",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"processed": 0
@@ -20752,6 +20818,17 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
+	"\/website\/img\/popup_blacklist@2x.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 57350,
+		"inputAbbreviatedPath": "\/website\/img\/popup_blacklist@2x.png",
+		"outputAbbreviatedPath": "\/website\/img\/popup_blacklist@2x.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
 	"\/website\/img\/popup_link.png": {
 		"fileType": 32768,
 		"ignore": 0,
@@ -20759,6 +20836,17 @@
 		"initialSize": 41520,
 		"inputAbbreviatedPath": "\/website\/img\/popup_link.png",
 		"outputAbbreviatedPath": "\/website\/img\/popup_link.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/website\/img\/popup_link@2x.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 65969,
+		"inputAbbreviatedPath": "\/website\/img\/popup_link@2x.png",
+		"outputAbbreviatedPath": "\/website\/img\/popup_link@2x.png",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"processed": 0
@@ -20774,6 +20862,17 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
+	"\/website\/img\/popup_text-webseite@2x.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 70180,
+		"inputAbbreviatedPath": "\/website\/img\/popup_text-webseite@2x.png",
+		"outputAbbreviatedPath": "\/website\/img\/popup_text-webseite@2x.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
 	"\/website\/img\/popup_text.png": {
 		"fileType": 32768,
 		"ignore": 0,
@@ -20781,6 +20880,17 @@
 		"initialSize": 23645,
 		"inputAbbreviatedPath": "\/website\/img\/popup_text.png",
 		"outputAbbreviatedPath": "\/website\/img\/popup_text.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/website\/img\/popup_text@2x.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 68352,
+		"inputAbbreviatedPath": "\/website\/img\/popup_text@2x.png",
+		"outputAbbreviatedPath": "\/website\/img\/popup_text@2x.png",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"processed": 0
@@ -20796,6 +20906,17 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
+	"\/website\/img\/showmator_icon@2x.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 29361,
+		"inputAbbreviatedPath": "\/website\/img\/showmator_icon@2x.png",
+		"outputAbbreviatedPath": "\/website\/img\/showmator_icon@2x.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
 	"\/website\/img\/shownotes-loeschen.png": {
 		"fileType": 32768,
 		"ignore": 0,
@@ -20807,6 +20928,17 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
+	"\/website\/img\/shownotes-loeschen@2x.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 34822,
+		"inputAbbreviatedPath": "\/website\/img\/shownotes-loeschen@2x.png",
+		"outputAbbreviatedPath": "\/website\/img\/shownotes-loeschen@2x.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
 	"\/website\/img\/text-eintrag-live-shownotes.png": {
 		"fileType": 32768,
 		"ignore": 0,
@@ -20814,6 +20946,17 @@
 		"initialSize": 28913,
 		"inputAbbreviatedPath": "\/website\/img\/text-eintrag-live-shownotes.png",
 		"outputAbbreviatedPath": "\/website\/img\/text-eintrag-live-shownotes.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/website\/img\/text-eintrag-live-shownotes@2x.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 66822,
+		"inputAbbreviatedPath": "\/website\/img\/text-eintrag-live-shownotes@2x.png",
+		"outputAbbreviatedPath": "\/website\/img\/text-eintrag-live-shownotes@2x.png",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"processed": 0
