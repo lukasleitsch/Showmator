@@ -171,7 +171,8 @@ $(function() {
       
       // fill input with title and prevent saving if on blacklist
       } else {
-        $title.val(title);
+        $title.val($("<div/>").html(title).text());
+        // $title.val(title);
 
         //show blacklist overlay
         if(blacklist && !localStorage.showTextOnly)
