@@ -1,7 +1,7 @@
 /*global $ */
 $(function(){
 	function nav(page) {
-		page = (page || window.location.hash).replace('#', '');
+		page = window.location.hash.replace('#', '');
 		var targetClass = '';
 
 		switch(page) {
@@ -27,7 +27,8 @@ $(function(){
 	$('.js-nav').click(function(e) {
 		e.preventDefault();
 		this.blur();
-		nav(this.href.split('#')[1]);
+		window.location.hash = this.href.split('#')[1];
+		nav();
 	});
 
 	$(window).on('popstate', nav);
