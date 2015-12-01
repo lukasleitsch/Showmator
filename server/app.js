@@ -41,7 +41,14 @@ db.serialize(function() {
 io.sockets.on('connection', function(client) {
   
   var log = function() {
-        var args = [new Date().getTime(), client.id];
+        var date = new Date(),
+        args = ['[' + ('0' + date.getDate()).slice(-2) + '.' 
+                + ('0' + (date.getMonth()+1)).slice(-2) + '.' 
+                + date.getUTCFullYear() + ' - ' 
+                + ('0' + date.getHours()).slice(-2) + ':' 
+                + ('0' + date.getMinutes()).slice(-2) + ':' 
+                + ('0' + date.getSeconds()).slice(-2)
+                + ']', client.id];
         for (var key in arguments)
           args.push(arguments[key]);
         console.log.apply(undefined, args);
