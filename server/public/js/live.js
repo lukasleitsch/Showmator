@@ -61,7 +61,7 @@ $(function() {
         $result   = $('#result'),
         adminHtml,
 
-        fallbackTitle = 'Live Shownotes',
+        fallbackTitle = 'Live',
         currentTitle  = document.title,
         linkCounter   = 0,
 
@@ -142,7 +142,7 @@ $(function() {
 
 
     socket.on('updateShownotesTitleSuccess', function(data) {
-      currentTitle = !!data.title ? data.title : fallbackTitle;
+      currentTitle = (!!data.title ? data.title : fallbackTitle) + ' Shownotes';
       updateTitle();
     });
 
