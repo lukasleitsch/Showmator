@@ -40,8 +40,6 @@ $(function() {
 
   // add link/text and show loading state when submit button is clicked
   $save.click(function() {
-    console.log(!$body.hasClass('on-duplicate'));
-    console.log(!$body.hasClass('on-blacklist'));
     if (!$body.hasClass('on-duplicate') && !$body.hasClass('on-blacklist')) {
       var $input = isText ? $text : $title,
           val    = $.trim($input.val());
@@ -89,16 +87,19 @@ $(function() {
         $delete.click();
       else
         $save.click();
+      // TODO necessary?
       return;
     
     // on cmd+enter in text-mode
     } else if (isText && e.keyCode == 13 && e.metaKey){
       $save.click();
+      // TODO necessary?
       return;
 
     // close on escape (in both cases)
     } else if (e.keyCode == 27) {
       window.close();
+      // TODO necessary?
       return;
     }
   });
@@ -151,9 +152,9 @@ $(function() {
   // get tab data und send add-event
   } else {
     chrome.tabs.getSelected(null, function(tab) {
-      title  = htmlEntities(tab.title);
+      title = tab.title;
+      url   = tab.url;
       var blacklist = false;
-      url    = tab.url;
 
       // don't save links from blacklist
       if (!!localStorage.blacklist) {

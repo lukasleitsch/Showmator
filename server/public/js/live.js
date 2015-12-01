@@ -34,10 +34,16 @@ $(function() {
    * -----------------------------------------------------------------------------
    */
   
-  var $body = $('body');
+  var $body      = $('body'),
+      isLivePage = $body.hasClass('page-live');
 
   socket.on('updateShownotesTitleSuccess', function(data) {
-    $('#title').text(data.title);
+    var title = data.title;
+    // if empty title on live shownotes page: reset title
+    if (!data.title && isLivePage) {
+      title = 'Live';
+    }
+    $('#title').text(title);
   });
 
 
@@ -45,7 +51,7 @@ $(function() {
    * -----------------------------------------------------------------------------
    */
 
-  if ($body.hasClass('page-live')) {
+  if (isLivePage) {
 
     // vars
     // -----------------------------------------------------------------------------
@@ -55,7 +61,8 @@ $(function() {
         $result   = $('#result'),
         adminHtml,
 
-        originalTitle = document.title,
+        fallbackTitle = 'Live',
+        currentTitle  = document.title,
         linkCounter   = 0,
 
         stateKey,
@@ -87,7 +94,7 @@ $(function() {
 
         updateTitle = function() {
           var counterText = (linkCounter > 0) ? "(" + linkCounter + ") " : '';
-          document.title = counterText + originalTitle;
+          document.title = counterText + currentTitle;
         };
 
 
@@ -135,7 +142,7 @@ $(function() {
 
 
     socket.on('updateShownotesTitleSuccess', function(data) {
-      originalTitle = data.title;
+      currentTitle = (!!data.title ? data.title : fallbackTitle) + ' Shownotes';
       updateTitle();
     });
 

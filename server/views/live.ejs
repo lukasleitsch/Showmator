@@ -3,14 +3,14 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <link rel="stylesheet" href="/css/live.css">
-  <title><%= title || "Live Shownotes" %></title>
+  <title><%= title || "Live" %> Shownotes</title>
 </head>
 
 <body class="page-live<% if (items.length < 1) { %> on-empty<% } %>" data-public-slug="<%= publicSlug %>">
 
   <header class="jumbo-header">
     <h1>
-      <img src="/img/icon48_white.png" alt=""> <span id="title"><%= title || "Live" %></span> Shownotes
+      <img srcset="/img/icon48_white@2x.png 2x, /img/icon48_white.png 1x" src="/img/icon48_white.png" alt=""> <span id="title"><%= title || "Live" %></span> Shownotes
     </h1>
   </header>
 
@@ -30,7 +30,7 @@
       <li class="entry" id="entry-<%= item.id %>">
         <span class="time" data-time="<%= item.time %>"></span>
         <% if (!item.isText) { %>
-          <a class="entry-text" href="<%= item.url %>" target="_blank"><%= item.title %></a>
+          <a class="entry-text" href="<%= item.url %>" target="_blank"><%- item.title %></a>
         <% } else { %>
           <span class="entry-text"><%= item.title %></span>
         <% } %>
