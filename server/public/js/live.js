@@ -34,19 +34,24 @@ $(function() {
    * -----------------------------------------------------------------------------
    */
   
-  var $body = $('body');
+  var $body      = $('body'),
+      isLivePage = $body.hasClass('page-live');
 
   socket.on('updateShownotesTitleSuccess', function(data) {
-    $('#title').text(data.title);
+    var title = data.title;
+    // if empty title on live shownotes page: reset title
+    if (!data.title && isLivePage) {
+      title = 'Live';
+    }
+    $('#title').text(title);
   });
-
 
 
   /* LIVE SHOWNOTES
    * -----------------------------------------------------------------------------
    */
 
-  if ($body.hasClass('page-live')) {
+  if (isLivePage) {
 
     // vars
     // -----------------------------------------------------------------------------
@@ -54,7 +59,43 @@ $(function() {
     var tzOffset  = new Date().getTimezoneOffset() * 60000, // difference between UTC and local time
         $autoOpen = $('#auto-open'),
         $result   = $('#result'),
-        adminHtml;
+        adminHtml,
+
+        fallbackTitle = 'Live',
+        currentTitle  = document.title,
+        linkCounter   = 0,
+
+        stateKey,
+        eventKey = (function() {
+          var keys = {
+                hidden:       "visibilitychange",
+                webkitHidden: "webkitvisibilitychange",
+                mozHidden:    "mozvisibilitychange",
+                msHidden:     "msvisibilitychange"
+              };
+
+          for (stateKey in keys) {
+            if (stateKey in document) {
+              return keys[stateKey];
+            }
+          }
+        })(),
+
+        isHidden = function() {
+          return document[stateKey];
+        },
+        onVisible = function(callback) {
+          document.addEventListener(eventKey, function() {
+            if (!isHidden()) {
+              callback();
+            }
+          });
+        },
+
+        updateTitle = function() {
+          var counterText = (linkCounter > 0) ? "(" + linkCounter + ") " : '';
+          document.title = counterText + currentTitle;
+        };
 
 
     // socket bindings
@@ -80,11 +121,12 @@ $(function() {
         $('#entry-' + data.id).find('.entry-text').after(adminHtml);
 
       $body.removeClass('on-empty');
-    });
 
-
-    socket.on('counter', function(data) {
-      $('#counter').html(data);
+      // show counter in title if tab inactive
+      if (isHidden()) {
+        linkCounter++;
+        updateTitle();
+      }
     });
 
 
@@ -96,6 +138,12 @@ $(function() {
     socket.on('deleteEntrySuccess', function(data) {
       $('#entry-' + data.id).remove();
       $body.toggleClass('on-empty', $result.find('li').length < 1);
+    });
+
+
+    socket.on('updateShownotesTitleSuccess', function(data) {
+      currentTitle = (!!data.title ? data.title : fallbackTitle) + ' Shownotes';
+      updateTitle();
     });
 
 
@@ -136,6 +184,12 @@ $(function() {
         }
       }, false);
     }
+
+    // reset link-counter in title if tab is active
+    onVisible(function(){
+      linkCounter = 0;
+      updateTitle();
+    });
 
 
 

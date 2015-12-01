@@ -28,10 +28,7 @@ $states:("empty-slug", "duplicate", "blacklist", "loading", "success-link", "suc
 }
 .on-text-only-allowed .show-on-text-only-allowed {display:block;}
 
-@keyframes spin {
-  100% {transform:rotate(360deg);}
-}
-.glyphicon-refresh {animation:spin 1s linear infinite;}
+.link-settings {position:absolute; top:5px; right:5px; z-index:1;}
 
 .form-control {margin:0 0 24px;
   .on-text-only-allowed & {margin-bottom:16px;}
@@ -56,9 +53,12 @@ textarea {max-width:100%;
   .on-success-text &.show-on-text-only {display:none;}
 }
 
-@include keyframes(shake) {
+// Todo actually used?
+@keyframes shake {
   0%, 100% {transform: translateX(0);}
   12.5%, 37.5%, 62.5%, 87.5% {transform: translateX(-8px);}
   25%, 50%, 75% {transform: translateX(8px);}
 }
-.shake {@include animation(shake 0.5s both);}
+.shake {
+  animation:shake 0.5s both;
+}

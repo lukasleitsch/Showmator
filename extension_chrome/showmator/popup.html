@@ -32,7 +32,7 @@
       Dieser Link befindet sich in der Blacklist!
     </p>
     <p class="show-on-loading">
-      <span class="glyphicon glyphicon-refresh"></span>
+      <span class="glyphicon glyphicon-refresh glyphicon-refresh-spin"></span>
       Lädt...
     </p>
     <p class="show-on-success-link">
@@ -49,12 +49,14 @@
     </p>
   </div>
 
+  <a class="link-settings text-muted" target="_blank"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
+
   <label id="title-label" for="title">
     <span class="hide-on-text-only">Titel für Shownotes:</span>
     <span class="show-on-text-only">Texteintrag:</span>
   </label>
   <input type="text" name="title" id="title" class="form-control hide-on-text-only" tabindex="1" autofocus placeholder="Titel eingeben"/>
-  <textarea id="text" class="form-control show-on-text-only" autofocus placeholder="Text eingeben"></textarea>
+  <textarea id="text" class="form-control show-on-text-only" tabindex="1" autofocus placeholder="Text eingeben"></textarea>
 
   <div class="show-on-text-only-allowed">
     <label for="text-only">

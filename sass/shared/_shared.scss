@@ -30,3 +30,8 @@
 .help-block {margin-bottom:0; font-size:12px;}
 
 .footer-author {max-width:600px; margin:80px auto 0; padding:12px 0; border-top:1px solid #eee; text-align:center; font-size:$smallerFontSize;}
+
+@keyframes spin {
+  100% {transform:rotate(360deg);}
+}
+.glyphicon-refresh-spin {animation:spin 1s linear infinite;}

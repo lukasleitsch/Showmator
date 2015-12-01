@@ -99,6 +99,17 @@ window.addEventListener('message', function(event) {
                 .parent().toggleClass('btn-default btn-primary');
             },
 
+            placeCursorToEnd = function(el) {
+              var range = document.createRange(),
+                  sel   = window.getSelection(),
+                  node  = el.childNodes[0];
+
+              range.setStart(node, node.length);
+              // range.collapse(true);
+              sel.removeAllRanges();
+              sel.addRange(range);
+            },
+
             enterEditMode = function() {
               var textBefore = $link
                 .prop('contenteditable', true)
@@ -112,6 +123,8 @@ window.addEventListener('message', function(event) {
               document.addEventListener('keydown', cancelOnEscape, true);
 
               toggleEditClasses();
+
+              placeCursorToEnd($link[0]);
             },
 
             quitEditMode = function() {

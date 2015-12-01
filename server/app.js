@@ -22,10 +22,10 @@ var db = new sqlite3.Database(file);
 
 
 var render404 = function(res) {
-      res.writeHead(404);
-      res.write("Diese Shownotes existieren nicht.");
-      res.end();
-    };
+  res.writeHead(404);
+  res.write("Diese Shownotes existieren nicht.");
+  res.end();
+};
 
 // Create tables if not present
 db.serialize(function() {
@@ -67,7 +67,6 @@ io.sockets.on('connection', function(client) {
     log('connectToLiveShownotes', publicSlug);
     client.publicSlug = publicSlug;
     client.join(publicSlug);
-    io.sockets.in(publicSlug).emit('counter', counter(publicSlug));
   });
 
   client.on('connectToHtmlExport', function(slug) {
@@ -244,16 +243,9 @@ io.sockets.on('connection', function(client) {
   // Client disconnected
   client.on('disconnect', function() {
     log('disconnect', client.isPopup ? 'no slug (popup)' : client.publicSlug);
-    io.sockets.in(client.publicSlug).emit('counter', counter(client.publicSlug) - 1);
     if (!client.isPopup)
       db.close();
   });
-
-
-  // Current connections of clients
-  function counter(publicSlug) {
-    return io.sockets.clients(publicSlug).length;
-  }
 
 });
 
@@ -262,9 +254,8 @@ io.sockets.on('connection', function(client) {
 // Routes
 // -----------------------------------------------------------------------------
 
-// Search for route first, then static file
-app.use(app.router);
-app.use(express.static(__dirname + '/public'));
+// Static files
+app.use(express.static('public'));
 
 
 // Live shownotes site

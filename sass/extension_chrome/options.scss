@@ -1,12 +1,25 @@
 @import "../shared/base";
 
+// loading
+// -----------------------------------------------------------------------------
+.loading {margin-top:80px; font-size: 2em; text-align: center;}
+
+.has-no-active-shownotes, .has-active-shownotes {
+  .loading {display:none;}
+}
+
 // active shownotes toggle
 // -----------------------------------------------------------------------------
 
-.show-on-active-shownotes {display:none;}
+.show-on-active-shownotes, .hide-on-active-shownotes {display:none;}
 .has-active-shownotes {
   .hide-on-active-shownotes {display:none;}
   .show-on-active-shownotes {display:block;}
+}
+
+.has-no-active-shownotes {
+  .hide-on-active-shownotes {display:block;}
+  .show-on-active-shownotes {display:none;}
 }
 
 
