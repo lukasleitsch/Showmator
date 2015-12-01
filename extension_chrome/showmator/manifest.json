@@ -30,15 +30,15 @@
 
   "content_scripts": [{
     "matches": [ "http://*/*", "https://*/*"],
-    "js":      ["js/jquery.min.js", "js/socket.io.js"]
+    "js":      ["js/jquery.min.js", "js/socket.io.min.js"]
   }, {
     "matches": ["http://localhost:63123/live/*"],
-    "js":      ["js/jquery.min.js", "js/socket.io.js", "js/admin_btns.js"],
+    "js":      ["js/jquery.min.js", "js/socket.io.min.js", "js/admin_btns.min.js"],
     "run_at":  "document_start"
   }],
 
   "background": {
-    "scripts": ["js/jquery.min.js", "js/background.js"]
+    "scripts": ["js/jquery.min.js", "js/background.min.js"]
   },
 
   "options_page": "options.html",
