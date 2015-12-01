@@ -1,8 +1,8 @@
 /*global $ */
 $(function(){
-	function nav(page) {
-		page = window.location.hash.replace('#', '');
-		var targetClass = '';
+	function nav() {
+		var page        = window.location.hash.replace('#', ''),
+		    targetClass = '';
 
 		switch(page) {
 			case 'main':
