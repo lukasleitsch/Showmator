@@ -41,17 +41,21 @@ db.serialize(function() {
 io.sockets.on('connection', function(client) {
   
   var log = function() {
-        var date = new Date(),
-        args = ['[' + ('0' + date.getDate()).slice(-2) + '.' 
-                + ('0' + (date.getMonth()+1)).slice(-2) + '.' 
-                + date.getUTCFullYear() + ' - ' 
-                + ('0' + date.getHours()).slice(-2) + ':' 
-                + ('0' + date.getMinutes()).slice(-2) + ':' 
-                + ('0' + date.getSeconds()).slice(-2)
-                + ']', client.id];
+        var args = [formattedDate(), client.id];
         for (var key in arguments)
           args.push(arguments[key]);
         console.log.apply(undefined, args);
+      },
+
+      formattedDate = function() {
+        var now = new Date(),
+            padZero = function(num) {
+              return num < 10 ? "0" + num : num;
+            };
+        return padZero(now.getDate() + 1) + '.' +
+               padZero(now.getMonth() + 1) + '.' +
+               now.getUTCFullYear() + ' - ' +
+               now.toLocaleTimeString();
       },
       
       db = new sqlite3.Database(file),
