@@ -52,7 +52,7 @@ io.sockets.on('connection', function(client) {
             padZero = function(num) {
               return num < 10 ? "0" + num : num;
             };
-        return padZero(now.getDate() + 1) + '.' +
+        return padZero(now.getDate()) + '.' +
                padZero(now.getMonth() + 1) + '.' +
                now.getUTCFullYear() + ' - ' +
                now.toLocaleTimeString();
