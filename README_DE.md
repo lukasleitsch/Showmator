@@ -15,7 +15,7 @@ Beim Showmator handelt es sich um eine Browser-Erweiterung für Google Chrome, m
 
 - [Showmator im Chrome-Webstore laden](https://chrome.google.com/webstore/detail/showmator/pabpbanbfoacolccnihhcbjlhlcahgpm)
 - [Zur Anleitung](http://showmator.com#guide)
-- Bei Fragen, Feedback oder Problemen bitte an [@phasenkasper](https://twitter.com/phasenkasper) wenden oder eine [Issue](https://github.com/lukasleitsch/Showmator/issues) erstellen.
+- Bei Fragen, Feedback oder Problemen bitte an [@showmator](https://twitter.com/showmator) wenden oder eine [Issue](https://github.com/lukasleitsch/Showmator/issues) erstellen.
 
 **Viel Spaß beim Podcasten!**  
 

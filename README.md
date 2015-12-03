@@ -15,7 +15,7 @@ Showmator is a browser extension for Google Chrome helping you create your shown
 
 * [Get Showmator from the Chrome Webstore](https://chrome.google.com/webstore/detail/showmator/pabpbanbfoacolccnihhcbjlhlcahgpm)
 * [Read the guide](http://showmator.com/#guide)
-* Contact [@phasenkasper](https://twitter.com/phasenkasper) if you've got any questions or feedback or create an [issue](https://github.com/lukasleitsch/Showmator/issues) if you are experiencing any problems.
+* Contact [@showmator](https://twitter.com/showmator) if you've got any questions or feedback or create an [issue](https://github.com/lukasleitsch/Showmator/issues) if you are experiencing any problems.
 
 **Enjoy your podcasting sessions!**  
 
