@@ -1,20 +1,22 @@
 Showmator
 ==================
 
-**Klick dir deine Shownotes während der Aufnahme**
+**Gather your shownotes while recording.**  
 
-Website: [showmator.com](http://showmator.com)
+Website: [showmator.com](http://showmator.com/)
 
-## Was ist der *Showmator*?
+## What is *Showmator*?
 
-Shownotes gehören zum guten Ton, wenn man heutzutage Podcasts veröffentlicht. Bisher bedeutete das allerdings eine Menge Arbeit. Damit man die Folge nicht nachträglich noch mal hören muss oder während der Aufnahme vom Schreiben der Shownotes abgelenkt ist, gibt es den Showmator.
+Shownotes are common courtesy when publishing podcasts nowadays. Up until now, that meant a whole lot of work. With Showmator you neither have to re-listen to your last episode nor are you distracted with writing shownotes during the recording.  
 
-Beim Showmator handelt es sich um eine Browser-Erweiterung für Google Chrome, mit dem sich einfach und schnell nebenbei Shownotes erstellen lassen.
+Showmator is a browser extension for Google Chrome helping you create your shownotes&mdash;distraction free, nice and easy.
 
 ## Links
 
-- [Showmator im Chrome-Webstore laden](https://chrome.google.com/webstore/detail/showmator/pabpbanbfoacolccnihhcbjlhlcahgpm)
-- [Zur Anleitung](http://showmator.com#guide)
-- Bei Fragen, Feedback oder Problemen bitte an [@phasenkasper](https://twitter.com/phasenkasper) wenden oder eine [Issue](https://github.com/lukasleitsch/Showmator/issues) erstellen.
+* [Get Showmator from the Chrome Webstore](https://chrome.google.com/webstore/detail/showmator/pabpbanbfoacolccnihhcbjlhlcahgpm)
+* [Read the guide](http://showmator.com/#guide)
+* Contact [@phasenkasper](https://twitter.com/phasenkasper) if you've got any questions or feedback or create an [issue](https://github.com/lukasleitsch/Showmator/issues) if you are experiencing any problems.
 
-**Viel Spaß beim Podcasten!**
+**Enjoy your podcasting sessions!**  
+
+Lies die README auf [deutsch](./README_DE.md).
