@@ -17,15 +17,6 @@ $(function() {
       $save   = $('#save'),
       $delete = $('#delete'),
 
-      htmlEntities = function(str) {
-        // TODO why `String()`?
-        return String(str)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;');
-      },
-
       completeAndClose = function(statusClass) {
         $body.removeClass('on-loading').addClass(statusClass);
         setTimeout(function() {
@@ -55,7 +46,7 @@ $(function() {
       $body.addClass('on-loading');
       socket.emit('addLink', {
         slug:   localStorage.slug,
-        title:  htmlEntities(val),
+        title:  val,
         url:    isText ? false : url,
         isText: isText ? 1 : 0
       });

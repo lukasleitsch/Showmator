@@ -24,6 +24,10 @@ var padZero = function(num) {
                      parseInt(matches[3]));
     },
 
+    decode = function(text){
+      return $("<div/>").html(text).text();
+    },
+
     socketURL = 'http://localhost:63123',
     socket    = io.connect(socketURL);
 
@@ -131,7 +135,7 @@ $(function() {
 
 
     socket.on('updateEntryTitleSuccess', function(data) {
-      $('#entry-' + data.id).find('.entry-text').text(data.title);
+      $('#entry-' + data.id).find('.entry-text').text(decode(data.title));
     });
 
 

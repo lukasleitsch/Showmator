@@ -10,7 +10,7 @@
 
   <header class="jumbo-header">
     <h1>
-      <img srcset="/img/icon48_white@2x.png 2x, /img/icon48_white.png 1x" src="/img/icon48_white.png" alt=""> <span id="title"><%= title || '' %></span> HTML-Shownotes
+      <img srcset="/img/icon48_white@2x.png 2x, /img/icon48_white.png 1x" src="/img/icon48_white.png" alt=""> <span id="title"><%- title || '' %></span> HTML-Shownotes
     </h1>
   </header>
 
@@ -70,14 +70,14 @@
         <li>
           <span class="time" data-time="<%= item.time %>"></span>
           <% if (item.isText) { %>
-            <span class="text"><%= item.title %></span>
+            <span class="text"><%- item.title %></span>
           <% } else { %>
-            <a href="<%= item.url %>" target="_blank"><%= item.title %></a>
+            <a href="<%= item.url %>" target="_blank"><%- item.title %></a>
           <% } %>
         </li>
       <% }) %>
     </ul>
-    <p><a href="http://showmator.com" target="_blank">Shownotes wurden mit dem Showmator erstellt</a></p>
+    <p><a href="http://showmator.com" target="_blank">Shownotes wurden mit dem Showmator erstellt.</a></p>
   </div>
 
 

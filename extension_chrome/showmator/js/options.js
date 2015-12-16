@@ -39,11 +39,11 @@ $(function() {
           // if active: show extended form and replace title
           if (data.active) {
             toggleForm(true);
-            $title.val(data.title);
-            $titleAlert.text(data.title || noTitleText);
+            $title.val(decode(data.title));
+            $titleAlert.text(decode(data.title) || noTitleText);
 
-            slug       = localStorage.slug;
-            publicSlug = data.publicSlug;
+            slug                    = localStorage.slug;
+            publicSlug              = data.publicSlug;
             localStorage.publicSlug = publicSlug;
 
           // if new: generate slugs
@@ -150,6 +150,10 @@ $(function() {
           }, hideDelay);
 
         }, showDelay);
+      },
+
+      decode = function(text){
+        return $("<div/>").html(text).text();
       };
 
 

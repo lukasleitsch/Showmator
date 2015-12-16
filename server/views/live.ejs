@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <link rel="stylesheet" href="/css/live.css">
-  <title><%= title || "Live" %> Shownotes</title>
+  <title><%- title || "Live" %> Shownotes</title>
   <link rel="icon" href="/img/favicon.png" type="image/png">
 </head>
 
@@ -11,7 +11,7 @@
 
   <header class="jumbo-header">
     <h1>
-      <img srcset="/img/icon48_white@2x.png 2x, /img/icon48_white.png 1x" src="/img/icon48_white.png" alt=""> <span id="title"><%= title || "Live" %></span> Shownotes
+      <img srcset="/img/icon48_white@2x.png 2x, /img/icon48_white.png 1x" src="/img/icon48_white.png" alt=""> <span id="title"><%- title || "Live" %></span> Shownotes
     </h1>
   </header>
 
@@ -33,7 +33,7 @@
         <% if (!item.isText) { %>
           <a class="entry-text" href="<%= item.url %>" target="_blank"><%- item.title %></a>
         <% } else { %>
-          <span class="entry-text"><%= item.title %></span>
+          <span class="entry-text"><%- item.title %></span>
         <% } %>
       </li>
     <% }); %>

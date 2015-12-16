@@ -1,16 +1,16 @@
 /*global console */
 /*global require */
-/*global __dirname */
 
 // TODO FOREIGN KEY constraint failed: Insert entry without create shownotes
 
-var express = require('express'),
-    app     = express(),
-    server  = require('http').createServer(app),
-    io      = require('socket.io').listen(server, { log: false }),
-    sqlite3 = require("sqlite3").verbose(),
-    fs      = require("fs"),
-    file    = "data.db";
+var express   = require('express'),
+    app       = express(),
+    server    = require('http').createServer(app),
+    io        = require('socket.io').listen(server, { log: false }),
+    sqlite3   = require("sqlite3").verbose(),
+    sanitizer = require('sanitizer'),
+    fs        = require("fs"),
+    file      = "data.db";
 
 if (!fs.existsSync(file)) {
   console.log("Creating DB file.");
@@ -116,7 +116,9 @@ io.sockets.on('connection', function(client) {
   client.on('createNewShownotes', function(data) {
     log('createNewShownotes', data);
 
-    db.run('INSERT INTO meta (slug, publicSlug) VALUES (? , ?)', [data.slug, data.publicSlug], function(/*err, result*/) {
+    db.run('INSERT INTO meta (slug, publicSlug) VALUES (? , ?)', 
+      [sanitizer.escape(data.slug), 
+      sanitizer.escape(data.publicSlug)], function(/*err, result*/) {
       client.publicSlug = data.publicSlug;
       log('createdNewShownotes');
     });
@@ -144,9 +146,14 @@ io.sockets.on('connection', function(client) {
           emitError(err);
 
         if (row.startTime === null)
-          db.run('UPDATE meta SET startTime = ? WHERE slug = ?', [time, data.slug]);
+          db.run('UPDATE meta SET startTime = ? WHERE slug = ?', [sanitizer.escape(time), sanitizer.escape(data.slug)]);
 
-        db.run('INSERT INTO data (slug, title, url, time, isText) VALUES (?, ?, ?, ?, ?)', [data.slug, data.title, data.url, time, data.isText], function(err/*, result*/) {
+        db.run('INSERT INTO data (slug, title, url, time, isText) VALUES (?, ?, ?, ?, ?)', 
+          [sanitizer.escape(data.slug), 
+          sanitizer.escape(data.title), 
+          sanitizer.escape(data.url), 
+          parseInt(time), 
+          !!data.isText], function(err/*, result*/) {
           if (err) {
             emitError(err);
           
@@ -154,7 +161,7 @@ io.sockets.on('connection', function(client) {
             log('addLinkSucces');
             client.broadcast.to(row.publicSlug).emit('push', {
               id:     this.lastID,
-              title:  data.title,
+              title:  sanitizer.escape(data.title),
               url:    data.url,
               isText: data.isText,
               time:   time
@@ -171,11 +178,14 @@ io.sockets.on('connection', function(client) {
 
   // Update the entry title
   client.on('updateEntryTitle', function(data) {
-    log('updateEntryTitle');
+    log('updateEntryTitle', data);
 
-    db.run('UPDATE data SET title = ? WHERE id = ? AND slug = ?', [data.title, data.id, data.slug], function(/*err, row*/) {
+    db.run('UPDATE data SET title = ? WHERE id = ? AND slug = ?', 
+      [sanitizer.escape(data.title), 
+      parseInt(data.id), 
+      sanitizer.escape(data.slug)], function(/*err, row*/) {
       db.get('SELECT publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
-        client.broadcast.to(row.publicSlug).emit('updateEntryTitleSuccess', {title: data.title, id: data.id});
+        client.broadcast.to(row.publicSlug).emit('updateEntryTitleSuccess', {title: sanitizer.escape(data.title), id: data.id});
       });
     });
   });
@@ -201,13 +211,16 @@ io.sockets.on('connection', function(client) {
   client.on('updateShownotesTitle', function(data) {
     log('updateShownotesTitle', data);
     
-    db.run('UPDATE meta SET title = ? WHERE slug = ? AND publicSlug = ?', [data.title, data.slug, client.publicSlug], function() {
+    db.run('UPDATE meta SET title = ? WHERE slug = ? AND publicSlug = ?', 
+      [sanitizer.escape(data.title), 
+      sanitizer.escape(data.slug), 
+      sanitizer.escape(client.publicSlug)], function() {
       if (this.changes === 1) {
         data.publicSlug = client.publicSlug;
 
         // publicSlug for live shownotes, private slug for html shownotes
         [client.publicSlug, data.slug].forEach(function(val) {
-          client.broadcast.to(val).emit('updateShownotesTitleSuccess', {title: data.title});
+          client.broadcast.to(val).emit('updateShownotesTitleSuccess', {title: sanitizer.escape(data.title)});
         });
       }
     });
@@ -217,7 +230,7 @@ io.sockets.on('connection', function(client) {
   // Set time offset
   client.on('updateOffset', function(data) {
     log('updateOffset', data.offset);
-    db.run('UPDATE meta SET offset = ? WHERE slug = ?', [data.offset, data.slug]);
+    db.run('UPDATE meta SET offset = ? WHERE slug = ?', [parseInt(data.offset), sanitizer.escape(data.slug)]);
   });
 
 
@@ -225,7 +238,8 @@ io.sockets.on('connection', function(client) {
   client.on('deleteEntry', function(data) {
     log('deleteEntry', data);
     
-    db.run('DELETE FROM data WHERE id = ? AND slug = ?', [data.id, data.slug], function(/*err, result*/) {
+    db.run('DELETE FROM data WHERE id = ? AND slug = ?', 
+      [parseInt(data.id), sanitizer.escape(data.slug)], function(/*err, result*/) {
       if (this.changes === 1) {
         var emitEvent = function() {
           io.sockets.in(data.publicSlug).emit('deleteEntrySuccess', {id: data.id});
@@ -276,6 +290,7 @@ app.get('/live/:publicSlug', function(req, res) {
   db.get('SELECT slug, title FROM meta WHERE publicSlug = ?', publicSlug, function(err, row1) {
     if (row1) {
       db.all('SELECT * FROM data WHERE slug = ? ORDER BY time DESC', row1.slug, function(err, rows) {
+        console.log(rows);
         res.render('live.ejs', {
           items: rows,
           publicSlug: publicSlug,
