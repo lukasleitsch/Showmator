@@ -72,8 +72,9 @@ var Server = (function (){
       _log('requestStatus', data);
 
       db.get('SELECT * FROM meta WHERE slug = ?', data.slug, function(err, row) {
-        if (err) 
+        if (err) {
           _emitError(err);
+        }
 
         var data = {};
         
@@ -123,8 +124,9 @@ var Server = (function (){
       var time = new Date().getTime();
 
       db.get('SELECT * FROM data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
-        if(err)
+        if(err) {
           _emitError(err);
+        }
 
         if (row && !row.isText) {
           _emitDuplicate(data, row);
@@ -133,11 +135,13 @@ var Server = (function (){
         }
 
         db.get('SELECT startTime, offset, publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
-          if(err)
+          if(err) {
             _emitError(err);
+          }
 
-          if (row.startTime === null)
+          if (row.startTime === null) {
             db.run('UPDATE meta SET startTime = ? WHERE slug = ?', [_sanitizer.escape(time), _sanitizer.escape(data.slug)]);
+          }
 
           db.run('INSERT INTO data (slug, title, url, time, isText) VALUES (?, ?, ?, ?, ?)', 
             [_sanitizer.escape(data.slug), 
@@ -193,8 +197,9 @@ var Server = (function (){
       // only check if we don't have a text-only entry
       if (!data.isText) {
         db.get('SELECT id FROM data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
-          if (row)
+          if (row) {
             _emitDuplicate(data, row);
+          }
         });
       }
     });
@@ -239,14 +244,14 @@ var Server = (function (){
         if (this.changes === 1) {
           var emitEvent = function() {
             _io.in(data.publicSlug).emit('deleteEntrySuccess', {id: data.id});
-            if (client.isPopup)
+            if (client.isPopup) {
               client.emit('deleteEntrySuccess', {id: data.id});
+            }
             _log('deleteEntrySuccess', data);
           };
 
           if (data.publicSlug) {
             emitEvent();
-
           } else {
             db.get('SELECT publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
               data.publicSlug = row.publicSlug;
@@ -265,8 +270,9 @@ var Server = (function (){
   _disconnect = function(client, db) {
     client.on('disconnect', function() {
       _log('disconnect', client.isPopup ? 'no slug (popup)' : client.publicSlug);
-      if (!client.isPopup)
+      if (!client.isPopup) {
         db.close();
+      }
     });    
   },
 
