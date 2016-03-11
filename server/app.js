@@ -10,17 +10,17 @@ var Server = (function (){
   // Private
   // -------------------------------------------------------------------------
 
-  express   = require('express'),
-  app       = express(),
-  server    = require('http').createServer(app),
-  io        = require('socket.io').listen(server, { log: false }),
-  sqlite3   = require("sqlite3").verbose(),
-  sanitizer = require('sanitizer'),
-  fs        = require("fs"),
-  file      = "data.db",
+  _express   = require('express'),
+  _app       = _express(),
+  _server    = require('http').createServer(_app),
+  _io        = require('socket.io').listen(_server, { log: false }),
+  _sqlite3   = require("sqlite3").verbose(),
+  _sanitizer = require('sanitizer'),
+  _fs        = require("fs"),
+  _file      = "data.db",
 
   _openDB = function() {
-    return new sqlite3.Database(file);
+    return new _sqlite3.Database(_file);
   },
 
   _render404 = function(res) {
@@ -107,8 +107,8 @@ var Server = (function (){
       _log('createNewShownotes', data);
 
       db.run('INSERT INTO meta (slug, publicSlug) VALUES (? , ?)', 
-        [sanitizer.escape(data.slug), 
-        sanitizer.escape(data.publicSlug)], function(/*err, result*/) {
+        [_sanitizer.escape(data.slug), 
+        _sanitizer.escape(data.publicSlug)], function(/*err, result*/) {
         client.publicSlug = data.publicSlug;
         _log('createdNewShownotes');
       });
@@ -137,12 +137,12 @@ var Server = (function (){
             _emitError(err);
 
           if (row.startTime === null)
-            db.run('UPDATE meta SET startTime = ? WHERE slug = ?', [sanitizer.escape(time), sanitizer.escape(data.slug)]);
+            db.run('UPDATE meta SET startTime = ? WHERE slug = ?', [_sanitizer.escape(time), _sanitizer.escape(data.slug)]);
 
           db.run('INSERT INTO data (slug, title, url, time, isText) VALUES (?, ?, ?, ?, ?)', 
-            [sanitizer.escape(data.slug), 
-            sanitizer.escape(data.title), 
-            sanitizer.escape(data.url), 
+            [_sanitizer.escape(data.slug), 
+            _sanitizer.escape(data.title), 
+            _sanitizer.escape(data.url), 
             parseInt(time), 
             !!data.isText], function(err/*, result*/) {
             if (err) {
@@ -152,7 +152,7 @@ var Server = (function (){
               _log('addLinkSucces');
               client.broadcast.to(row.publicSlug).emit('push', {
                 id:     this.lastID,
-                title:  sanitizer.escape(data.title),
+                title:  _sanitizer.escape(data.title),
                 url:    data.url,
                 isText: data.isText,
                 time:   time
@@ -173,11 +173,11 @@ var Server = (function (){
       _log('updateEntryTitle', data);
 
       db.run('UPDATE data SET title = ? WHERE id = ? AND slug = ?', 
-        [sanitizer.escape(data.title), 
+        [_sanitizer.escape(data.title), 
         parseInt(data.id), 
-        sanitizer.escape(data.slug)], function(/*err, row*/) {
+        _sanitizer.escape(data.slug)], function(/*err, row*/) {
         db.get('SELECT publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
-          client.broadcast.to(row.publicSlug).emit('updateEntryTitleSuccess', {title: sanitizer.escape(data.title), id: data.id});
+          client.broadcast.to(row.publicSlug).emit('updateEntryTitleSuccess', {title: _sanitizer.escape(data.title), id: data.id});
         });
       });
     });
@@ -206,15 +206,15 @@ var Server = (function (){
       _log('updateShownotesTitle', data);
       
       db.run('UPDATE meta SET title = ? WHERE slug = ? AND publicSlug = ?', 
-        [sanitizer.escape(data.title), 
-        sanitizer.escape(data.slug), 
-        sanitizer.escape(client.publicSlug)], function() {
+        [_sanitizer.escape(data.title), 
+        _sanitizer.escape(data.slug), 
+        _sanitizer.escape(client.publicSlug)], function() {
         if (this.changes === 1) {
           data.publicSlug = client.publicSlug;
 
           // publicSlug for live shownotes, private slug for html shownotes
           [client.publicSlug, data.slug].forEach(function(val) {
-            client.broadcast.to(val).emit('updateShownotesTitleSuccess', {title: sanitizer.escape(data.title)});
+            client.broadcast.to(val).emit('updateShownotesTitleSuccess', {title: _sanitizer.escape(data.title)});
           });
         }
       });
@@ -225,7 +225,7 @@ var Server = (function (){
   _updateOffset = function(client, db) {
     client.on('updateOffset', function(data) {
       _log('updateOffset', data.offset);
-      db.run('UPDATE meta SET offset = ? WHERE slug = ?', [parseInt(data.offset), sanitizer.escape(data.slug)]);
+      db.run('UPDATE meta SET offset = ? WHERE slug = ?', [parseInt(data.offset), _sanitizer.escape(data.slug)]);
     });
   },
 
@@ -235,10 +235,10 @@ var Server = (function (){
       _log('deleteEntry', data);
       
       db.run('DELETE FROM data WHERE id = ? AND slug = ?', 
-        [parseInt(data.id), sanitizer.escape(data.slug)], function(/*err, result*/) {
+        [parseInt(data.id), _sanitizer.escape(data.slug)], function(/*err, result*/) {
         if (this.changes === 1) {
           var emitEvent = function() {
-            io.sockets.in(data.publicSlug).emit('deleteEntrySuccess', {id: data.id});
+            _io.in(data.publicSlug).emit('deleteEntrySuccess', {id: data.id});
             if (client.isPopup)
               client.emit('deleteEntrySuccess', {id: data.id});
             _log('deleteEntrySuccess', data);
@@ -272,7 +272,7 @@ var Server = (function (){
 
   // Live shownotes site
   _liveShownotes = function(db) {
-    app.get('/live/:publicSlug', function(req, res) {
+    _app.get('/live/:publicSlug', function(req, res) {
       var publicSlug = req.params.publicSlug;
       
       db.get('SELECT slug, title FROM meta WHERE publicSlug = ?', publicSlug, function(err, row1) {
@@ -295,7 +295,7 @@ var Server = (function (){
 
   // HTML export site
   _htmlExport = function(db) {
-    app.get('/html/:slug', function(req, res) {
+    _app.get('/html/:slug', function(req, res) {
       var slug = req.params.slug;
       
       db.get('SELECT startTime, offset, title FROM meta WHERE slug = ?', slug, function(err1, row1) {
@@ -325,12 +325,12 @@ var Server = (function (){
   module.init = function() {
       var db = _openDB();
 
-      if (!fs.existsSync(file)) {
+      if (!_fs.existsSync(_file)) {
         console.log("Creating DB file.");
-        fs.openSync(file, "w");
+        _fs.openSync(_file, "w");
       }
 
-      server.listen(63123);
+      _server.listen(63123);
 
       // Create tables if not present
       db.serialize(function() {
@@ -341,7 +341,7 @@ var Server = (function (){
   };
 
   module.on = function(){
-    io.on('connection', function(client) { 
+    _io.on('connection', function(client) { 
       _log(client.id, 'connected');
       var db = _openDB();
       _connectToLiveShownotes(client);
@@ -362,7 +362,7 @@ var Server = (function (){
     var db = _openDB();
 
     // Static files
-    app.use(express.static('public'));
+    _app.use(_express.static('public'));
 
     _liveShownotes(db);
     _htmlExport(db);
