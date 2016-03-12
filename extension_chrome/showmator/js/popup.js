@@ -155,11 +155,13 @@ $(function() {
         });
       }
       
-      isText = (url.split('/')[4] === localStorage.publicSlug) || (blacklist && localStorage.showTextOnly);
-
       // on live-shownotes make changes for text-only entry
-      if (isText) {
+      if (url.split('/')[4] === localStorage.publicSlug) {
         $body.addClass('on-text-only');
+
+      // link is on the blacklist and the option text entry in popup is activ
+      } else if (blacklist && localStorage.showTextOnly){
+        $body.addClass('on-text-only on-text-only-blacklist');
       
       // fill input with title and prevent saving if on blacklist
       } else {

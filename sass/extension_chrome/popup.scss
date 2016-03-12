@@ -21,12 +21,13 @@ $states:("empty-slug", "duplicate", "blacklist", "loading", "success-link", "suc
   }
 }
 
-.show-on-text-only, .show-on-text-only-allowed {@extend %hide-on-start;}
+.show-on-text-only, .show-on-text-only-allowed, .info {@extend %hide-on-start;}
 .on-text-only {
   .show-on-text-only {display:inline;}
   .hide-on-text-only {@extend %hide-on-start;}
 }
 .on-text-only-allowed .show-on-text-only-allowed {display:block;}
+.on-text-only-blacklist .info {display:block;font-style:italic;padding: 10px 0;}
 
 .link-settings {position:absolute; top:5px; right:5px; z-index:1;}
 
