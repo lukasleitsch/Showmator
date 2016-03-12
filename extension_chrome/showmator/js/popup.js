@@ -31,10 +31,11 @@ $(function() {
 
   // add link/text and show loading state when submit button is clicked
   $save.click(function() {
+    $save.blur();
     if (!$body.hasClass('on-duplicate') && !$body.hasClass('on-blacklist')) {
       var $input = isText ? $text : $title,
           val    = $.trim($input.val());
-      
+
       // if empty value: shake input
       if (val === '') {
         $input.on('webkitAnimationEnd animationEnd animationend', function() {
@@ -158,6 +159,7 @@ $(function() {
       // on live-shownotes make changes for text-only entry
       if (url.split('/')[4] === localStorage.publicSlug) {
         $body.addClass('on-text-only');
+        isText = true;
 
       // link is on the blacklist and the option text entry in popup is activ
       } else if (blacklist && localStorage.showTextOnly){
