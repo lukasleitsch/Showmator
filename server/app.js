@@ -121,7 +121,7 @@ var Server = (function (){
         _deleteEntry(client, db, io, data);
       });
       client.on('disconnect', function() {
-        _disconnect(client, db);
+        _disconnect(client);
       });
     });
   },
@@ -145,7 +145,7 @@ var Server = (function (){
 
     db.get('SELECT * FROM meta WHERE slug = ?', data.slug, function(err, row) {
       if (err) {
-        _emitError(err);
+        _emitError(client, err);
       }
 
       var data = {};
@@ -194,18 +194,17 @@ var Server = (function (){
 
     db.get('SELECT * FROM data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
       if(err) {
-        _emitError(err);
+        _emitError(client, err);
       }
 
       if (row && !row.isText) {
-        _emitDuplicate(data, row);
-        db.close();
+        _emitDuplicate(client, data, row);
         return;
       }
 
       db.get('SELECT startTime, offset, publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
         if(err) {
-          _emitError(err);
+          _emitError(client, err);
         }
 
         if (row.startTime === null) {
@@ -219,7 +218,7 @@ var Server = (function (){
           parseInt(time), 
           !!data.isText], function(err/*, result*/) {
           if (err) {
-            _emitError(err);
+            _emitError(client, err);
           
           } else {
             _log('addLinkSucces');
@@ -232,8 +231,6 @@ var Server = (function (){
             });
             client.emit('addLinkSuccess');
           }
-
-          db.close();
         });
       });
     });
@@ -265,7 +262,7 @@ var Server = (function (){
     if (!data.isText) {
       db.get('SELECT id FROM data WHERE url = ? AND slug = ?', [data.url, data.slug], function(err, row) {
         if (row) {
-          _emitDuplicate(data, row);
+          _emitDuplicate(client, data, row);
         }
       });
     }
@@ -331,11 +328,8 @@ var Server = (function (){
 
 
   // Client disconnected
-  _disconnect = function(client, db) {
+  _disconnect = function(client) {
     _log('disconnect', client.isPopup ? 'no slug (popup)' : client.publicSlug);
-    if (!client.isPopup) {
-      db.close();
-    }
   },
 
 
