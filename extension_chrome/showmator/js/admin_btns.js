@@ -1,193 +1,281 @@
 /*global chrome */
 /*global io */
 
+/*global $ */
 
-// Render admin buttons
-// -----------------------------------------------------------------------------
+var admin_btns = (function() {
 
-var $result, socket;
+    var module = {},
 
-
-// listen for request from web page
-window.addEventListener('message', function(event) {
-  if (event.source == window && event.data.type &&
-        event.data.type == 'showmatorAdminRequestFromPage') {
     
-    // save vars for later access
-    $result = $('#' + event.data.listContainerID);
-    socket  = io.connect(event.data.socketURL);
+    // Private
+    // ---------------------------------------------------------------------
 
-    // send request to extension to receive slug
-    chrome.runtime.sendMessage({
-      type:       'showmatorAdminRequestFromScript',
-      publicSlug: event.data.publicSlug
-    
-    // callback with received slug and extension shortcut
-    }, function(resp) {
-      
+        // Variables
+        // ---------------------------------------------------------------------
 
-      // render hint for adding text-entry
-      if (!localStorage.hideTextHint) {
-        var shortcutHtml = resp.shortcut ? (' (<em>' + resp.shortcut + '</em>)') : '',
-            html = '<div id="add-text-hint" class="alert alert-warning alert-dismissible">' +
-                     '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Schließen</span></button>' +
-                     '<p><strong>Tipp:</strong> Um einen Texteintrag (ohne Link) hinzuzufügen, kannst du das Icon der Showmator-Erweiterung neben der Adressleiste klicken oder einen Tastatur-Shortcut' + shortcutHtml + ' verwenden. Den Shortcut kannst du <a href="chrome://extensions/configureCommands">hier</a> ändern.</p>' +
-                   '</div>';
+        _$hint,
 
-        $result.before(html);
+        _slug,
+        _response,
+        _isEditing  = false,
+        _editedID   = 0,
 
-        var $hint = $('#add-text-hint');
-
-        // when closing hint: hide, destroy and never show again
-        $hint.find('button').click(function() {
-          $hint.slideUp(200, function() {
-            localStorage.hideTextHint = true;
-            $hint.remove();
-          });
-        });
-
-        // link to shortcut options ('chrome://' is non-http and therefore
-        // doesn't work with a-tags)
-        $hint.find('a').click(function(e) {
-          e.preventDefault();
-          chrome.runtime.sendMessage({type: "showmatorConfigureShortcut"});
-        });
-      }
+        _$listContainer,
+        _socket,
 
 
-      // vars and outer functions for admin buttons
-      var slug     = resp.slug,
-          adminHtml = '<div class="admin-btn-wrapper">' +
+        // ListContainer Variables
+        // ---------------------------------------------------------------------
+
+        _$listContainerLi,
+        _$listContainerLink,
+        _$listContainerBtnWrap,
+        _$listContainerEditIcon,
+        _$listContainerDeleteIcon,
+        _listContainerEntryId,
+
+
+        // Handlers
+        // ---------------------------------------------------------------------
+
+        _handleMessageEvent = function(e) {
+            if (e.source == window && 
+                e.data.type &&
+                e.data.type === 'showmatorAdminRequestFromPage')
+            {
+                _saveVarsForLaterAccess(e);
+                _sendRequestToExtensionToReceiveSlug(e);
+            }
+        },
+
+        _handleHintButtonClick = function() {
+            // when closing hint: hide, destroy and never show again
+            _$hint.slideUp(200, function() {
+                localStorage.hideTextHint = true;
+                _$hint.remove();
+            });
+        },
+
+        _handleShortcutOptionsClick = function(e) {
+            // link to shortcut options ('chrome://' is non-http and therefore doesn't work with a-tags)
+            e.preventDefault();
+            chrome.runtime.sendMessage({ type: 'showmatorConfigureShortcut' });
+        },
+
+        _handleListContainerButtonClick = function(e) {
+            e.preventDefault();
+
+            var $this = $(this);
+            _setUpListContainerVars($this);
+
+            // cancel editing on other entry if present
+            if (_isEditing && _editedID > 0 && _listContainerEntryId != _editedID) {
+                _cancelOnEscape(false, true);
+            }
+
+            if ($this.hasClass('btn-edit')) {
+                _editOrSave();
+            }
+            else {
+                _deleteOrCancel();
+            }
+        },
+
+
+        // Builders
+        // ---------------------------------------------------------------------
+
+        _buildHintHtml = function(shortcutHtml) {
+            return  '<div id="add-text-hint" class="alert alert-warning alert-dismissible">' +
+                        '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Schließen</span></button>' +
+                        '<p><strong>Tipp:</strong> Um einen Texteintrag (ohne Link) hinzuzufügen, kannst du das Icon der Showmator-Erweiterung neben der Adressleiste klicken oder einen Tastatur-Shortcut' + shortcutHtml + ' verwenden. Den Shortcut kannst du <a href="chrome://extensions/configureCommands">hier</a> ändern.</p>' +
+                    '</div>';
+        },
+
+        _buildAdminHtml = function() {
+            return  '<div class="admin-btn-wrapper">' +
                         '<button class="btn btn-default btn-xs btn-edit"><span class="glyphicon glyphicon-pencil"></span></button>' +
                         '<button class="btn btn-default btn-xs btn-delete"><span class="glyphicon glyphicon-trash"></span></button>' +
-                      '</div>',
-          isEditing = false,
-          editedID  = 0,
+                    '</div>';
+        },
 
-          saveOnEnter = function(e) {
-            if (e.keyCode == 13) {
-              e.preventDefault();
-              $result.find('.editing').find('.btn-edit').click();
+
+        // Helper functions
+        // ---------------------------------------------------------------------
+
+        _saveVarsForLaterAccess = function(e) {
+            _$listContainer = $('#' + e.data.listContainerID);
+            _socket  = io.connect(e.data.socketURL);
+        },
+
+        _sendRequestToExtensionToReceiveSlug = function(e) {
+            chrome.runtime.sendMessage({
+                type:       'showmatorAdminRequestFromScript',
+                publicSlug: e.data.publicSlug
+            }, _callbackWithReceivedSlugAndExtensionShortcut);
+        },
+
+        _callbackWithReceivedSlugAndExtensionShortcut = function(response) {
+            _response = response;
+            _setUpHint();
+            _slug = _response.slug;
+            _addListContainerButtonClickHandler();
+            _renderAdminButtons();
+            _deliverAdminMarkupToWebpage();
+        },       
+
+        _setUpHint = function() {
+            if (!localStorage.hideTextHint) {
+                _renderHintForAddingTextEntry(_response.shortcut);
+                _addHintClickListener();
             }
-          },
-          
-          cancelOnEscape = function(e, forceCancel) {
-            if (forceCancel || (!!e && e.which == 27))
-              $result.find('.editing').find('.btn-delete').click();
-          };
+        },
 
+        _renderHintForAddingTextEntry = function(shortcut) {
+            var shortcutHtml = shortcut ? (' (<em>' + shortcut + '</em>') : '',
+                html = _buildHintHtml(shortcutHtml);
 
-      // bind edit/delete events to admin buttons
-      $result.on('click', '.btn-edit, .btn-delete', function(e) {
-        e.preventDefault();
+            _$listContainer.before(html);
+            _$hint = $('#add-text-hint');
+        },
 
-        var $this = $(this),
+        _addHintClickListener = function() {
+            _$hint.find('button').on('click', _handleHintButtonClick);
+            _$hint.find('a').on('click', _handleShortcutOptionsClick);
+        },
 
-            $li         = $this.closest('.entry'),
-            $link       = $li.find('.entry-text'),
-            $btnWrap    = $this.closest('.admin-btn-wrapper'),
-            $editIcon   = $btnWrap.find('.glyphicon-pencil, .glyphicon-ok'),
-            $deleteIcon = $btnWrap.find('.glyphicon-trash, .glyphicon-remove'),
-            id          = $li.prop('id').split('-')[1],
+        _addListContainerButtonClickHandler = function() {
+            _$listContainer.on('click', '.btn-edit, .btn-delete', _handleListContainerButtonClick);
+        },        
 
-            toggleEditClasses = function() {
-              isEditing = !isEditing;
-              editedID  = isEditing ? id : 0;
-              $btnWrap.toggleClass('editing');
-              $deleteIcon.toggleClass('glyphicon-trash glyphicon-remove');
-              $editIcon.toggleClass('glyphicon-pencil glyphicon-ok')
-                .parent().toggleClass('btn-default btn-primary');
-            },
+        _saveOnEnter = function(e) {
+            if (e.keyCode === 13) {
+                e.preventDefault();
+                _$listContainer.find('.editing').find('.btn-edit').click();
+            }
+        },
 
-            placeCursorToEnd = function(el) {
-              var range = document.createRange(),
-                  sel   = window.getSelection(),
-                  node  = el.childNodes[0];
+        _cancelOnEscape = function(e, forceCancel) {
+            if (forceCancel || (!!e && e.which === 27)) {
+                _$listContainer.find('.editing').find('.btn-delete').click();
+            }
+        },
+
+        _setUpListContainerVars = function($element) {
+            _$listContainerLi         = $element.closest('.entry');
+            _$listContainerLink       = _$listContainerLi.find('.entry-text');
+            _$listContainerBtnWrap    = $element.closest('.admin-btn-wrapper');
+            _$listContainerEditIcon   = _$listContainerBtnWrap.find('.glyphicon-pencil, .glyphicon-ok');
+            _$listContainerDeleteIcon = _$listContainerBtnWrap.find('.glyphicon-trash, .glyphicon-remove');
+            _listContainerEntryId          = _$listContainerLi.prop('id').split('-')[1];
+        },
+
+        _toggleEditClasses = function() {
+            _isEditing = !_isEditing;
+            _editedID  = _isEditing ? _listContainerEntryId : 0;
+            _$listContainerBtnWrap.toggleClass('editing');
+            _$listContainerDeleteIcon.toggleClass('glyphicon-trash glyphicon-remove');
+            _$listContainerEditIcon
+                .toggleClass('glyphicon-pencil glyphicon-ok')
+                .parent()
+                .toggleClass('btn-default btn-primary');
+        },
+
+        _placeCursorToEnd = function(el) {
+            var range = document.createRange(),
+                sel   = window.getSelection(),
+                node  = el.childNodes[0];
 
               range.setStart(node, node.length);
               // range.collapse(true);
               sel.removeAllRanges();
               sel.addRange(range);
-            },
+        },
 
-            enterEditMode = function() {
-              var textBefore = $link
+        _enterEditMode = function() {
+            var textBefore = _$listContainerLink
                 .prop('contenteditable', true)
-                .on('keydown.saveOnEnter', saveOnEnter)
+                .on('keydown.saveOnEnter', _saveOnEnter)
                 .focus()
                 .text();
-              $link.data('text-before', textBefore);
+            _$listContainerLink.data('text-before', textBefore);
 
-              // vanilla JS because Esc on contenteditable does not work with
-              // jQuery events
-              document.addEventListener('keydown', cancelOnEscape, true);
+            // vanilla JS because Esc on contenteditable does not work with
+            // jQuery events
+            document.addEventListener('keydown', _cancelOnEscape, true);
 
-              toggleEditClasses();
+            _toggleEditClasses();
 
-              placeCursorToEnd($link[0]);
-            },
+            _placeCursorToEnd(_$listContainerLink[0]);
+        },
 
-            quitEditMode = function() {
-              $link.prop('contenteditable', false)
+        _quitEditMode = function() {
+            _$listContainerLink.prop('contenteditable', false)
                 .off('keydown.saveOnEnter')
                 .blur();
-              document.removeEventListener('keydown', cancelOnEscape, true);
-              toggleEditClasses();
-            };
+            document.removeEventListener('keydown', _cancelOnEscape, true);
+            _toggleEditClasses();
+        },
 
+        _editOrSave = function() {
+            // edit
+            if (_$listContainerEditIcon.hasClass('glyphicon-pencil')) {
+                _enterEditMode();
+            }
+            // save
+            else {
+                _quitEditMode();
+                _socket.emit('updateEntryTitle', {
+                    id:     _listContainerEntryId,
+                    title:  _$listContainerLink.text(),
+                    slug:   _slug
+                });
+            }
+        },
 
-        // cancel editing on other entry if present
-        if (isEditing && editedID > 0 && id != editedID)
-          cancelOnEscape(false, true);
+        _deleteOrCancel = function() {
+            // delete
+            // TODO text via data-attribute?
+            if (_$listContainerDeleteIcon.hasClass('glyphicon-trash') && window.confirm('Wirklich löschen?')) {
+                _socket.emit('deleteEntry', {
+                    slug: _slug,
+                    id:   _listContainerEntryId
+                });
+            }
+            // cancel
+            else if (_$listContainerDeleteIcon.hasClass('glyphicon-remove')) {
+                _quitEditMode();
+                _$listContainerLink.text(_$listContainerLink.data('text-before'));
+            }
+        },
 
+        _renderAdminButtons = function() {
+            _$listContainer
+                .find('.entry-text')
+                .after(_buildAdminHtml());
+        },
 
-        // edit/save
-        if ($this.hasClass('btn-edit')) {
-          
-          // edit
-          if ($editIcon.hasClass('glyphicon-pencil')) {
-            enterEditMode();
+        _deliverAdminMarkupToWebpage = function() {
+            window.postMessage({
+                type:       'showmatorAdminResponseFromScript',
+                adminHtml:  _buildAdminHtml()
+            }, '*');
+        },
 
-          // save
-          } else {
-            quitEditMode();
-            socket.emit('updateEntryTitle', {
-              id:    id,
-              title: $link.text(),
-              slug:  slug
-            });
-          }
+        _addEventListeners = function() {
+            // Listen for request from web page.
+            window.addEventListener('message', _handleMessageEvent, false);
+        };
 
-        // delete/cancel
-        } else {
+    // Public
+    // ---------------------------------------------------------------------
 
-          // delete
-          // TODO text via data-attribute?
-          if ($deleteIcon.hasClass('glyphicon-trash') && window.confirm('Wirklich löschen?')) {
-            socket.emit('deleteEntry', {
-              slug: slug,
-              id:   id
-            });
+    module.init = function() {
+        _addEventListeners();
+    };
 
-          // cancel
-          } else if ($deleteIcon.hasClass('glyphicon-remove')) {
-            quitEditMode();
-            $link.text($link.data('text-before'));
-          }
-        }
+    return module;
+})();
 
-
-      // render admin buttons
-      }).find('.entry-text')
-      .after(adminHtml);
-
-
-      // deliver admin markup to webpage (so the page can add the buttons to
-      // incoming links)
-      window.postMessage({
-        type:      'showmatorAdminResponseFromScript',
-        adminHtml: adminHtml
-      }, '*');
-    });
-  }
-}, false);
+admin_btns.init();
