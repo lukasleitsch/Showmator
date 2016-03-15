@@ -1,6 +1,5 @@
 /*global io */
 /*global chrome */
-/*global console */
 
 // TODO error handling (no slug found, duplicated slug on #submit-slug)
 var Options = (function () {
@@ -10,8 +9,8 @@ var Options = (function () {
   // Vars
   // -------------------------------------------------------------------------
 
-  _baseUrl = 'http://localhost:63123',
-  _socket  = io.connect(_baseUrl),
+  _BASE_URL = 'http://localhost:63123',
+  _socket   = io.connect(_BASE_URL),
 
   _publicSlug,
 
@@ -30,7 +29,7 @@ var Options = (function () {
   _$delete,
 
 
-  _initVars = function() {
+  _cacheElements = function() {
     _$body       = $('body');
     _$slug       = $('#slug');
     _$submit     = $('#submit-slug');
@@ -45,6 +44,62 @@ var Options = (function () {
     _noTitleText = _$titleAlert.data('no-title');
   },
 
+
+
+  // Helpers
+  // ---------------------------------------------------------------------------
+
+
+  // helper for slug generation
+  _randomSlug = function() {
+    return Math.random().toString(36).substring(7);
+  },
+
+  _decode = function(text){
+    return $("<div/>").html(text).text();
+  },
+
+
+
+  // Actions
+  // -----------------------------------------------------------------------------
+  
+  // when receiving response from server: show corresponding form
+  _showActiveOrNewForm = function(data) {
+    var slug;
+
+    // if active: show extended form and replace title
+    if (data.active) {
+      _toggleForm(true);
+      _$title.val(_decode(data.title));
+      _$titleAlert.text(_decode(data.title) || _noTitleText);
+
+      slug                    = localStorage.slug;
+      _publicSlug              = data.publicSlug;
+      localStorage.publicSlug = _publicSlug;
+
+    // if new: generate slugs
+    } else {
+      _toggleForm(false);
+
+      slug       = _randomSlug();
+      _publicSlug = _randomSlug();
+
+      _$titleAlert.text(_noTitleText);
+      _$title.val(''); // clear title fild after create new shownotes
+    }
+
+    // enter slug into fields
+    _$slug.val(slug);
+    _$slugStatic.text(slug);
+    _lastTitle = _$title.val();
+
+    // update href attributes for external links
+    $('#html').prop('href', _BASE_URL + '/html/' + slug);
+    $('#live').prop('href', _BASE_URL + '/live/' + _publicSlug);
+  },
+
+
   // renders create new form or options form
   _toggleForm = function(hasShownotes) {
     var hasShownotesClass = 'has-active-shownotes',
@@ -53,6 +108,7 @@ var Options = (function () {
       .toggleClass(hasShownotesClass, hasShownotes)
       .toggleClass(noShownotesClass, !hasShownotes);
   },
+
 
   // read current shortcut and insert it as text
   _displayShortcut = function() {
@@ -71,121 +127,20 @@ var Options = (function () {
     });
   },
 
-  // bind events
-  _bindEvents = function() {
-    // submit new slug and show more options
-    _$submit.click(function() {
-      var slug    = $.trim(_$slug.val()).replace(/ /g,''),
-          showTooltip = function(text, allowHtml) {
-            _$slug.tooltip({
-              title:     text,
-              placement: 'bottom',
-              trigger:   'manual',
-              html:      !!allowHtml
-            }).tooltip('show')
-            .one('keyup', function() {
-              _$slug.tooltip('destroy');
-            });
-          };
-      
-      // if empty: tooltip
-      if (!slug) {
-        showTooltip(_$slug.data('empty'));
-      
-      // if invalid: tooltip
-      } else if (!/^[a-zA-Z0-9]+$/g.test(slug)) {
-        showTooltip(_$slug.data('invalid'), true);
 
-      // if valid: send event to server, save in localStorage and show active form
-      } else {
-        _socket.emit('createNewShownotes', {slug: slug, publicSlug: _publicSlug});
-        localStorage.slug = slug;
-        _$slugStatic.text(slug);
-        localStorage.publicSlug = _publicSlug;
-        _toggleForm(true);
-        // TODO no need for status requesting, just do things for 'active shownotes'
-        module.init();
-      }
-    });
-
-    // trigger submit on enter
-    _$slug.keyup(function(e) {
-      if (e.keyCode == 13){
-        _$submit.click();
-      }
-    });
-
-    // save title changes (only when nothing has changed after 1000ms)
-    _$title.keyup(function() {
-      var val = $(this).val();
-      if (val == _lastTitle){
-        return;
-      }
-      _lastTitle = val;
-      _$titleAlert.text(val || _noTitleText);
-      _initSavedTooltip(_$title, _saveTitleOnServer);
-    });
-
-    // shortcut link (non-http doesn't work with a-tags)
-    $('#link-to-shortcut-options').click(function(e) {
-      e.preventDefault();
-      chrome.tabs.create({url: 'chrome://extensions/configureCommands'});
-    });
-
-    // check for changed shortcut when window is activated
-    $(window).focus(_displayShortcut);
-
-
-    // save text-only changes
-    _$textOnly.change(function() {
-      var isChecked = $(this).is(':checked');
-      if (isChecked)
-        localStorage.showTextOnly = true;
-      else
-        localStorage.removeItem('showTextOnly');
-      _initSavedTooltip(_$textOnly, false, 200, 'top');
-    });
-
-
-    // save blacklist changes
-    _$blacklist.keyup(function() {
-      if (_$blacklist.val() == localStorage.blacklist)
-        return;
-      localStorage.blacklist = _$blacklist.val();
-      _initSavedTooltip(_$blacklist);
-    });
-
-
-    // 'create new' button triggers new shownotes' init
-    _$delete.click(function(e) {
-      e.preventDefault();
-
-      if (window.confirm(_$delete.data('confirm'))) {
-        localStorage.removeItem('slug');
-        localStorage.removeItem('publicSlug');
-        _toggleForm(false);
-        // TODO no need for status requesting, just do things for 'no active shownotes'
-        module.init();
-      }
-    });
-
-    $('#alert-link-create-new').click(function(e) {
-      e.preventDefault();
-      _$body.animate({scrollTop: _$body.outerHeight()});
-    });
+  // shortcut link (non-http doesn't work with a-tags)
+  _openShortcutDialog = function(e) {
+    e.preventDefault();
+    chrome.tabs.create({url: 'chrome://extensions/configureCommands'});
   },
 
-  // helper for slug generation
-  _randomSlug = function() {
-    return Math.random().toString(36).substring(7);
+
+  // scroll to delete link
+  _scrollToBottom = function(e) {
+    e.preventDefault();
+    _$body.animate({scrollTop: _$body.outerHeight()});
   },
 
-  // updates title on server
-  _saveTitleOnServer = function() {
-    _socket.emit('updateShownotesTitle', {
-      slug: localStorage.slug, title: _$title.val()
-    });
-  },
 
   // shows saved-tooltip and manages delays + validity checks
   _initSavedTooltip = function($el, callback, showDelay, placement) {
@@ -224,69 +179,155 @@ var Options = (function () {
     }, showDelay);
   },
 
-  _decode = function(text){
-    return $("<div/>").html(text).text();
+
+  // show tooltip for empty or invalid slug
+  _showTooltip = function(text, allowHtml) {
+    _$slug.tooltip({
+      title:     text,
+      placement: 'bottom',
+      trigger:   'manual',
+      html:      !!allowHtml
+    }).tooltip('show')
+    .one('keyup', function() {
+      _$slug.tooltip('destroy');
+    });
+  },
+
+
+  // submit new slug and show more options
+  _submitSlug = function() {
+    var slug = $.trim(_$slug.val()).replace(/ /g,'');
+    
+    // if empty: tooltip
+    if (!slug) {
+      _showTooltip(_$slug.data('empty'));
+    
+    // if invalid: tooltip
+    } else if (!/^[a-zA-Z0-9]+$/g.test(slug)) {
+      _showTooltip(_$slug.data('invalid'), true);
+
+    // if valid: send event to server, save in localStorage and show active form
+    } else {
+      _socket.emit('createNewShownotes', {slug: slug, publicSlug: _publicSlug});
+      localStorage.slug = slug;
+      _$slugStatic.text(slug);
+      localStorage.publicSlug = _publicSlug;
+      _toggleForm(true);
+      // TODO no need for status requesting, just do things for 'active shownotes'
+      module.init();
+    }
+  },
+
+
+  // trigger submit on enter
+  _triggerSubmitOnEnter = function(e) {
+    if (e.keyCode == 13){
+      _$submit.click();
+    }
+  },
+
+
+  // save title changes (only when nothing has changed after 1000ms)
+  _saveTitle = function() {
+    var val = $(this).val();
+    if (val == _lastTitle){
+      return;
+    }
+    _lastTitle = val;
+    _$titleAlert.text(val || _noTitleText);
+    _initSavedTooltip(_$title, _saveTitleOnServer);
+  },
+
+
+  // updates title on server
+  _saveTitleOnServer = function() {
+    _socket.emit('updateShownotesTitle', {
+      slug: localStorage.slug, title: _$title.val()
+    });
+  },
+
+
+  // save text-only changes
+  _saveTextOnlyChange = function() {
+    var isChecked = $(this).is(':checked');
+    if (isChecked)
+      localStorage.showTextOnly = true;
+    else
+      localStorage.removeItem('showTextOnly');
+    _initSavedTooltip(_$textOnly, false, 200, 'top');
+  },
+
+
+  // save blacklist changes
+  _saveBlacklistChanges = function() {
+    if (_$blacklist.val() == localStorage.blacklist)
+      return;
+    localStorage.blacklist = _$blacklist.val();
+    _initSavedTooltip(_$blacklist);
+  },
+
+
+  // 'create new' button triggers new shownotes' init
+  _deleteAndReInitShownotes = function(e) {
+    e.preventDefault();
+
+    if (window.confirm(_$delete.data('confirm'))) {
+      localStorage.removeItem('slug');
+      localStorage.removeItem('publicSlug');
+      _toggleForm(false);
+      // TODO no need for status requesting, just do things for 'no active shownotes'
+      module.init();
+    }
+  },
+
+
+
+  // Events
+  // ---------------------------------------------------------------------------
+
+  // bind events
+  _bindEvents = function() {
+    _$submit.click(_submitSlug);
+    _$slug.keyup(_triggerSubmitOnEnter);
+    _$title.keyup(_saveTitle);
+    $('#link-to-shortcut-options').click(_openShortcutDialog);
+    $(window).focus(_displayShortcut); // check for changed shortcut when window is activated
+    _$textOnly.change(_saveTextOnlyChange);
+    _$blacklist.keyup(_saveBlacklistChanges);
+    _$delete.click(_deleteAndReInitShownotes);
+    $('#alert-link-create-new').click(_scrollToBottom);
   };
+
+
 
   // Init
-  // -------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
 
   module.init = function() {
-    // checks active status + inserts data if available + inserts shortcut
-    $(function() {
-      _initVars();
-      // TODO only bind socket.on-Event once
-      _socket.emit('requestStatus', {slug: localStorage.slug});
-      _socket.on('respondToStatus', function(data) {
-        var slug;
+    _cacheElements();
 
-        // if active: show extended form and replace title
-        if (data.active) {
-          _toggleForm(true);
-          _$title.val(_decode(data.title));
-          _$titleAlert.text(_decode(data.title) || _noTitleText);
+    // TODO only bind socket.on-Event once
+    _socket.emit('requestStatus', {slug: localStorage.slug});
+    _socket.on('respondToStatus', _showActiveOrNewForm);
 
-          slug                    = localStorage.slug;
-          _publicSlug              = data.publicSlug;
-          localStorage.publicSlug = _publicSlug;
-
-        // if new: generate slugs
-        } else {
-          _toggleForm(false);
-
-          slug       = _randomSlug();
-          _publicSlug = _randomSlug();
-
-          _$titleAlert.text(_noTitleText);
-          _$title.val(''); // clear title fild after create new shownotes
-        }
-
-        // enter slug into fields
-        _$slug.val(slug);
-        _$slugStatic.text(slug);
-        _lastTitle = _$title.val();
-
-        // update href attributes for external links
-        $('#html').prop('href', _baseUrl + '/html/' + slug);
-        $('#live').prop('href', _baseUrl + '/live/' + _publicSlug);
-      });
-
-      // insert shortcut, text-only-state and blacklist
-      _displayShortcut();
-
-      _$textOnly.prop('checked', !!localStorage.showTextOnly);
-
-      if (typeof(localStorage.blacklist) != "undefined") {
-        _$blacklist.val(localStorage.blacklist);
-      }
-    
-      _bindEvents();
-    });
-
+    // insert shortcut, text-only-state and blacklist
+    _displayShortcut();
+    _$textOnly.prop('checked', !!localStorage.showTextOnly);
+    if (typeof(localStorage.blacklist) != "undefined") {
+      _$blacklist.val(localStorage.blacklist);
+    }
+  
+    _bindEvents();
   };
+
+
 
   return module;
 
 })();
 
-Options.init();
+
+
+$(function() {
+  Options.init();
+});
