@@ -17,7 +17,6 @@ var adminBtns = (function() {
     _$hint,
 
     _slug,
-    _response,
     _isEditing  = false,
     _editedID   = 0,
 
@@ -117,17 +116,16 @@ var adminBtns = (function() {
     },
 
     _callbackWithReceivedSlugAndExtensionShortcut = function(response) {
-      _response = response;
-      _setUpHint();
-      _slug = _response.slug;
+      _setUpHint(response.shortcut);
+      _slug = response.slug;
       _addListContainerButtonClickHandler();
       _renderAdminButtons();
       _deliverAdminMarkupToWebpage();
     },       
 
-    _setUpHint = function() {
+    _setUpHint = function(shortcut) {
       if (!localStorage.hideTextHint) {
-        _renderHintForAddingTextEntry(_response.shortcut);
+        _renderHintForAddingTextEntry(shortcut);
         _addHintClickListener();
       }
     },
