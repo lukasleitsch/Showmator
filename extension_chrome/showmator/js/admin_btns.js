@@ -39,7 +39,7 @@ var adminBtns = (function() {
     // ---------------------------------------------------------------------
 
     _handleMessageEvent = function(e) {
-      if (e.source == window && 
+      if (e.source === window && 
         e.data.type &&
         e.data.type === 'showmatorAdminRequestFromPage')
       {
@@ -69,7 +69,7 @@ var adminBtns = (function() {
       _setUpListContainerVars($this);
 
       // cancel editing on other entry if present
-      if (_isEditing && _editedID > 0 && _listContainerEntryId != _editedID) {
+      if (_isEditing && _editedID > 0 && _listContainerEntryId !== _editedID) {
         _cancelOnEscape(false, true);
       }
 
