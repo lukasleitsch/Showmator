@@ -383,6 +383,12 @@ var Server = (function (){
         }
       });
     });
+  },
+
+  _initRouteForServerStatus = function(app) {
+    app.get('/status', function(req, res) {
+        res.sendStatus(200);
+    });
   };
 
 
@@ -409,6 +415,7 @@ var Server = (function (){
     app.use(express.static('public')); // static files
     _initRouteForliveShownotes(app, db);
     _initRouteForHtmlExport(app, db);
+    _initRouteForServerStatus(app);
   };
 
 
