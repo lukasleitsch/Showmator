@@ -214,7 +214,7 @@ var Options = (function () {
       localStorage.publicSlug = _publicSlug;
       _toggleForm(true);
       // TODO no need for status requesting, just do things for 'active shownotes'
-      module.init();
+      _reinit();
     }
   },
 
@@ -276,10 +276,24 @@ var Options = (function () {
       localStorage.removeItem('publicSlug');
       _toggleForm(false);
       // TODO no need for status requesting, just do things for 'no active shownotes'
-      module.init();
+      _reinit();
     }
   },
 
+  // c
+  _reinit = function() {
+
+    // TODO only bind socket.on-Event once
+    _socket.emit('requestStatus', {slug: localStorage.slug});
+    _socket.on('respondToStatus', _showActiveOrNewForm);
+
+    // insert shortcut, text-only-state and blacklist
+    _displayShortcut();
+    _$textOnly.prop('checked', !!localStorage.showTextOnly);
+    if (typeof(localStorage.blacklist) != "undefined") {
+      _$blacklist.val(localStorage.blacklist);
+    }
+  },
 
 
   // Events
@@ -299,28 +313,14 @@ var Options = (function () {
   };
 
 
-
   // Init
   // ---------------------------------------------------------------------------
 
   module.init = function() {
     _cacheElements();
-
-    // TODO only bind socket.on-Event once
-    _socket.emit('requestStatus', {slug: localStorage.slug});
-    _socket.on('respondToStatus', _showActiveOrNewForm);
-
-    // insert shortcut, text-only-state and blacklist
-    _displayShortcut();
-    _$textOnly.prop('checked', !!localStorage.showTextOnly);
-    if (typeof(localStorage.blacklist) != "undefined") {
-      _$blacklist.val(localStorage.blacklist);
-    }
-  
+    _reinit();
     _bindEvents();
   };
-
-
 
   return module;
 
