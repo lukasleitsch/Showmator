@@ -52,7 +52,7 @@ var Options = (function () {
 
   // helper for slug generation
   _randomSlug = function() {
-    return Math.random().toString(36).substring(7);
+    return Math.random().toString(36).substring(2,12);
   },
 
   _decode = function(text){
