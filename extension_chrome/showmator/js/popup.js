@@ -208,7 +208,7 @@ var PopUp = (function() {
 
       // link is on the blacklist and the option text entry in popup is activ
       } else if (_blacklist && localStorage.showTextOnly){
-        _$body.addClass(_TEXT_ONLY, _TEXT_ONLY_BLACKLIST);
+        _$body.addClass(_TEXT_ONLY).addClass(_TEXT_ONLY_BLACKLIST);
       
       // fill input with title and prevent saving if on blacklist
       } else {
