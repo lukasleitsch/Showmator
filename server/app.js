@@ -41,8 +41,8 @@ var Server = (function (){
   },
 
 
-  _formattedDate = function() {
-    var now = new Date(),
+  _formattedDate = function(date) {
+    var now = (date) ? new Date(date) : new Date(),
         padZero = function(num) {
           return num < 10 ? "0" + num : num;
         };
@@ -126,6 +126,14 @@ var Server = (function (){
     });
   },
 
+  // diff between now and a time
+  _TimeAgo = function(time) {
+    var timeBetween = new Date().getTime() - time;
+    var diffDays = Math.round(timeBetween / 86400000); // days
+    var diffHrs = Math.round((timeBetween % 86400000) / 3600000); // hours
+    var diffMins = Math.round(((timeBetween % 86400000) % 3600000) / 60000); // minutes
+    return diffDays + ' Tag(e) ' + diffHrs + ' Stunde(n) ' + diffMins + ' Minute(n)';
+  },
 
 
   // Client Actions
@@ -385,9 +393,15 @@ var Server = (function (){
     });
   },
 
-  _initRouteForServerStatus = function(app) {
+  _initRouteForServerStatus = function(app, db) {
     app.get('/status', function(req, res) {
-        res.sendStatus(200);
+      var result = {lastShownotes : []};
+
+      db.each('SELECT time, publicSlug FROM meta, data WHERE meta.slug = data.slug ORDER BY time DESC LIMIT 3', function(err, row) {
+          result.lastShownotes.push({'time' : _formattedDate(row.time), 'ago' : _TimeAgo(row.time), 'publicSlug' : row.publicSlug});
+        }, function() {
+          res.send('<pre>' + JSON.stringify(result, null, 2) + '</pre>');
+      });
     });
   };
 
@@ -415,7 +429,7 @@ var Server = (function (){
     app.use(express.static('public')); // static files
     _initRouteForliveShownotes(app, db);
     _initRouteForHtmlExport(app, db);
-    _initRouteForServerStatus(app);
+    _initRouteForServerStatus(app, db);
   };
 
 
