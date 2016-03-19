@@ -21,27 +21,27 @@ var PopUp = (function() {
       // Custom classes
       // ---------------------------------------------------------------------
     
-      _BLACKLIST            = 'on-blacklist',
-      _DELETE               = 'on-delete',
-      _DUPLICATE            = 'on-duplicate',
-      _EMPTY_SLUG           = 'on-empty-slug',
-      _LOADING              = 'on-loading',
-      _SUCCESS_LINK         = 'on-success-link',
-      _SUCCESS_TEXT         = 'on-success-text',
-      _TEXT_ONLY            = 'on-text-only',
-      _TEXT_ONLY_ALLOWED    = 'on-text-only-allowed',
-      _TEXT_ONLY_BLACKLIST  = 'on-text-only-blacklist',
+      _CLASS_BLACKLIST            = 'on-blacklist',
+      _CLASS_DELETE               = 'on-delete',
+      _CLASS_DUPLICATE            = 'on-duplicate',
+      _CLASS_EMPTY_SLUG           = 'on-empty-slug',
+      _CLASS_LOADING              = 'on-loading',
+      _CLASS_SUCCESS_LINK         = 'on-success-link',
+      _CLASS_SUCCESS_TEXT         = 'on-success-text',
+      _CLASS_TEXT_ONLY            = 'on-text-only',
+      _CLASS_TEXT_ONLY_ALLOWED    = 'on-text-only-allowed',
+      _CLASS_TEXT_ONLY_BLACKLIST  = 'on-text-only-blacklist',
     
 
-      // Cusomt events
+      // Custom events
       // ---------------------------------------------------------------------
     
-      _ADD_LINK             = 'addLink',
-      _ADD_LINK_SUCCESS     = 'addLinkSuccess',
-      _DELETE_ENTRY         = 'deleteEntry',
-      _DELETE_ENTRY_SUCCESS = 'deleteEntrySuccess',
-      _FIND_DUPLICATE       = 'findDuplicate',
-      _OPEN_POPUP           = 'openPopup',
+      _EVENT_ADD_LINK             = 'addLink',
+      _EVENT_ADD_LINK_SUCCESS     = 'addLinkSuccess',
+      _EVENT_DELETE_ENTRY         = 'deleteEntry',
+      _EVENT_DELETE_ENTRY_SUCCESS = 'deleteEntrySuccess',
+      _EVENT_FIND_DUPLICATE       = 'findDuplicate',
+      _EVENT_OPEN_POPUP           = 'openPopup',
 
 
     // Variables
@@ -69,7 +69,7 @@ var PopUp = (function() {
 
     _completeAndClose = function(statusClass) {
       _$body
-        .removeClass(_LOADING)
+        .removeClass(_CLASS_LOADING)
         .addClass(statusClass);
       setTimeout(_closeWindow, 2000);
     },
@@ -80,7 +80,7 @@ var PopUp = (function() {
 
     _handleSaveClick = function() {
       _$save.blur();
-      if (!_$body.hasClass(_DUPLICATE) && !_$body.hasClass(_BLACKLIST)) {
+      if (!_$body.hasClass(_CLASS_DUPLICATE) && !_$body.hasClass(_CLASS_BLACKLIST)) {
         _addLink();
       }
     },
@@ -91,10 +91,10 @@ var PopUp = (function() {
 
     _handleDeleteClick = function() {
       _$body
-        .removeClass(_DUPLICATE)
-        .addClass(_LOADING);
+        .removeClass(_CLASS_DUPLICATE)
+        .addClass(_CLASS_LOADING);
 
-      _socket.emit(_DELETE_ENTRY, {
+      _socket.emit(_EVENT_DELETE_ENTRY, {
         slug:       localStorage.slug,
         publicSlug: localStorage.publicSlug,
         id:         _$delete.data('id')
@@ -109,32 +109,32 @@ var PopUp = (function() {
       } else if (!_isText && e.keyCode === _ENTER && e.metaKey) {
         _$save.click();
       } else if (e.keyCode === _ESCAPE) {
-        window.close();
+        _closeWindow();
       }
     },
 
     _handleTextOnlyChange = function() {
       // on text-only change: switch body class and transfer value to new field
       _isText = $(this).is(':checked');
-      _$body.toggleClass(_TEXT_ONLY, _isText);
+      _$body.toggleClass(_CLASS_TEXT_ONLY, _isText);
       _transferValue();
     },
 
     _handleFindDuplicate = function(data) {
       _$body
-        .removeClass(_LOADING)
-        .addClass(_DUPLICATE);
+        .removeClass(_CLASS_LOADING)
+        .addClass(_CLASS_DUPLICATE);
 
       _$delete.data('id', data.id);
     },
 
     _handleAddLinkSuccess = function() {
-      _completeAndClose(!_isText ? _SUCCESS_LINK : _SUCCESS_TEXT);
+      _completeAndClose(!_isText ? _CLASS_SUCCESS_LINK : _CLASS_SUCCESS_TEXT);
     },
 
     _handleDeleteEntrySuccess = function(data) {
       if (data.id === _$delete.data('id')) {
-        _completeAndClose(_DELETE);
+        _completeAndClose(_CLASS_DELETE);
       }
     },
 
@@ -156,8 +156,8 @@ var PopUp = (function() {
         return;
       }
 
-      _$body.addClass(_LOADING);
-      _socket.emit(_ADD_LINK, {
+      _$body.addClass(_CLASS_LOADING);
+      _socket.emit(_EVENT_ADD_LINK, {
         slug:   localStorage.slug,
         title:  val,
         url:    _isText ? false : _url,
@@ -172,7 +172,7 @@ var PopUp = (function() {
     },
 
     _saveChanges = function() {
-      if (_$body.hasClass(_DUPLICATE)) {
+      if (_$body.hasClass(_CLASS_DUPLICATE)) {
         _$delete.click();
       } else {
         _$save.click();
@@ -186,7 +186,7 @@ var PopUp = (function() {
     },
 
     _showWarning = function() {
-      _$body.addClass(_EMPTY_SLUG);
+      _$body.addClass(_CLASS_EMPTY_SLUG);
       $('#link-options').prop('href', chrome.extension.getURL('options.html'));
     },
 
@@ -203,12 +203,12 @@ var PopUp = (function() {
 
       // on live-shownotes make changes for text-only entry
       if (_url.split('/')[4] === localStorage.publicSlug) {
-        _$body.addClass(_TEXT_ONLY);
+        _$body.addClass(_CLASS_TEXT_ONLY);
         _isText = true;
 
       // link is on the blacklist and the option text entry in popup is activ
       } else if (_blacklist && localStorage.showTextOnly){
-        _$body.addClass(_TEXT_ONLY + ' ' +_TEXT_ONLY_BLACKLIST);
+        _$body.addClass(_CLASS_TEXT_ONLY + ' ' + _CLASS_TEXT_ONLY_BLACKLIST);
       
       // fill input with title and prevent saving if on blacklist
       } else {
@@ -216,22 +216,17 @@ var PopUp = (function() {
 
         //show blacklist overlay
         if(_blacklist && !localStorage.showTextOnly)
-          _$body.addClass(_BLACKLIST);    
+          _$body.addClass(_CLASS_BLACKLIST);    
 
         // show text-only checkbox
         if (!_isText && localStorage.showTextOnly) {
-          _$body.addClass(_TEXT_ONLY_ALLOWED);
+          _$body.addClass(_CLASS_TEXT_ONLY_ALLOWED);
         }
       }
 
       _blacklist = false;
 
-      // checks for duplicate
-      _socket.emit(_OPEN_POPUP, {
-        slug:   localStorage.slug,
-        url:    _url,
-        isText: _isText ? 1 : 0
-      });
+      _checkForDuplicates();
     },
 
     _checkAgainstBlacklist = function(entry) {
@@ -239,6 +234,14 @@ var PopUp = (function() {
         _blacklist = true;
         return true;
       }
+    },
+
+    _checkForDuplicates = function() {
+      _socket.emit(_EVENT_OPEN_POPUP, {
+        slug:   localStorage.slug,
+        url:    _url,
+        isText: _isText ? 1 : 0
+      });
     },
 
 
@@ -272,11 +275,11 @@ var PopUp = (function() {
 
     _bindSocketEvents = function() {
       // prevent duplication
-      _socket.on(_FIND_DUPLICATE, _handleFindDuplicate);
+      _socket.on(_EVENT_FIND_DUPLICATE, _handleFindDuplicate);
 
       // show success message and close window
-      _socket.on(_ADD_LINK_SUCCESS, _handleAddLinkSuccess);
-      _socket.on(_DELETE_ENTRY_SUCCESS, _handleDeleteEntrySuccess);
+      _socket.on(_EVENT_ADD_LINK_SUCCESS, _handleAddLinkSuccess);
+      _socket.on(_EVENT_DELETE_ENTRY_SUCCESS, _handleDeleteEntrySuccess);
     };
 
 
