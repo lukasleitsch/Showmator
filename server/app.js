@@ -360,17 +360,13 @@ var Server = (function (){
     app.get('/live/:publicSlug', function(req, res) {
       var publicSlug = req.params.publicSlug;
       
-      db.get('SELECT slug, title FROM meta WHERE publicSlug = ?', publicSlug, function(err, row1) {
-        if (row1) {
-          db.all('SELECT * FROM data WHERE slug = ? ORDER BY time DESC', row1.slug, function(err, rows) {
-            console.log(rows);
+      db.all('SELECT publicSlug, id, meta.title AS shownotes_title, data.title, url, time, isText FROM meta, data WHERE meta.slug = data.slug AND publicSlug = ? ORDER BY time DESC', publicSlug, function(err, rows) {
+        if (rows) {
             res.render('live.ejs', {
               items: rows,
-              publicSlug: publicSlug,
-              title: row1.title
+              publicSlug: rows.publicSlug,
+              title: rows[0].shownotes_title
             });
-          });
-
         } else {
           _render404(res);
         }
@@ -384,18 +380,15 @@ var Server = (function (){
     app.get('/html/:slug', function(req, res) {
       var slug = req.params.slug;
       
-      db.get('SELECT startTime, offset, title FROM meta WHERE slug = ?', slug, function(err1, row1) {
-        if (row1) {
-          db.all('SELECT * FROM data WHERE slug = ? ORDER BY time', slug, function(err2, rows) {
+      db.all('SELECT startTime, offset, meta.title AS shownotes_title, time, url, data.title, isText FROM meta, data WHERE meta.slug = data.slug AND meta.slug = ?', slug, function(err, rows) {
+        if (rows) {
             res.render('html.ejs', {
               items:  rows,
-              start:  row1.startTime,
+              start:  rows[0].startTime,
               slug:   slug,
-              offset: row1.offset,
-              title:  row1.title
+              offset: rows[0].offset,
+              title:  rows[0].shownotes_title
             });
-          });
-
         } else {
           _render404(res);
         }

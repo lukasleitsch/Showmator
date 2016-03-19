@@ -1676,17 +1676,6 @@
 		"shouldRunBless": 0,
 		"useLibsass": 1
 		},
-	"\/server\/app.js": {
-		"fileType": 64,
-		"ignore": 1,
-		"ignoreWasSetByUser": 1,
-		"inputAbbreviatedPath": "\/server\/app.js",
-		"outputAbbreviatedPath": "\/server\/app.min.js",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
-		"outputStyle": 0,
-		"syntaxCheckerStyle": 1
-		},
 	"\/server\/node_modules\/accepts\/HISTORY.md": {
 		"criticStyle": 0,
 		"enableFootnotes": 0,
