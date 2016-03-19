@@ -128,11 +128,21 @@ var Server = (function (){
 
   // diff between now and a time
   _TimeAgo = function(time) {
-    var timeBetween = new Date().getTime() - time;
-    var diffDays = Math.round(timeBetween / 86400000); // days
-    var diffHrs = Math.round((timeBetween % 86400000) / 3600000); // hours
-    var diffMins = Math.round(((timeBetween % 86400000) % 3600000) / 60000); // minutes
-    return diffDays + ' Tag(e) ' + diffHrs + ' Stunde(n) ' + diffMins + ' Minute(n)';
+    var timeBetween = new Date().getTime() - time,
+        diffDays = Math.round(timeBetween / 86400000), // days
+        diffHrs = Math.round((timeBetween % 86400000) / 3600000), // hours
+        diffMins = Math.round(((timeBetween % 86400000) % 3600000) / 60000), // minutes
+        result = '';
+
+    if (diffDays > 0) {
+      result += diffDays + ' Tag(e) ';
+    }
+
+    if (diffMins > 0) {
+      result += diffHrs + ' Stunde(n) ';
+    }
+
+    return result + diffMins + ' Minute(n)';
   },
 
 
