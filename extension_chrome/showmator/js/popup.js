@@ -225,6 +225,13 @@ var PopUp = (function() {
       }
 
       _blacklist = false;
+
+      // checks for duplicate
+      _socket.emit(_OPEN_POPUP, {
+        slug:   localStorage.slug,
+        url:    _url,
+        isText: _isText ? 1 : 0
+      });
     },
 
     _checkAgainstBlacklist = function(entry) {
@@ -260,13 +267,6 @@ var PopUp = (function() {
         _showWarning();
       } else {
         chrome.tabs.getSelected(null, _getTabData);
-
-        // checks for duplicate
-        _socket.emit(_OPEN_POPUP, {
-          slug:   localStorage.slug,
-          url:    _url,
-          isText: _isText ? 1 : 0
-        });
       }
     },
 
