@@ -29,6 +29,7 @@ var Server = (function () {
     // Create tables if not present
     var adapter = require('sqlite3').verbose(),
         db      = new adapter.Database(_FILE);
+
     db.serialize(function() {
       db.run('CREATE TABLE IF NOT EXISTS meta (slug TEXT PRIMARY KEY NOT NULL, startTime INTEGER, offset INTEGER, publicSlug TEXT, title TEXT)');
       db.run('CREATE TABLE IF NOT EXISTS data (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, title TEXT, url TEXT, time INTEGER, isText INTEGER, FOREIGN KEY (slug) REFERENCES meta(slug))');
@@ -51,6 +52,7 @@ var Server = (function () {
   module.init = function() {
     var db = _setupDB(),
         io = require('./router').init(db).getSocket();
+
     _createUserOnConnection(io, db);
   };
 
