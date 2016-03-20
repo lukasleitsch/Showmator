@@ -20829,6 +20829,17 @@
 		"outputStyle": 1,
 		"syntaxCheckerStyle": 1
 		},
+	"\/server\/router.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 1,
+		"inputAbbreviatedPath": "\/server\/router.js",
+		"outputAbbreviatedPath": "\/server\/router.min.js",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
+		},
 	"\/server\/smclient.js": {
 		"fileType": 64,
 		"ignore": 1,
@@ -20846,17 +20857,6 @@
 		"ignoreWasSetByUser": 1,
 		"inputAbbreviatedPath": "\/server\/smdb.js",
 		"outputAbbreviatedPath": "\/server\/smdb.min.js",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
-		"outputStyle": 1,
-		"syntaxCheckerStyle": 1
-		},
-	"\/server\/smrouter.js": {
-		"fileType": 64,
-		"ignore": 1,
-		"ignoreWasSetByUser": 1,
-		"inputAbbreviatedPath": "\/server\/smrouter.js",
-		"outputAbbreviatedPath": "\/server\/smrouter.min.js",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1,

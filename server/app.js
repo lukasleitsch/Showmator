@@ -27,13 +27,6 @@ var Server = (function () {
   },
 
 
-  _render404 = function(res) {
-    res.writeHead(404);
-    res.write("Diese Shownotes existieren nicht.");
-    res.end();
-  },
-
-
   _emitError = function(client, err) {
     _util.log("genericError", err);
     client.emit("genericError");
@@ -313,69 +306,6 @@ var Server = (function () {
   // Client disconnected
   _disconnect = function(client) {
     _util.log('disconnect', client.isPopup ? 'no slug (popup)' : client.publicSlug);
-  },
-
-
-
-  // Routes
-  // -----------------------------------------------------------------------------
-
-  // Live shownotes site
-  _initRouteForliveShownotes = function(app, db) {
-    app.get('/live/:publicSlug', function(req, res) {
-      var publicSlug = req.params.publicSlug;
-      
-      db.all('SELECT publicSlug, id, meta.title AS shownotesTitle, data.title, url, time, isText FROM meta, data WHERE meta.slug = data.slug AND publicSlug = ? ORDER BY time DESC', publicSlug, function(err, rows) {
-        if (rows) {
-          res.render('live.ejs', {
-            items:      rows,
-            publicSlug: rows[0].publicSlug,
-            title:      rows[0].shownotesTitle
-          });
-        } else {
-          _render404(res);
-        }
-      });
-    });
-  },
-
-
-  // HTML export site
-  _initRouteForHtmlExport = function(app, db) {
-    app.get('/html/:slug', function(req, res) {
-      var slug = req.params.slug;
-      
-      db.all('SELECT startTime, offset, meta.title AS shownotesTitle, time, url, data.title, isText FROM meta, data WHERE meta.slug = data.slug AND meta.slug = ?', slug, function(err, rows) {
-        if (rows) {
-          res.render('html.ejs', {
-            items:  rows,
-            start:  rows[0].startTime,
-            slug:   slug,
-            offset: rows[0].offset,
-            title:  rows[0].shownotesTitle
-          });
-        } else {
-          _render404(res);
-        }
-      });
-    });
-  },
-
-  // route for checking last added shownotes
-  _initRouteForServerStatus = function(app, db) {
-    app.get('/status', function(req, res) {
-      var result = {lastShownotes : []};
-
-      db.each('SELECT time, publicSlug FROM meta, data WHERE meta.slug = data.slug ORDER BY time DESC LIMIT 3', function(err, row) {
-          result.lastShownotes.push({
-            time:       _util.formattedDate(row.time),
-            ago:        _util.timeAgo(row.time),
-            publicSlug: row.publicSlug
-          });
-        }, function() {
-          res.send('<pre>' + JSON.stringify(result, null, 2) + '</pre>');
-      });
-    });
   };
 
 
@@ -384,26 +314,14 @@ var Server = (function () {
   // -------------------------------------------------------------------------
 
   module.init = function() {
-    var express = require('express'),
-        app     = express(),
-        server  = require('http').createServer(app),
-        io      = require('socket.io').listen(server, {log: false});
-
     _sqlite3    = require('sqlite3').verbose();
     _sanitizer  = require('sanitizer');
     _util       = require('util');
 
-    var db = _setupDB();
-    
-    server.listen(63123);
+    var db = _setupDB(),
+        io = require('./router').init(db).getSocket();
 
     _registerListeners(io, db);
-
-    // routes
-    app.use(express.static('public')); // static files
-    _initRouteForliveShownotes(app, db);
-    _initRouteForHtmlExport(app, db);
-    _initRouteForServerStatus(app, db);
   };
 
 
