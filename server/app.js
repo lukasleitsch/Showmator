@@ -3,7 +3,7 @@
 
 // TODO FOREIGN KEY constraint failed: Insert entry without create shownotes
 
-var Server = (function (){
+var Server = (function () {
 
   var module = {},
 
@@ -13,6 +13,7 @@ var Server = (function (){
 
   _sqlite3,
   _sanitizer,
+  _util,
 
   _FILE = 'data.db',
 
@@ -33,35 +34,14 @@ var Server = (function (){
   },
 
 
-  _log = function() {
-    var args = [_formattedDate()/*, client.id*/];
-    for (var key in arguments) {
-      args.push(arguments[key]);
-    }
-    console.log.apply(undefined, args);
-  },
-
-
-  _formattedDate = function(date) {
-    var now = (date) ? new Date(date) : new Date(),
-        padZero = function(num) {
-          return num < 10 ? "0" + num : num;
-        };
-    return padZero(now.getDate()) + '.' +
-           padZero(now.getMonth() + 1) + '.' +
-           now.getUTCFullYear() + ' - ' +
-           now.toLocaleTimeString();
-  },
-
-
   _emitError = function(client, err) {
-    _log("genericError", err);
+    _util.log("genericError", err);
     client.emit("genericError");
   },
 
 
   _emitDuplicate = function(client, data, row) {
-    _log('findDuplicate', data, row);
+    _util.log('findDuplicate', data, row);
     client.emit('findDuplicate', {id: row.id});
   },
 
@@ -88,7 +68,7 @@ var Server = (function (){
 
   _registerListeners = function(io, db) {
     io.on('connection', function(client) { 
-      _log(client.id, 'connected');
+      _util.log(client.id, 'connected');
       // var db = _openDB();
 
       client.on('connectToLiveShownotes', function(publicSlug) {
@@ -127,32 +107,13 @@ var Server = (function (){
     });
   },
 
-  // diff between now and a time
-  _timeAgo = function(time) {
-    var timeBetween = new Date().getTime() - time,
-        diffDays    = Math.round(timeBetween / 86400000), // days
-        diffHrs     = Math.round((timeBetween % 86400000) / 3600000), // hours
-        diffMins    = Math.round(((timeBetween % 86400000) % 3600000) / 60000), // minutes
-        result      = '';
-
-    if (diffDays > 0) {
-      result += diffDays + ' Tag(e) ';
-    }
-
-    if (diffMins > 0) {
-      result += diffHrs + ' Stunde(n) ';
-    }
-
-    return result + diffMins + ' Minute(n)';
-  },
-
 
   // Client Actions
   // -----------------------------------------------------------------------------
   
   // Make clients join their rooms
   _connectToLiveShownotes = function (client, publicSlug) {
-    _log('connectToLiveShownotes', publicSlug);
+    _util.log('connectToLiveShownotes', publicSlug);
     client.publicSlug = publicSlug;
     client.join(publicSlug);
   },
@@ -160,7 +121,7 @@ var Server = (function (){
 
   // Check status of shownotes
   _requestStatus = function(client, db, data) {
-    _log('requestStatus', data);
+    _util.log('requestStatus', data);
 
     db.get('SELECT * FROM meta WHERE slug = ?', data.slug, function(err, row) {
       if (err) {
@@ -180,34 +141,34 @@ var Server = (function (){
 
       client.emit('respondToStatus', data);
       
-      _log('respondToStatus', row ? client.publicSlug : 'no rows (=no slug yet)', row);
+      _util.log('respondToStatus', row ? client.publicSlug : 'no rows (=no slug yet)', row);
     });
   },
 
 
   // Connecting to HTML-Export
   _connectToHtmlExport = function(client, slug) {
-    _log('connectToHtmlExport', slug);
+    _util.log('connectToHtmlExport', slug);
     client.join(slug); // currently only used for updateShownotesTitle
   },
 
 
   // Create new shownotes
   _createNewShownotes = function(client, db, data) {
-    _log('createNewShownotes', data);
+    _util.log('createNewShownotes', data);
 
     db.run('INSERT INTO meta (slug, publicSlug) VALUES (? , ?)', 
       [_sanitizer.escape(data.slug), 
       _sanitizer.escape(data.publicSlug)], function(/*err, result*/) {
       client.publicSlug = data.publicSlug;
-      _log('createdNewShownotes');
+      _util.log('createdNewShownotes');
     });
   },
 
 
   // Add new entry
   _addLink = function(client, db, data) {
-    _log('addLink', data);
+    _util.log('addLink', data);
     
     var time = new Date().getTime();
 
@@ -240,7 +201,7 @@ var Server = (function (){
             _emitError(client, err);
           
           } else {
-            _log('addLinkSucces');
+            _util.log('addLinkSucces');
             client.broadcast.to(row.publicSlug).emit('push', {
               id:     this.lastID,
               title:  _sanitizer.escape(data.title),
@@ -258,7 +219,7 @@ var Server = (function (){
 
   // Update the entry title
   _updateEntryTitle = function(client, db, data) {
-    _log('updateEntryTitle', data);
+    _util.log('updateEntryTitle', data);
 
     db.run('UPDATE data SET title = ? WHERE id = ? AND slug = ?', 
       [_sanitizer.escape(data.title), 
@@ -276,7 +237,7 @@ var Server = (function (){
 
   // Check for duplicates when popup opens
   _openPopup = function(client, db, data) {
-    _log('openPopup');
+    _util.log('openPopup');
     
     client.isPopup = true;
 
@@ -293,7 +254,7 @@ var Server = (function (){
 
   // Set title of shownotes
   _updateShownotesTitle = function(client, db, data) {
-    _log('updateShownotesTitle', data);
+    _util.log('updateShownotesTitle', data);
     
     db.run('UPDATE meta SET title = ? WHERE slug = ? AND publicSlug = ?', 
       [_sanitizer.escape(data.title), 
@@ -313,14 +274,14 @@ var Server = (function (){
 
   // Set time offset
   _updateOffset = function(client, db, data) {
-    _log('updateOffset', data.offset);
+    _util.log('updateOffset', data.offset);
     db.run('UPDATE meta SET offset = ? WHERE slug = ?', [parseInt(data.offset), _sanitizer.escape(data.slug)]);
   },
 
 
   // Delete entry
   _deleteEntry = function(client, db, io, data) {
-    _log('deleteEntry', data);
+    _util.log('deleteEntry', data);
     
     db.run('DELETE FROM data WHERE id = ? AND slug = ?', 
       [parseInt(data.id), _sanitizer.escape(data.slug)], function(/*err, result*/) {
@@ -330,7 +291,7 @@ var Server = (function (){
           if (client.isPopup) {
             client.emit('deleteEntrySuccess', {id: data.id});
           }
-          _log('deleteEntrySuccess', data);
+          _util.log('deleteEntrySuccess', data);
         };
 
         if (data.publicSlug) {
@@ -343,7 +304,7 @@ var Server = (function (){
         }
 
       } else {
-        _log('no entries found for deleteEntry', data);
+        _util.log('no entries found for deleteEntry', data);
       }
     });
   },
@@ -351,7 +312,7 @@ var Server = (function (){
 
   // Client disconnected
   _disconnect = function(client) {
-    _log('disconnect', client.isPopup ? 'no slug (popup)' : client.publicSlug);
+    _util.log('disconnect', client.isPopup ? 'no slug (popup)' : client.publicSlug);
   },
 
 
@@ -407,8 +368,8 @@ var Server = (function (){
 
       db.each('SELECT time, publicSlug FROM meta, data WHERE meta.slug = data.slug ORDER BY time DESC LIMIT 3', function(err, row) {
           result.lastShownotes.push({
-            time:       _formattedDate(row.time),
-            ago:        _timeAgo(row.time),
+            time:       _util.formattedDate(row.time),
+            ago:        _util.timeAgo(row.time),
             publicSlug: row.publicSlug
           });
         }, function() {
@@ -428,8 +389,9 @@ var Server = (function (){
         server  = require('http').createServer(app),
         io      = require('socket.io').listen(server, {log: false});
 
-    _sqlite3    = require("sqlite3").verbose();
+    _sqlite3    = require('sqlite3').verbose();
     _sanitizer  = require('sanitizer');
+    _util       = require('util');
 
     var db = _setupDB();
     
