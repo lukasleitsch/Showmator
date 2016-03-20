@@ -1,6 +1,3 @@
-/*global console */
-/*global require */
-
 // TODO FOREIGN KEY constraint failed: Insert entry without create shownotes
 
 var Server = (function () {
