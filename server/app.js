@@ -127,12 +127,12 @@ var Server = (function (){
   },
 
   // diff between now and a time
-  _TimeAgo = function(time) {
+  _timeAgo = function(time) {
     var timeBetween = new Date().getTime() - time,
-        diffDays = Math.round(timeBetween / 86400000), // days
-        diffHrs = Math.round((timeBetween % 86400000) / 3600000), // hours
-        diffMins = Math.round(((timeBetween % 86400000) % 3600000) / 60000), // minutes
-        result = '';
+        diffDays    = Math.round(timeBetween / 86400000), // days
+        diffHrs     = Math.round((timeBetween % 86400000) / 3600000), // hours
+        diffMins    = Math.round(((timeBetween % 86400000) % 3600000) / 60000), // minutes
+        result      = '';
 
     if (diffDays > 0) {
       result += diffDays + ' Tag(e) ';
@@ -362,11 +362,11 @@ var Server = (function (){
       
       db.all('SELECT publicSlug, id, meta.title AS shownotes_title, data.title, url, time, isText FROM meta, data WHERE meta.slug = data.slug AND publicSlug = ? ORDER BY time DESC', publicSlug, function(err, rows) {
         if (rows) {
-            res.render('live.ejs', {
-              items: rows,
-              publicSlug: rows.publicSlug,
-              title: rows[0].shownotes_title
-            });
+          res.render('live.ejs', {
+            items:      rows,
+            publicSlug: rows.publicSlug,
+            title:      rows[0].shownotes_title
+          });
         } else {
           _render404(res);
         }
@@ -382,13 +382,13 @@ var Server = (function (){
       
       db.all('SELECT startTime, offset, meta.title AS shownotes_title, time, url, data.title, isText FROM meta, data WHERE meta.slug = data.slug AND meta.slug = ?', slug, function(err, rows) {
         if (rows) {
-            res.render('html.ejs', {
-              items:  rows,
-              start:  rows[0].startTime,
-              slug:   slug,
-              offset: rows[0].offset,
-              title:  rows[0].shownotes_title
-            });
+          res.render('html.ejs', {
+            items:  rows,
+            start:  rows[0].startTime,
+            slug:   slug,
+            offset: rows[0].offset,
+            title:  rows[0].shownotes_title
+          });
         } else {
           _render404(res);
         }
@@ -396,12 +396,17 @@ var Server = (function (){
     });
   },
 
+  // route for checking last added shownotes
   _initRouteForServerStatus = function(app, db) {
     app.get('/status', function(req, res) {
       var result = {lastShownotes : []};
 
       db.each('SELECT time, publicSlug FROM meta, data WHERE meta.slug = data.slug ORDER BY time DESC LIMIT 3', function(err, row) {
-          result.lastShownotes.push({'time' : _formattedDate(row.time), 'ago' : _TimeAgo(row.time), 'publicSlug' : row.publicSlug});
+          result.lastShownotes.push({
+            time:       _formattedDate(row.time),
+            ago:        _timeAgo(row.time),
+            publicSlug: row.publicSlug
+          });
         }, function() {
           res.send('<pre>' + JSON.stringify(result, null, 2) + '</pre>');
       });
