@@ -35,14 +35,15 @@ var Server = (function (){
 
   _log = function() {
     var args = [_formattedDate()/*, client.id*/];
-    for (var key in arguments)
+    for (var key in arguments) {
       args.push(arguments[key]);
+    }
     console.log.apply(undefined, args);
   },
 
 
   _formattedDate = function(date) {
-    var now = (date) ? new Date(date) : new Date(),
+    var now = (date) ? new Date(date) : new Date(),
         padZero = function(num) {
           return num < 10 ? "0" + num : num;
         };
@@ -264,7 +265,10 @@ var Server = (function (){
       parseInt(data.id), 
       _sanitizer.escape(data.slug)], function(/*err, row*/) {
       db.get('SELECT publicSlug FROM meta WHERE slug = ?', data.slug, function(err, row) {
-        client.broadcast.to(row.publicSlug).emit('updateEntryTitleSuccess', {title: _sanitizer.escape(data.title), id: data.id});
+        client.broadcast.to(row.publicSlug).emit('updateEntryTitleSuccess', {
+          title: _sanitizer.escape(data.title),
+          id:    data.id
+        });
       });
     });
   },
@@ -360,12 +364,12 @@ var Server = (function (){
     app.get('/live/:publicSlug', function(req, res) {
       var publicSlug = req.params.publicSlug;
       
-      db.all('SELECT publicSlug, id, meta.title AS shownotes_title, data.title, url, time, isText FROM meta, data WHERE meta.slug = data.slug AND publicSlug = ? ORDER BY time DESC', publicSlug, function(err, rows) {
+      db.all('SELECT publicSlug, id, meta.title AS shownotesTitle, data.title, url, time, isText FROM meta, data WHERE meta.slug = data.slug AND publicSlug = ? ORDER BY time DESC', publicSlug, function(err, rows) {
         if (rows) {
           res.render('live.ejs', {
             items:      rows,
             publicSlug: rows[0].publicSlug,
-            title:      rows[0].shownotes_title
+            title:      rows[0].shownotesTitle
           });
         } else {
           _render404(res);
@@ -380,14 +384,14 @@ var Server = (function (){
     app.get('/html/:slug', function(req, res) {
       var slug = req.params.slug;
       
-      db.all('SELECT startTime, offset, meta.title AS shownotes_title, time, url, data.title, isText FROM meta, data WHERE meta.slug = data.slug AND meta.slug = ?', slug, function(err, rows) {
+      db.all('SELECT startTime, offset, meta.title AS shownotesTitle, time, url, data.title, isText FROM meta, data WHERE meta.slug = data.slug AND meta.slug = ?', slug, function(err, rows) {
         if (rows) {
           res.render('html.ejs', {
             items:  rows,
             start:  rows[0].startTime,
             slug:   slug,
             offset: rows[0].offset,
-            title:  rows[0].shownotes_title
+            title:  rows[0].shownotesTitle
           });
         } else {
           _render404(res);
