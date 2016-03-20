@@ -21389,7 +21389,7 @@
 			"flagValue": -1
 			},
 		"camelcase": {
-			"active": 0,
+			"active": 1,
 			"flagValue": -1
 			},
 		"couch": {
@@ -21397,7 +21397,7 @@
 			"flagValue": -1
 			},
 		"curly": {
-			"active": 0,
+			"active": 1,
 			"flagValue": -1
 			},
 		"debug": {
@@ -21417,7 +21417,7 @@
 			"flagValue": -1
 			},
 		"eqeqeq": {
-			"active": 0,
+			"active": 1,
 			"flagValue": -1
 			},
 		"eqnull": {
@@ -21461,12 +21461,12 @@
 			"flagValue": -1
 			},
 		"immed": {
-			"active": 0,
+			"active": 1,
 			"flagValue": -1
 			},
 		"indent": {
-			"active": 0,
-			"flagValue": 4
+			"active": 1,
+			"flagValue": 2
 			},
 		"iterator": {
 			"active": 0,
@@ -21509,8 +21509,8 @@
 			"flagValue": 3
 			},
 		"maxlen": {
-			"active": 0,
-			"flagValue": 150
+			"active": 1,
+			"flagValue": 120
 			},
 		"maxparams": {
 			"active": 0,
@@ -21557,7 +21557,7 @@
 			"flagValue": -1
 			},
 		"nonbsp": {
-			"active": 0,
+			"active": 1,
 			"flagValue": -1
 			},
 		"nonew": {
