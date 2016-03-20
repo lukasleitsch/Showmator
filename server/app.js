@@ -364,7 +364,7 @@ var Server = (function (){
         if (rows) {
           res.render('live.ejs', {
             items:      rows,
-            publicSlug: rows.publicSlug,
+            publicSlug: rows[0].publicSlug,
             title:      rows[0].shownotes_title
           });
         } else {
