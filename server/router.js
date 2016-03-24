@@ -17,16 +17,16 @@ module.exports = (function() {
 
   
   // Live shownotes site
-  _initRouteForliveShownotes = function(app, db) {
+  _initRouteForliveShownotes = function(app, model) {
     app.get('/live/:publicSlug', function(req, res) {
       var publicSlug = req.params.publicSlug;
       
-      db.all('SELECT publicSlug, id, meta.title AS shownotesTitle, data.title, url, time, isText FROM meta, data WHERE meta.slug = data.slug AND publicSlug = ? ORDER BY time DESC', publicSlug, function(err, rows) {
+      model.getShownotesForLive(publicSlug, function(rows, publicSlug, title) {
         if (rows) {
           res.render('live.ejs', {
             items:      rows,
-            publicSlug: rows[0].publicSlug,
-            title:      rows[0].shownotesTitle
+            publicSlug: publicSlug,
+            title:      title
           });
         } else {
           _render404(res);
@@ -37,18 +37,18 @@ module.exports = (function() {
 
 
   // HTML export site
-  _initRouteForHtmlExport = function(app, db) {
+  _initRouteForHtmlExport = function(app, model) {
     app.get('/html/:slug', function(req, res) {
       var slug = req.params.slug;
       
-      db.all('SELECT startTime, offset, meta.title AS shownotesTitle, time, url, data.title, isText FROM meta, data WHERE meta.slug = data.slug AND meta.slug = ?', slug, function(err, rows) {
+      model.getShownotesForExport(slug, function(rows, start, offset, title) {
         if (rows) {
           res.render('html.ejs', {
             items:  rows,
-            start:  rows[0].startTime,
+            start:  start,
             slug:   slug,
-            offset: rows[0].offset,
-            title:  rows[0].shownotesTitle
+            offset: offset,
+            title:  title
           });
         } else {
           _render404(res);
@@ -59,18 +59,19 @@ module.exports = (function() {
 
 
   // route for checking last added shownotes
-  _initRouteForServerStatus = function(app, db) {
+  _initRouteForServerStatus = function(app, model) {
     app.get('/status', function(req, res) {
       var result = {lastShownotes : []};
 
-      db.each('SELECT time, publicSlug FROM meta, data WHERE meta.slug = data.slug ORDER BY time DESC LIMIT 3', function(err, row) {
-          result.lastShownotes.push({
-            time:       _util.formattedDate(row.time),
-            ago:        _util.timeAgo(row.time),
-            publicSlug: row.publicSlug
-          });
-        }, function() {
-          res.send('<pre>' + JSON.stringify(result, null, 2) + '</pre>');
+      // TODO fix this
+      model.each('SELECT time, publicSlug FROM meta, data WHERE meta.slug = data.slug ORDER BY time DESC LIMIT 3', function(err, row) {
+        result.lastShownotes.push({
+          time:       _util.formattedDate(row.time),
+          ago:        _util.timeAgo(row.time),
+          publicSlug: row.publicSlug
+        });
+      }, function() {
+        res.send('<pre>' + JSON.stringify(result, null, 2) + '</pre>');
       });
     });
   };
@@ -85,7 +86,7 @@ module.exports = (function() {
   };
 
 
-  module.init = function(db) {
+  module.init = function(model) {
     var express = require('express'),
         app     = express(),
         server  = require('http').createServer(app);
@@ -98,9 +99,9 @@ module.exports = (function() {
     // static files
     app.use(express.static('public'));
 
-    _initRouteForliveShownotes(app, db);
-    _initRouteForHtmlExport(app, db);
-    _initRouteForServerStatus(app, db);
+    _initRouteForliveShownotes(app, model);
+    _initRouteForHtmlExport(app, model);
+    _initRouteForServerStatus(app, model);
 
     // fluent interface
     return module;

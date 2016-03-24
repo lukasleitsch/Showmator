@@ -1696,6 +1696,17 @@
 		"outputStyle": 0,
 		"syntaxCheckerStyle": 1
 		},
+	"\/server\/model.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 1,
+		"inputAbbreviatedPath": "\/server\/model.js",
+		"outputAbbreviatedPath": "\/server\/model.min.js",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
+		},
 	"\/server\/node_modules\/accepts\/HISTORY.md": {
 		"criticStyle": 0,
 		"enableFootnotes": 0,
@@ -20824,6 +20835,17 @@
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/server\/public\/js\/live.min.js",
 		"outputAbbreviatedPath": "\/server\/public\/js\/live.min.min.js",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
+		},
+	"\/server\/query_builder.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 1,
+		"inputAbbreviatedPath": "\/server\/query_builder.js",
+		"outputAbbreviatedPath": "\/server\/query_builder.min.js",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1,
