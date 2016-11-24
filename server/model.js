@@ -60,7 +60,7 @@ module.exports = (function() {
   module.createNewShownotes = function(slug, publicSlug, callback) {
     _queryBuilder.insert('meta')
       .value('slug', slug)
-      .value('slug', slug)
+      .value('publicSlug', publicSlug)
       .run(callback);
   };
 
