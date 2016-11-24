@@ -11,3 +11,4 @@ server/data.db
 .sass-cache
 *.crx
 *.log
+.idea/
