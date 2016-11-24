@@ -1,7 +1,7 @@
 {
   "name": "Showmator",
   "version": "2.1.0",
-  "description": "Klick dir deine Shownotes",
+  "description": "Gather your shownotes while recording",
   "main": "app.js",
   "dependencies": {
     "ejs": "~2.3",
